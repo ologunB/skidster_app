@@ -1,24 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:mms_app/app/colors.dart';
-import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/screens/user/home/post_load_widget.dart';
-import 'package:mms_app/screens/user/user_main_layout.dart';
-import 'package:mms_app/screens/widgets/buttons.dart';
-import 'package:mms_app/screens/widgets/custom_textfield.dart';
+import 'package:mms_app/screens/widgets/notification_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
-import 'package:mms_app/screens/widgets/utils.dart';
 
 import 'find_trucker.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key key}) : super(key: key);
+class UserHomeScreen extends StatefulWidget {
+  const UserHomeScreen({Key key}) : super(key: key);
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _UserHomeScreenState createState() => _UserHomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _UserHomeScreenState extends State<UserHomeScreen> {
   bool isPostLoad = true;
 
   @override
@@ -32,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ListView(
               shrinkWrap: true,
               physics: ClampingScrollPhysics(),
-              padding: EdgeInsets.symmetric(horizontal: 30.h),
+              padding: EdgeInsets.symmetric(horizontal: 20.h),
               children: [
                 Row(
                   children: [
@@ -43,11 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: AppColors.primaryColor,
                     ),
                     Spacer(),
-                    Icon(
-                      Icons.notifications,
-                      size: 30.h,
-                      color: AppColors.primaryColor,
-                    )
+                    AppNotificationsWidget()
                   ],
                 ),
                 regularText(

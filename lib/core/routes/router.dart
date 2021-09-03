@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mms_app/screens/general/login_layout.dart';
-import 'package:mms_app/screens/general/login_screen.dart';
+import 'package:mms_app/screens/general/auth/login_layout.dart';
+import 'package:mms_app/screens/general/auth/login_screen.dart';
 import 'package:mms_app/screens/general/onboarding_view.dart';
-import 'package:mms_app/screens/general/signup_layout.dart';
+import 'package:mms_app/screens/general/auth/signup_layout.dart';
 
 const String OnboardingScreen = '/onboarding-view';
 const String LoginView = '/login-view';

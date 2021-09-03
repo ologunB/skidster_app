@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/routes/router.dart';
-import 'package:mms_app/screens/user/home/post_load_widget.dart';
-import 'package:mms_app/screens/user/user_main_layout.dart';
-import 'package:mms_app/screens/widgets/buttons.dart';
-import 'package:mms_app/screens/widgets/custom_textfield.dart';
+import 'package:mms_app/screens/widgets/notification_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
-import 'package:mms_app/screens/widgets/utils.dart';
 
 import 'loads_details_screen.dart';
 
 class LoadsScreen extends StatefulWidget {
-  const LoadsScreen({Key key}) : super(key: key);
+  const LoadsScreen({Key key, this.isTruck = false}) : super(key: key);
+
+  final bool isTruck;
 
   @override
   _LoadsScreenState createState() => _LoadsScreenState();
@@ -40,11 +38,8 @@ class _LoadsScreenState extends State<LoadsScreen> {
                     color: AppColors.primaryColor,
                   ),
                   Spacer(),
-                  Icon(
-                    Icons.notifications,
-                    size: 30.h,
-                    color: AppColors.primaryColor,
-                  )
+                  AppNotificationsWidget()
+
                 ],
               ),
             ),
@@ -65,7 +60,8 @@ class _LoadsScreenState extends State<LoadsScreen> {
               itemBuilder: (context, index) {
                 return InkWell(
                   onTap: () {
-                    routeTo(context, LoadsDetailsScreen());
+                    routeTo(
+                        context, LoadsDetailsScreen(isTruck: widget.isTruck));
                   },
                   child: Container(
                     margin: EdgeInsets.only(bottom: 15.h),

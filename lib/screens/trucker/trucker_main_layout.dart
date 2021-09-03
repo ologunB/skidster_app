@@ -4,6 +4,11 @@ import 'package:mms_app/app/colors.dart';
 
 import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
+import 'package:mms_app/screens/general/message/messages_screen.dart';
+import 'package:mms_app/screens/general/profile/profile_screen.dart';
+import 'package:mms_app/screens/user/loads/loads_screen.dart';
+
+import 'home/trucker_home_screen.dart';
 
 class TruckerMainLayout extends StatefulWidget {
   const TruckerMainLayout({Key key}) : super(key: key);
@@ -20,7 +25,12 @@ class _TruckerMainLayoutState extends State<TruckerMainLayout> {
     setState(() {});
   }
 
-  List<Widget> views() => [Text('data')];
+  List<Widget> views() => [
+        TruckerHomeScreen(),
+        LoadsScreen(isTruck: true),
+        MessagesScreen(),
+        ProfileScreen(),
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -33,46 +43,58 @@ class _TruckerMainLayoutState extends State<TruckerMainLayout> {
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
         backgroundColor: AppColors.white,
-        selectedItemColor: AppColors.black,
-        unselectedItemColor: AppColors.textGrey,
+        selectedItemColor: AppColors.primaryColor,
+        unselectedItemColor: AppColors.grey,
         currentIndex: currentIndex,
         selectedLabelStyle: GoogleFonts.mulish(
             fontSize: 11.sp,
-            color: AppColors.black,
+            color: AppColors.primaryColor,
             fontWeight: FontWeight.w400),
         unselectedLabelStyle: GoogleFonts.mulish(
             fontSize: 11.sp,
-            color: AppColors.textGrey,
+            color: AppColors.grey,
             fontWeight: FontWeight.w400),
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
               label: 'Home',
               icon: ImageIcon(
-                AssetImage('assets/images/Home0.png'),
-                color: AppColors.textGrey,
+                AssetImage('images/home.png'),
+                color: AppColors.grey,
               ),
               activeIcon: ImageIcon(
-                AssetImage('assets/images/Home1.png'),
+                AssetImage('images/home.png'),
+                color: AppColors.primaryColor,
               )),
           BottomNavigationBarItem(
-            label: 'Requests',
+              label: 'My Loads',
+              icon: ImageIcon(
+                AssetImage('images/loads.png'),
+                color: AppColors.grey,
+              ),
+              activeIcon: ImageIcon(
+                AssetImage('images/loads.png'),
+                color: AppColors.primaryColor,
+              )),
+          BottomNavigationBarItem(
+            label: 'Message',
             icon: ImageIcon(
-              AssetImage('assets/images/Request0.png'),
-              color: AppColors.textGrey,
+              AssetImage('images/message.png'),
+              color: AppColors.grey,
             ),
             activeIcon: ImageIcon(
-              AssetImage('assets/images/Request0.png'),
-              color: AppColors.black,
+              AssetImage('images/message.png'),
+              color: AppColors.primaryColor,
             ),
           ),
           BottomNavigationBarItem(
-            label: 'Messages',
+            label: 'Account',
             icon: ImageIcon(
-              AssetImage('assets/images/Message0.png'),
-              color: AppColors.textGrey,
+              AssetImage('images/person.png'),
+              color: AppColors.grey,
             ),
             activeIcon: ImageIcon(
-              AssetImage('assets/images/Message1.png'),
+              AssetImage('images/person.png'),
+              color: AppColors.primaryColor,
             ),
           ),
         ],

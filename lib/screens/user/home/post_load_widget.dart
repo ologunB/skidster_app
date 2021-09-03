@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:mms_app/app/colors.dart';
+import 'package:mms_app/core/routes/router.dart';
+import 'package:mms_app/screens/user/home/review_load_screen.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/custom_textfield.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
@@ -111,8 +113,9 @@ class _PostLoadWidgetState extends State<PostLoadWidget> {
             fontSize: 17.sp,
             height: 50.h,
             textColor: AppColors.white,
-            fontWeight: FontWeight.w600,
-            onTap: () {}),
+            fontWeight: FontWeight.w600, onTap: () {
+          routeTo(context, ReviewLoadScreen());
+        }),
       ],
     );
   }

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:global_configuration/global_configuration.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:mms_app/screens/general/onboarding_view.dart';
-import 'package:mms_app/screens/general/splash_view.dart';
+ import 'package:google_fonts/google_fonts.dart';
+ import 'package:mms_app/screens/general/splash_view.dart';
 import 'package:provider/provider.dart';
 
 import 'core/routes/router.dart';

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/routes/router.dart';
-import 'package:mms_app/screens/general/login_screen.dart';
-import 'package:mms_app/screens/general/signup_layout.dart';
+import 'package:mms_app/screens/general/auth/login_screen.dart';
+import 'package:mms_app/screens/general/auth/signup_layout.dart';
 
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';

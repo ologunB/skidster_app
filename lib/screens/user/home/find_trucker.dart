@@ -3,8 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
+import 'package:mms_app/core/routes/router.dart';
+import 'package:mms_app/screens/general/filter_screen.dart';
+import 'package:mms_app/screens/general/finder_details.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
-import 'package:mms_app/screens/widgets/utils.dart';
 
 class FIndTruckerWidget extends StatefulWidget {
   const FIndTruckerWidget({Key key}) : super(key: key);
@@ -72,7 +74,9 @@ class _FIndTruckerWidgetState extends State<FIndTruckerWidget> {
             ),
             SizedBox(width: 12.h),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                routeTo(context, FilterScreen());
+              },
               highlightColor: AppColors.white,
               child:
                   Image.asset('images/filter.png', height: 50.h, width: 50.h),
@@ -98,7 +102,7 @@ class _FIndTruckerWidgetState extends State<FIndTruckerWidget> {
             itemBuilder: (context, index) {
               return InkWell(
                 onTap: () {
-                  //  routeTo(context, LoadsDetailsScreen());
+                  routeTo(context, FinderDetails());
                 },
                 child: Row(
                   children: [

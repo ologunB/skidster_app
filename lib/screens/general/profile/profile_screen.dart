@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/routes/router.dart';
-import 'package:mms_app/screens/user/home/post_load_widget.dart';
-import 'package:mms_app/screens/user/user_main_layout.dart';
-import 'package:mms_app/screens/widgets/buttons.dart';
-import 'package:mms_app/screens/widgets/custom_textfield.dart';
+import 'package:mms_app/screens/general/profile/saved_loads.dart';
+import 'package:mms_app/screens/general/profile/saved_profiles.dart';
+import 'package:mms_app/screens/general/profile/util_screen.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
-import 'package:mms_app/screens/widgets/utils.dart';
+import 'package:share/share.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'go_premium_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key key}) : super(key: key);
@@ -56,11 +58,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ],
             ),
             SizedBox(height: 8.h),
-            regularText('Upgrade Plan',
-                fontSize: 13.sp,
-                color: AppColors.primaryColor,
-                textAlign: TextAlign.right,
-                fontWeight: FontWeight.w700),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                InkWell(
+                  onTap: () {
+                    routeTo(context, GoPremiumScreen());
+                  },
+                  child: regularText('Upgrade Plan',
+                      fontSize: 13.sp,
+                      color: AppColors.primaryColor,
+                      fontWeight: FontWeight.w700),
+                ),
+              ],
+            ),
             SizedBox(height: 8.h),
             Row(
               children: [
@@ -85,41 +96,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
               itemCount: data().length,
               padding: EdgeInsets.symmetric(vertical: 10.h),
               separatorBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {},
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 36.h),
-                    child: Divider(
-                      height: 0,
-                      thickness: 1.h,
-                      color: AppColors.grey.withOpacity(.2),
-                    ),
+                return Padding(
+                  padding: EdgeInsets.only(left: 36.h),
+                  child: Divider(
+                    height: 0,
+                    thickness: 1.h,
+                    color: AppColors.grey.withOpacity(.2),
                   ),
                 );
               },
               itemBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsets.symmetric(vertical: 13.h),
-                  child: Row(
-                    children: [
-                      Image.asset(
-                        'images/profile$index.png',
-                        height: 24.h,
-                        width: 24.h,
-                      ),
-                      SizedBox(width: 12.h),
-                      regularText(
-                        data()[index],
-                        fontSize: 17.sp,
-                        color: AppColors.primaryColor,
-                      ),
-                      Spacer(),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        size: 16.h,
-                        color: AppColors.grey,
-                      )
-                    ],
+                return InkWell(
+                  onTap: () {
+                    if (index == 8) {
+                      Share.share('text', subject: 'Share App');
+                      return;
+                    }
+                    if (index == 7) {
+                      launch(
+                          'https://play.google.com/store/apps/details?id=com.autoserveng.autoserve&hl=en');
+                      return;
+                    }
+                    routeTo(context, gotos(data()[index])[index]);
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 13.h),
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          'images/profile$index.png',
+                          height: 24.h,
+                          width: 24.h,
+                        ),
+                        SizedBox(width: 12.h),
+                        regularText(
+                          data()[index],
+                          fontSize: 17.sp,
+                          color: AppColors.primaryColor,
+                        ),
+                        Spacer(),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16.h,
+                          color: AppColors.grey,
+                        )
+                      ],
+                    ),
                   ),
                 );
               },
@@ -149,5 +171,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         'Rate App',
         'Invite others',
         // 'Logout'
+      ];
+
+  List<Widget> gotos(String a) => [
+        UtilScreen(title: a),
+        UtilScreen(title: a),
+        UtilScreen(title: a),
+        UtilScreen(title: a),
+        UtilScreen(title: a),
+        SavedProfilesScreen(),
+        SavedLoadsScreen(),
       ];
 }

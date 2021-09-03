@@ -4,11 +4,11 @@ import 'package:mms_app/app/colors.dart';
 
 import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
-import 'package:mms_app/screens/user/profile/profile_screen.dart';
+import 'package:mms_app/screens/general/message/messages_screen.dart';
+import 'package:mms_app/screens/general/profile/profile_screen.dart';
 
 import 'home/home_screen.dart';
 import 'loads/loads_screen.dart';
-import 'message/messages_screen.dart';
 
 class UserMainLayout extends StatefulWidget {
   const UserMainLayout({Key key}) : super(key: key);
@@ -26,8 +26,8 @@ class _UserMainLayoutState extends State<UserMainLayout> {
   }
 
   List<Widget> views() => [
-        HomeScreen(),
-        LoadsScreen(),
+        UserHomeScreen(),
+        LoadsScreen(isTruck: false),
         MessagesScreen(),
         ProfileScreen(),
       ];

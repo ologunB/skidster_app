@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:mms_app/app/colors.dart';
-import 'package:mms_app/core/routes/router.dart';
-import 'package:mms_app/screens/user/home/post_load_widget.dart';
-import 'package:mms_app/screens/user/user_main_layout.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
-import 'package:mms_app/screens/widgets/custom_textfield.dart';
+import 'package:mms_app/screens/widgets/notification_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
-import 'package:mms_app/screens/widgets/utils.dart';
 
 class LoadsDetailsScreen extends StatefulWidget {
-  const LoadsDetailsScreen({Key key}) : super(key: key);
+  const LoadsDetailsScreen({Key key, this.isTruck = false}) : super(key: key);
+
+  final bool isTruck;
 
   @override
   _LoadsDetailsScreenState createState() => _LoadsDetailsScreenState();
 }
 
 class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
+  bool favorite = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,19 +36,33 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                   color: AppColors.primaryColor,
                 ),
                 Spacer(),
-                Icon(
-                  Icons.notifications,
-                  size: 30.h,
-                  color: AppColors.primaryColor,
-                )
+                AppNotificationsWidget()
+
               ],
             ),
-            SizedBox(height: 10.h),
-            regularText(
-              'Post ID',
-              fontSize: 17.sp,
-              fontWeight: FontWeight.w700,
-              color: AppColors.grey,
+            SizedBox(height: 16.h),
+            Row(
+              children: [
+                regularText(
+                  'Post ID',
+                  fontSize: 17.sp,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.grey,
+                ),
+                Spacer(),
+                if (widget.isTruck)
+                  InkWell(
+                    onTap: () {
+                      favorite = !favorite;
+                      setState(() {});
+                    },
+                    child: Icon(
+                      favorite ? Icons.favorite : Icons.favorite_border,
+                      size: 30.h,
+                      color: AppColors.primaryColor,
+                    ),
+                  )
+              ],
             ),
             Container(
               margin: EdgeInsets.only(top: 15.h),
@@ -180,7 +194,8 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10.h),    Row(
+                  SizedBox(height: 10.h),
+                  Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
@@ -200,7 +215,8 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10.h),    Row(
+                  SizedBox(height: 10.h),
+                  Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
@@ -225,14 +241,87 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
               ),
             ),
             SizedBox(height: 10.h),
-            Center(
-              child: regularText(
-                'Edit',
-                fontSize: 17.sp,
-                fontWeight: FontWeight.w700,
-                color: AppColors.primaryColor,
-              ),
-            ),
+            !widget.isTruck
+                ? Center(
+                    child: regularText(
+                      'Edit',
+                      fontSize: 17.sp,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.primaryColor,
+                    ),
+                  )
+                : Column(
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.share,
+                            color: AppColors.primaryColor,
+                            size: 24.h,
+                          ),
+                          SizedBox(width: 8.h),
+                          regularText(
+                            'Share',
+                            fontSize: 17.sp,
+                            color: AppColors.primaryColor,
+                          ),
+                          Spacer(),
+                          regularText(
+                            'Posted by :',
+                            fontSize: 17.sp,
+                            color: AppColors.grey,
+                          ),
+                          SizedBox(width: 8.h),
+                          regularText(
+                            'Jack',
+                            fontSize: 17.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.primaryColor,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 40.h),
+                      Container(
+                          height: 40.h,
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.symmetric(horizontal: 15.h),
+                          decoration: BoxDecoration(
+                              color: Color(0xffFFEBA3),
+                              borderRadius: BorderRadius.circular(10.h)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              regularText('Click here ',
+                                  fontSize: 17.sp,
+                                  color: AppColors.primaryColor,
+                                  fontWeight: FontWeight.w600),
+                              regularText(
+                                'if you have booked this load',
+                                fontSize: 17.sp,
+                                color: AppColors.primaryColor,
+                              ),
+                            ],
+                          )),
+                      SizedBox(height: 30.h),
+                      buttonWithBorder('Call',
+                          borderColor: AppColors.primaryColor,
+                          buttonColor: AppColors.primaryColor,
+                          textColor: AppColors.white,
+                          fontSize: 17.sp,
+                          height: 50.h,
+                          fontWeight: FontWeight.w600,
+                          onTap: () {}),
+                      SizedBox(height: 8.h),
+                      buttonWithBorder('Message',
+                          borderColor: AppColors.primaryColor,
+                          buttonColor: AppColors.white,
+                          textColor: AppColors.primaryColor,
+                          fontSize: 17.sp,
+                          height: 50.h,
+                          fontWeight: FontWeight.w600,
+                          onTap: () {}),
+                    ],
+                  )
           ],
         ),
       ),

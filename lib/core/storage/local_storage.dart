@@ -1,8 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mms_app/core/models/login_response.dart';
-import 'package:mms_app/core/models/quote_model.dart';
-import 'package:mms_app/core/models/youtube_model.dart';
 
 const String kUserBox = 'userBox';
 const String profileKey = 'profile';

@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/routes/router.dart';
-import 'package:mms_app/screens/user/home/post_load_widget.dart';
-import 'package:mms_app/screens/user/user_main_layout.dart';
-import 'package:mms_app/screens/widgets/buttons.dart';
-import 'package:mms_app/screens/widgets/custom_textfield.dart';
+import 'package:mms_app/screens/widgets/notification_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
-import 'package:mms_app/screens/widgets/utils.dart';
 
 import 'message_details.dart';
 
@@ -38,11 +34,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                     color: AppColors.primaryColor,
                   ),
                   Spacer(),
-                  Icon(
-                    Icons.notifications,
-                    size: 30.h,
-                    color: AppColors.primaryColor,
-                  )
+                  AppNotificationsWidget()
                 ],
               ),
             ),
@@ -50,6 +42,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
               child: ListView.separated(
                 itemCount: 3,
                 shrinkWrap: true,
+                padding: EdgeInsets.zero,
                 itemBuilder: (context, index) {
                   return InkWell(
                     onTap: () {
