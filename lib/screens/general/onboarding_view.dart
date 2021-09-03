@@ -104,7 +104,10 @@ class _OnboardingViewState extends State<OnboardingView> {
                           controller.nextPage(
                               duration: Duration(seconds: 1),
                               curve: Curves.easeIn);
-                        })
+                        }),
+
+                        SizedBox(height: 20.h),
+
                       ],
                     )
                   ],

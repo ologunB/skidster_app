@@ -165,11 +165,23 @@ class _FIndTruckerWidgetState extends State<FIndTruckerWidget> {
                           width: 33.h,
                         ),
                         SizedBox(width: 6.h),
-                        Image.asset(
-                          'images/message_circle_icon.png',
-                          height: 33.h,
-                          width: 33.h,
-                        ),
+                        Container(
+                            height: 33.h,
+                            width: 33.h,
+                            decoration: BoxDecoration(
+                                color: AppColors.grey.withOpacity(.5),
+                                borderRadius: BorderRadius.circular(20.h)),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  'images/call.png',
+                                  height: 20.h,
+                                  width: 20.h,
+                                  color: AppColors.primaryColor,
+                                ),
+                              ],
+                            )),
                       ],
                     ),
                   ],

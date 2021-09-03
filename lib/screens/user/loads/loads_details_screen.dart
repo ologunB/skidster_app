@@ -140,103 +140,13 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
             ),
             Container(
               margin: EdgeInsets.only(top: 15.h),
-              padding: EdgeInsets.symmetric(horizontal: 14.h, vertical: 10.h),
-              decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                        color: AppColors.grey.withOpacity(.3),
-                        spreadRadius: 2,
-                        blurRadius: 10)
-                  ],
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10.h)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: regularText(
-                          'Item',
-                          fontSize: 17.sp,
-                          color: AppColors.grey,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: regularText(
-                          ': Washing Machine',
-                          fontSize: 17.sp,
-                          color: AppColors.primaryColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10.h),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: regularText(
-                          'Weight',
-                          fontSize: 17.sp,
-                          color: AppColors.grey,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: regularText(
-                          ': 5000 kg',
-                          fontSize: 17.sp,
-                          color: AppColors.primaryColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10.h),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: regularText(
-                          'Skids',
-                          fontSize: 17.sp,
-                          color: AppColors.grey,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: regularText(
-                          ': Skids',
-                          fontSize: 17.sp,
-                          color: AppColors.primaryColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10.h),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: regularText(
-                          'Price',
-                          fontSize: 17.sp,
-                          color: AppColors.grey,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: regularText(
-                          ': \$130',
-                          fontSize: 17.sp,
-                          color: AppColors.primaryColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10.h),
+                  item2('Item', ': Washing Machine'),
+                  item2('Weight', ': 5000 kg'),
+                  item2('Skids', ': Skids'),
+                  item2('Price', ': \$130'),
                 ],
               ),
             ),
@@ -339,6 +249,32 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
         a,
         fontSize: 11.sp,
         color: AppColors.primaryColor,
+      ),
+    );
+  }
+
+  Widget item2(String a, String b) {
+    return Container(
+      padding: EdgeInsets.only(bottom: 10.h),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: regularText(
+              a,
+              fontSize: 17.sp,
+              color: AppColors.grey,
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: regularText(
+              b,
+              fontSize: 17.sp,
+              color: AppColors.primaryColor,
+            ),
+          ),
+        ],
       ),
     );
   }

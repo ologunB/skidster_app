@@ -23,8 +23,7 @@ Widget buttonWithBorder(
       height: height,
       width: width,
       alignment: Alignment.center,
-      padding:
-          EdgeInsets.symmetric(vertical: 13.h, horizontal: horiMargin ?? 0),
+      padding: EdgeInsets.symmetric(horizontal: horiMargin ?? 0),
       decoration: BoxDecoration(
           color: buttonColor,
           borderRadius: BorderRadius.circular(borderRadius ?? 10.h),

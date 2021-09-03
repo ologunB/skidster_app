@@ -1,7 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.skidster.skidster_app">
-   <application
-        android:label="skidster_app"
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <application
+        android:label="Skidster"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

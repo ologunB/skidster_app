@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/routes/router.dart';
+import 'package:mms_app/screens/user/loads/loads_status_screen.dart';
 import 'package:mms_app/screens/widgets/notification_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
@@ -39,7 +40,6 @@ class _LoadsScreenState extends State<LoadsScreen> {
                   ),
                   Spacer(),
                   AppNotificationsWidget()
-
                 ],
               ),
             ),
@@ -206,133 +206,139 @@ class _LoadsScreenState extends State<LoadsScreen> {
               itemCount: 2,
               physics: ClampingScrollPhysics(),
               itemBuilder: (context, index) {
-                return Container(
-                  margin: EdgeInsets.only(bottom: 15.h),
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 14.h, vertical: 10.h),
-                  decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                            color: AppColors.grey.withOpacity(.3),
-                            spreadRadius: 2,
-                            blurRadius: 10)
-                      ],
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10.h)),
-                  child: Row(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(right: 12.h),
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 10.h, vertical: 6.h),
-                        decoration: BoxDecoration(
-                            color: AppColors.grey.withOpacity(.5),
-                            borderRadius: BorderRadius.circular(6.h)),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            regularText(
-                              'APR',
-                              fontSize: 13.sp,
-                              color: AppColors.primaryColor,
-                            ),
-                            SizedBox(height: 6.h),
-                            regularText(
-                              '01',
-                              fontSize: 17.sp,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.primaryColor,
-                            ),
-                            SizedBox(height: 6.h),
-                            regularText(
-                              'MON',
-                              fontSize: 13.sp,
-                              color: AppColors.primaryColor,
-                            ),
-                          ],
+                return InkWell(
+                  onTap: () {
+                    routeTo(context, LoadsStatusScreen());
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: 15.h),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 14.h, vertical: 10.h),
+                    decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                              color: AppColors.grey.withOpacity(.3),
+                              spreadRadius: 2,
+                              blurRadius: 10)
+                        ],
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10.h)),
+                    child: Row(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(right: 12.h),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10.h, vertical: 6.h),
+                          decoration: BoxDecoration(
+                              color: AppColors.grey.withOpacity(.5),
+                              borderRadius: BorderRadius.circular(6.h)),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              regularText(
+                                'APR',
+                                fontSize: 13.sp,
+                                color: AppColors.primaryColor,
+                              ),
+                              SizedBox(height: 6.h),
+                              regularText(
+                                '01',
+                                fontSize: 17.sp,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.primaryColor,
+                              ),
+                              SizedBox(height: 6.h),
+                              regularText(
+                                'MON',
+                                fontSize: 13.sp,
+                                color: AppColors.primaryColor,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                regularText(
-                                  'Washing Machine',
-                                  fontSize: 13.sp,
-                                  color: AppColors.grey,
-                                ),
-                                Spacer(),
-                                Container(
-                                  margin: EdgeInsets.only(right: 6.h),
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 10.h, vertical: 6.h),
-                                  decoration: BoxDecoration(
-                                      color: Colors.green,
-                                      borderRadius: BorderRadius.circular(6.h)),
-                                  child: regularText(
-                                    'Completed',
-                                    fontSize: 11.sp,
-                                    color: AppColors.white,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  regularText(
+                                    'Washing Machine',
+                                    fontSize: 13.sp,
+                                    color: AppColors.grey,
                                   ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 10.h),
-                            Row(
-                              children: [
-                                Container(
-                                  height: 9.h,
-                                  width: 9.h,
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          width: 1.h,
-                                          color: AppColors.primaryColor),
-                                      borderRadius:
-                                          BorderRadius.circular(10.h)),
-                                ),
-                                SizedBox(width: 10.h),
-                                regularText(
-                                  'Mississauga',
-                                  fontSize: 15.sp,
-                                  color: AppColors.primaryColor,
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Container(
-                                  height: 9.h,
-                                  width: 9.h,
-                                  decoration: BoxDecoration(
-                                      color: AppColors.primaryColor,
-                                      border: Border.all(
-                                          width: 1.h,
-                                          color: AppColors.primaryColor),
-                                      borderRadius:
-                                          BorderRadius.circular(10.h)),
-                                ),
-                                SizedBox(width: 10.h),
-                                regularText(
-                                  'Anywhere',
-                                  fontSize: 15.sp,
-                                  color: AppColors.primaryColor,
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 10.h),
-                            Row(
-                              children: [
-                                item1('5000kg'),
-                                item1('Lorem'),
-                                item1('10 Skids'),
-                              ],
-                            )
-                          ],
-                        ),
-                      )
-                    ],
+                                  Spacer(),
+                                  Container(
+                                    margin: EdgeInsets.only(right: 6.h),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 10.h, vertical: 6.h),
+                                    decoration: BoxDecoration(
+                                        color: Colors.green,
+                                        borderRadius:
+                                            BorderRadius.circular(6.h)),
+                                    child: regularText(
+                                      'Completed',
+                                      fontSize: 11.sp,
+                                      color: AppColors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 10.h),
+                              Row(
+                                children: [
+                                  Container(
+                                    height: 9.h,
+                                    width: 9.h,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            width: 1.h,
+                                            color: AppColors.primaryColor),
+                                        borderRadius:
+                                            BorderRadius.circular(10.h)),
+                                  ),
+                                  SizedBox(width: 10.h),
+                                  regularText(
+                                    'Mississauga',
+                                    fontSize: 15.sp,
+                                    color: AppColors.primaryColor,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Container(
+                                    height: 9.h,
+                                    width: 9.h,
+                                    decoration: BoxDecoration(
+                                        color: AppColors.primaryColor,
+                                        border: Border.all(
+                                            width: 1.h,
+                                            color: AppColors.primaryColor),
+                                        borderRadius:
+                                            BorderRadius.circular(10.h)),
+                                  ),
+                                  SizedBox(width: 10.h),
+                                  regularText(
+                                    'Anywhere',
+                                    fontSize: 15.sp,
+                                    color: AppColors.primaryColor,
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 10.h),
+                              Row(
+                                children: [
+                                  item1('5000kg'),
+                                  item1('Lorem'),
+                                  item1('10 Skids'),
+                                ],
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 );
               },
