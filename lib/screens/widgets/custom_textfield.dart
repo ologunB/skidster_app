@@ -17,6 +17,7 @@ class CustomTextField extends StatelessWidget {
   final Function() onTap;
   final TextEditingController controller;
   final int maxLines;
+  final int maxLength;
   final bool readOnly;
   final bool obscureText;
   final bool autoFocus;
@@ -40,7 +41,7 @@ class CustomTextField extends StatelessWidget {
     this.maxLines = 1,
     this.onTap,
     this.autoFocus = false,
-    this.focusNode,
+    this.focusNode, this.maxLength,
   });
 
   @override
@@ -52,7 +53,7 @@ class CustomTextField extends StatelessWidget {
       focusNode: focusNode,
       cursorHeight: 15.h,
       autofocus: autoFocus,
-      maxLines: maxLines,
+      maxLines: maxLines,maxLength: maxLength,
       textInputAction: textInputAction,
       style: GoogleFonts.inter(
         color: AppColors.primaryColor,

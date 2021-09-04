@@ -25,8 +25,8 @@ class BaseAPI {
     return token;
   }
 
-  LoginData getUser() {
-    LoginData user = AppCache.getUser;
+  UserData getUser() {
+    UserData user = AppCache.getUser;
     // print(AppCache.getUser.toJson());
     return user;
   }

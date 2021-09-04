@@ -24,7 +24,11 @@ class _SplashViewState extends State<SplashView> {
         }
       } else {
         Future.delayed(Duration(seconds: 2), () {
-          locator<NavigationService>().pushReplace(OnboardingScreen);
+          if (AppCache.getUser.type == 'customer') {
+            locator<NavigationService>().pushReplace(UserMainView);
+          } else {
+            locator<NavigationService>().pushReplace(TruckerMainView);
+          }
         });
       }
     });

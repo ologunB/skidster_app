@@ -4,6 +4,8 @@ import 'package:mms_app/screens/general/auth/login_layout.dart';
 import 'package:mms_app/screens/general/auth/login_screen.dart';
 import 'package:mms_app/screens/general/onboarding_view.dart';
 import 'package:mms_app/screens/general/auth/signup_layout.dart';
+import 'package:mms_app/screens/trucker/trucker_main_layout.dart';
+import 'package:mms_app/screens/user/user_main_layout.dart';
 
 const String OnboardingScreen = '/onboarding-view';
 const String LoginView = '/login-view';
@@ -12,6 +14,8 @@ const String SignupLayoutScreen = '/signup-layout-view';
 const String LoginLayoutScreen = '/login-layout-view';
 const String ChangePasswordScreen = '/change-password';
 const String ConfirmOTPScreen = '/confirm-otp';
+const String UserMainView = '/user-main-view';
+const String TruckerMainView = '/truck-main-view';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
@@ -39,6 +43,20 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return _getPageRoute(
         routeName: settings.name,
         view: LoginScreen(),
+        args: settings.arguments,
+      );
+
+    case UserMainView:
+      return _getPageRoute(
+        routeName: settings.name,
+        view: UserMainLayout(),
+        args: settings.arguments,
+      );
+
+    case TruckerMainView:
+      return _getPageRoute(
+        routeName: settings.name,
+        view: TruckerMainLayout(),
         args: settings.arguments,
       );
 

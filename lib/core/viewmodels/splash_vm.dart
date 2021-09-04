@@ -6,7 +6,7 @@ import 'base_vm.dart';
 
 class SplashViewModel extends BaseModel {
   Future<void> isLoggedIn() async {
-    final LoginData loginData = AppCache.getUser;
+    final UserData loginData = AppCache.getUser;
     Future<void>.delayed(const Duration(seconds: 2), () {
       if (loginData == null) {
         navigate.navigateToReplacing(LoginView);

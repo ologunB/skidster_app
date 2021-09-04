@@ -26,17 +26,21 @@ class AppCache {
     return data;
   }
 
-  static void setUser(LoginData user) {
-    _userBox.put(profileKey, user.toJson());
+  static void setUser(Map<String, dynamic> user) {
+    _userBox.put(profileKey, user);
   }
 
-  static LoginData get getUser {
+  static UserData get getUser {
     final dynamic data = _userBox.get(profileKey);
     if (data == null) {
       return null;
     }
-    final LoginData user = LoginData.fromJson(data);
+    final UserData user = UserData.fromJson(data);
     return user;
+  }
+
+  static UserType get userType {
+    return getUser.type == 'customer' ? UserType.USER : UserType.TRUCKER;
   }
 
   static Future<void> clear() async {
@@ -47,3 +51,5 @@ class AppCache {
     _userBox.delete(key);
   }
 }
+
+enum UserType { USER, TRUCKER }

@@ -1,15 +1,23 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/routes/router.dart';
+import 'package:mms_app/core/storage/local_storage.dart';
+import 'package:mms_app/screens/general/auth/login_layout.dart';
+import 'package:mms_app/screens/general/profile/privacy_policy_screen.dart';
 import 'package:mms_app/screens/general/profile/saved_loads.dart';
 import 'package:mms_app/screens/general/profile/saved_profiles.dart';
+import 'package:mms_app/screens/general/profile/support_screen.dart';
+import 'package:mms_app/screens/general/profile/terms_service_screen.dart';
 import 'package:mms_app/screens/general/profile/util_screen.dart';
 import 'package:mms_app/screens/trucker/auth/upload_driverlicense_screen.dart';
+import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'edit_profile_screen.dart';
 import 'go_premium_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -74,33 +82,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ],
             ),
             SizedBox(height: 8.h),
-            Row(
-              children: [
-                InkWell(
-                  onTap: () {
-                    routeTo(context, UploadDriverLicenceScreen());
-                  },
-                  child: Container(
-                    height: 40.h,
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.symmetric(horizontal: 15.h),
-                    decoration: BoxDecoration(
-                        color: Color(0xffFFEBA3),
-                        borderRadius: BorderRadius.circular(10.h)),
-                    child: regularText(
-                      'Please verify your profile',
-                      fontSize: 15.sp,
-                      color: AppColors.primaryColor,
+            if (AppCache.userType == UserType.TRUCKER)
+              Row(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      routeTo(context, UploadDriverLicenceScreen());
+                    },
+                    child: Container(
+                      height: 40.h,
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.only(bottom: 10.h),
+                      padding: EdgeInsets.symmetric(horizontal: 15.h),
+                      decoration: BoxDecoration(
+                          color: Color(0xffFFEBA3),
+                          borderRadius: BorderRadius.circular(10.h)),
+                      child: regularText(
+                        'Please verify your profile',
+                        fontSize: 15.sp,
+                        color: AppColors.primaryColor,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
             ListView.separated(
               physics: ClampingScrollPhysics(),
               shrinkWrap: true,
               itemCount: data().length,
-              padding: EdgeInsets.symmetric(vertical: 10.h),
+              padding: EdgeInsets.zero,
               separatorBuilder: (context, index) {
                 return Padding(
                   padding: EdgeInsets.only(left: 36.h),
@@ -114,11 +124,68 @@ class _ProfileScreenState extends State<ProfileScreen> {
               itemBuilder: (context, index) {
                 return InkWell(
                   onTap: () {
-                    if (index == 8) {
+                    int lag = AppCache.userType == UserType.TRUCKER ? 0 : 2;
+                    if (index == 8 - lag) {
                       Share.share('text', subject: 'Share App');
                       return;
                     }
-                    if (index == 7) {
+                    if (index == 9 - lag) {
+                      showDialog<AlertDialog>(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              regularText(
+                                'Are you sure you want\nto logout?',
+                                fontSize: 17.sp,
+                                textAlign: TextAlign.center,
+                                color: AppColors.primaryColor,
+                              ),
+                              SizedBox(height: 10.h),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: buttonWithBorder(
+                                      'YES',
+                                      buttonColor: AppColors.primaryColor,
+                                      fontSize: 17.sp,
+                                      height: 40.h,
+                                      textColor: AppColors.white,
+                                      fontWeight: FontWeight.w400,
+                                      onTap: () {
+                                        AppCache.clear();
+                                        FirebaseAuth.instance.signOut();
+                                        routeToReplace(context, LoginLayout());
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(width: 10.h),
+                                  Expanded(
+                                    child: buttonWithBorder(
+                                      'NO',
+                                      buttonColor: AppColors.white,
+                                      fontSize: 17.sp,
+                                      borderColor: AppColors.primaryColor,
+                                      height: 40.h,
+                                      textColor: AppColors.primaryColor,
+                                      fontWeight: FontWeight.w400,
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
+                        ),
+                      );
+                      return;
+                    }
+                    if (index == 7 - lag) {
                       launch(
                           'https://play.google.com/store/apps/details?id=com.autoserveng.autoserve&hl=en');
                       return;
@@ -130,9 +197,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Row(
                       children: [
                         Image.asset(
-                          'images/profile$index.png',
+                          images()[index],
                           height: 24.h,
                           width: 24.h,
+                          color: AppColors.primaryColor,
                         ),
                         SizedBox(width: 12.h),
                         regularText(
@@ -168,24 +236,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   List<String> data() => [
         'Edit My Profile',
-        'My Truck',
+        if (AppCache.userType == UserType.TRUCKER) 'My Truck',
         'Terms of Service',
         'Privacy Policy',
         'Contact Support',
-        'Saved Profiles',
+        if (AppCache.userType == UserType.TRUCKER) 'Saved Profiles',
         'Saved Loads',
         'Rate App',
         'Invite others',
-        // 'Logout'
+        'Logout',
       ];
 
   List<Widget> gotos(String a) => [
-        UtilScreen(title: a),
-        UtilScreen(title: a),
-        UtilScreen(title: a),
-        UtilScreen(title: a),
-        UtilScreen(title: a),
-        SavedProfilesScreen(),
+        EditProfileScreen(),
+        if (AppCache.userType == UserType.TRUCKER) UtilScreen(title: a),
+        TermsServiceScreen(),
+        PrivacyPolicyScreen(),
+        SupportScreen(),
+        if (AppCache.userType == UserType.TRUCKER) SavedProfilesScreen(),
         SavedLoadsScreen(),
+      ];
+
+  List<String> images() => [
+        'images/profile0.png',
+        if (AppCache.userType == UserType.TRUCKER) 'images/profile1.png',
+        'images/profile2.png',
+        'images/profile3.png',
+        'images/profile4.png',
+        if (AppCache.userType == UserType.TRUCKER) 'images/profile5.png',
+        'images/profile6.png',
+        'images/profile7.png',
+        'images/profile8.png',
+        'images/profile9.png',
       ];
 }
