@@ -139,7 +139,7 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
               ),
             ),
             Container(
-              margin: EdgeInsets.only(top: 15.h),
+              margin: EdgeInsets.only(top: 25.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

@@ -4,6 +4,7 @@ import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/screens/general/filter_screen.dart';
 import 'package:mms_app/screens/user/loads/loads_details_screen.dart';
+import 'package:mms_app/screens/user/loads/loads_status_screen.dart';
 import 'package:mms_app/screens/widgets/notification_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
@@ -161,14 +162,14 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 10.h),
+                    SizedBox(height: 15.h),
                     regularText(
                       'Recently Added Loads',
                       fontSize: 17.sp,
                       fontWeight: FontWeight.w700,
                       color: AppColors.grey,
                     ),
-                    SizedBox(height: 10.h),
+                    SizedBox(height: 15.h),
                     Container(
                       height: 150.h,
                       child: ListView.builder(
@@ -304,14 +305,14 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                         },
                       ),
                     ),
-                    SizedBox(height: 10.h),
+                    SizedBox(height: 15.h),
                     regularText(
                       'My Loads',
                       fontSize: 17.sp,
                       fontWeight: FontWeight.w700,
                       color: AppColors.grey,
                     ),
-                    SizedBox(height: 10.h),
+                    SizedBox(height: 15.h),
                     Row(
                       children: [
                         Container(
@@ -329,46 +330,51 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 10.h),
-                    Container(
-                      padding: EdgeInsets.all(15.h),
-                      decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                                color: AppColors.grey.withOpacity(.3),
-                                spreadRadius: 2,
-                                blurRadius: 10)
-                          ],
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10.h)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          regularText(
-                            'Refrigerator',
-                            fontSize: 15.sp,
-                            color: AppColors.primaryColor,
-                          ),
-                          Row(
-                            children: [
-                              regularText(
-                                'Citywhere > Knowhere',
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.primaryColor,
-                              ),
-                              Spacer(),
-                              regularText(
-                                '30 Mar 2021',
-                                fontSize: 11.sp,
-                                color: AppColors.grey,
-                              ),
+                    SizedBox(height: 15.h),
+                    InkWell(
+                      onTap: () {
+                        routeTo(context, LoadsStatusScreen());
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(15.h),
+                        decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                  color: AppColors.grey.withOpacity(.3),
+                                  spreadRadius: 2,
+                                  blurRadius: 10)
                             ],
-                          )
-                        ],
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10.h)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            regularText(
+                              'Refrigerator',
+                              fontSize: 15.sp,
+                              color: AppColors.primaryColor,
+                            ),
+                            Row(
+                              children: [
+                                regularText(
+                                  'Citywhere > Knowhere',
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.primaryColor,
+                                ),
+                                Spacer(),
+                                regularText(
+                                  '30 Mar 2021',
+                                  fontSize: 11.sp,
+                                  color: AppColors.grey,
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                    SizedBox(height: 12.h),
+                    SizedBox(height: 15.h),
                     Row(
                       children: [
                         Container(
@@ -386,43 +392,48 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 10.h),
-                    Container(
-                      padding: EdgeInsets.all(15.h),
-                      decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                                color: AppColors.grey.withOpacity(.3),
-                                spreadRadius: 2,
-                                blurRadius: 10)
-                          ],
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10.h)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          regularText(
-                            'Refrigerator',
-                            fontSize: 15.sp,
-                            color: AppColors.primaryColor,
-                          ),
-                          Row(
-                            children: [
-                              regularText(
-                                'Citywhere > Knowhere',
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.primaryColor,
-                              ),
-                              Spacer(),
-                              regularText(
-                                'Completed',
-                                fontSize: 11.sp,
-                                color: AppColors.grey,
-                              ),
+                    SizedBox(height: 15.h),
+                    InkWell(
+                      onTap: () {
+                        routeTo(context, LoadsStatusScreen());
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(15.h),
+                        decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                  color: AppColors.grey.withOpacity(.3),
+                                  spreadRadius: 2,
+                                  blurRadius: 10)
                             ],
-                          )
-                        ],
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10.h)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            regularText(
+                              'Refrigerator',
+                              fontSize: 15.sp,
+                              color: AppColors.primaryColor,
+                            ),
+                            Row(
+                              children: [
+                                regularText(
+                                  'Citywhere > Knowhere',
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.primaryColor,
+                                ),
+                                Spacer(),
+                                regularText(
+                                  'Completed',
+                                  fontSize: 11.sp,
+                                  color: AppColors.grey,
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
                     SizedBox(height: 12.h),

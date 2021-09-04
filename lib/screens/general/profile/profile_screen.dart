@@ -4,6 +4,7 @@ import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/screens/general/profile/saved_loads.dart';
 import 'package:mms_app/screens/general/profile/saved_profiles.dart';
 import 'package:mms_app/screens/general/profile/util_screen.dart';
+import 'package:mms_app/screens/trucker/auth/upload_driverlicense_screen.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
 import 'package:share/share.dart';
@@ -75,17 +76,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
             SizedBox(height: 8.h),
             Row(
               children: [
-                Container(
-                  height: 40.h,
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.symmetric(horizontal: 15.h),
-                  decoration: BoxDecoration(
-                      color: Color(0xffFFEBA3),
-                      borderRadius: BorderRadius.circular(10.h)),
-                  child: regularText(
-                    'Please verify your profile',
-                    fontSize: 15.sp,
-                    color: AppColors.primaryColor,
+                InkWell(
+                  onTap: () {
+                    routeTo(context, UploadDriverLicenceScreen());
+                  },
+                  child: Container(
+                    height: 40.h,
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.symmetric(horizontal: 15.h),
+                    decoration: BoxDecoration(
+                        color: Color(0xffFFEBA3),
+                        borderRadius: BorderRadius.circular(10.h)),
+                    child: regularText(
+                      'Please verify your profile',
+                      fontSize: 15.sp,
+                      color: AppColors.primaryColor,
+                    ),
                   ),
                 ),
               ],

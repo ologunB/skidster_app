@@ -72,7 +72,7 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
           item('Business Number'),
           SizedBox(height: 8.h),
           CustomTextField(
-            hintText: '+32 890 ',
+            hintText: '+12 890 ',
             validator: Utils.isValidName,
             obscureText: false,
             textInputType: TextInputType.number,

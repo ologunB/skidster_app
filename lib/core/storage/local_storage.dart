@@ -14,11 +14,11 @@ class AppCache {
 
   static Box<dynamic> get _userBox => Hive.box<dynamic>(kUserBox);
 
-  static void haveFirstView(bool t) {
+  static void haveFirstView() {
     if (isFirstKey == null) {
       return;
     }
-    _userBox.put(isFirstKey, t);
+    _userBox.put(isFirstKey, false);
   }
 
   static bool getIsFirst() {
@@ -46,5 +46,4 @@ class AppCache {
   static void clean(String key) {
     _userBox.delete(key);
   }
-
 }

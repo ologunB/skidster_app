@@ -123,7 +123,7 @@ class _PostLoadWidgetState extends State<PostLoadWidget> {
   Widget item(String a) {
     return regularText(
       a,
-      fontSize: 11.sp,
+      fontSize: 13.sp,
       color: AppColors.primaryColor,
     );
   }

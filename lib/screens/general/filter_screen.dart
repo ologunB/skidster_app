@@ -180,7 +180,7 @@ class _FilterScreenState extends State<FilterScreen> {
             padding: EdgeInsets.symmetric(horizontal: 30.h),
             child: regularText(
               '0 kg - 500',
-              fontSize: 13.sp,
+              fontSize: 14.sp,
               color: AppColors.primaryColor,
             ),
           ),
@@ -211,7 +211,7 @@ class _FilterScreenState extends State<FilterScreen> {
             padding: EdgeInsets.symmetric(horizontal: 30.h),
             child: regularText(
               'Radius 30 miles',
-              fontSize: 13.sp,
+              fontSize: 14.sp,
               color: AppColors.primaryColor,
             ),
           ),

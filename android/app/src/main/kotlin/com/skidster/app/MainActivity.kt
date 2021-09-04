@@ -1,4 +1,4 @@
-package com.skidster.skidster_app
+package com.skidster.app
 
 import io.flutter.embedding.android.FlutterActivity
 

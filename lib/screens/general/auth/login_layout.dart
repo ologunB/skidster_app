@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/routes/router.dart';
+import 'package:mms_app/core/storage/local_storage.dart';
 import 'package:mms_app/screens/general/auth/login_screen.dart';
 import 'package:mms_app/screens/general/auth/signup_layout.dart';
 
@@ -13,6 +14,7 @@ import 'package:mms_app/app/size_config/extensions.dart';
 class LoginLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    AppCache.haveFirstView();
     return Scaffold(
       body: Column(
         children: [
@@ -62,7 +64,7 @@ class LoginLayout extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Padding(
-                        padding: EdgeInsets.all(9.h),
+                        padding: EdgeInsets.all(15.h),
                         child: regularText(
                           'OR',
                           fontSize: 14.sp,

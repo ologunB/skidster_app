@@ -30,7 +30,7 @@ class _UploadCareerDocumentScreenState
       bottomNavigationBar: Container(
         margin: EdgeInsets.symmetric(horizontal: 30.h, vertical: 10.h),
         child: SafeArea(
-          child: buttonWithBorder('Finish',
+          child: buttonWithBorder('Do It Later',
               buttonColor: AppColors.primaryColor,
               fontSize: 17.sp,
               height: 50.h,

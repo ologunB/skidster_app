@@ -60,6 +60,15 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
             textInputAction: TextInputAction.next,
           ),
           SizedBox(height: 16.h),
+          item('Phone'),
+          SizedBox(height: 8.h),
+          CustomTextField(
+            hintText: 'Enter Phone number',
+            obscureText: false,
+            textInputAction: TextInputAction.done,
+          ),
+          SizedBox(height: 16.h),
+
           item('Email'),
           SizedBox(height: 8.h),
           CustomTextField(
@@ -79,6 +88,7 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
             textInputAction: TextInputAction.done,
           ),
           SizedBox(height: 16.h),
+
         ],
       ),
     );

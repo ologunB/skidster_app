@@ -139,18 +139,23 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
                     color: AppColors.primaryColor,
                   )),
                   Container(
-                    height: 30.h,
-                    width: 30.h,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30.h),
-                      color: AppColors.primaryColor,
-                    ),
-                    child: Icon(
-                      Icons.directions_car,
-                      size: 18.h,
-                      color: Colors.white,
-                    ),
-                  ),
+                      height: 30.h,
+                      width: 30.h,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30.h),
+                        color: AppColors.primaryColor,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'images/profile1.png',
+                            height: 18.h,
+                            width: 18.h,
+                            color: AppColors.white,
+                          )
+                        ],
+                      )),
                   Expanded(
                       child: Container(
                     height: 2.h,

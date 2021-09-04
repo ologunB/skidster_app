@@ -115,7 +115,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                         spreadRadius: 1,
                         color: AppColors.grey.withOpacity(.2))
                   ]),
-              child: isPostLoad ? PostLoadWidget() : FIndTruckerWidget(),
+              child: isPostLoad ? PostLoadWidget() : FindTruckerWidget(),
             )
           ],
         ),

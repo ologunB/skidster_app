@@ -8,14 +8,14 @@ import 'package:mms_app/screens/general/filter_screen.dart';
 import 'package:mms_app/screens/general/finder_details.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 
-class FIndTruckerWidget extends StatefulWidget {
-  const FIndTruckerWidget({Key key}) : super(key: key);
+class FindTruckerWidget extends StatefulWidget {
+  const FindTruckerWidget({Key key}) : super(key: key);
 
   @override
-  _FIndTruckerWidgetState createState() => _FIndTruckerWidgetState();
+  _FindTruckerWidgetState createState() => _FindTruckerWidgetState();
 }
 
-class _FIndTruckerWidgetState extends State<FIndTruckerWidget> {
+class _FindTruckerWidgetState extends State<FindTruckerWidget> {
   @override
   Widget build(BuildContext context) {
     return ListView(

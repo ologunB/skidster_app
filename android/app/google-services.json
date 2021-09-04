@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "677827270176",
+    "project_id": "skidster-fc3b3",
+    "storage_bucket": "skidster-fc3b3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:677827270176:android:3065d114195e41a3784e45",
+        "android_client_info": {
+          "package_name": "com.skidster.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "677827270176-a4drdalstkdqqo970hs5ieln5o9cen0u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.skidster.app",
+            "certificate_hash": "c6e94cdc70d739c33571dad023b3455635423255"
+          }
+        },
+        {
+          "client_id": "677827270176-5mkv1c1kiesctucu7lrc78tfm62vqm38.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCylFpVc7WtmU2sDBilSdU-AY4dM92Hw0M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "677827270176-5mkv1c1kiesctucu7lrc78tfm62vqm38.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
