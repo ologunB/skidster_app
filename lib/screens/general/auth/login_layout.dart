@@ -58,7 +58,7 @@ class LoginLayout extends StatelessWidget {
                       fontSize: 17.sp,
                       height: 50.h,
                       fontWeight: FontWeight.w600, onTap: () {
-                    routeTo(context, LoginScreen());
+                    navigateTo(context, LoginScreen());
                   }),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -119,7 +119,7 @@ class LoginLayout extends StatelessWidget {
                                 ),
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
-                                    routeTo(context, SignupLayout());
+                                    navigateTo(context, SignupLayout());
                                   })
                           ],
                         ),

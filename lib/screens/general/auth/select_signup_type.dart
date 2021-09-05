@@ -38,9 +38,9 @@ class _SelectUserTypeState extends State<SelectUserType> {
                     textColor: AppColors.white,
                     fontWeight: FontWeight.w600, onTap: () {
                   if (index == 1) {
-                    routeTo(context, TruckerSignupScreen());
+                    navigateTo(context, TruckerSignupScreen());
                   } else {
-                    routeTo(context, UserSignupScreen());
+                    navigateTo(context, UserSignupScreen());
                   }
                 }),
               ),

@@ -60,7 +60,7 @@ class _LoadsScreenState extends State<LoadsScreen> {
               itemBuilder: (context, index) {
                 return InkWell(
                   onTap: () {
-                    routeTo(
+                    navigateTo(
                         context, LoadsDetailsScreen(isTruck: widget.isTruck));
                   },
                   child: Container(
@@ -208,7 +208,7 @@ class _LoadsScreenState extends State<LoadsScreen> {
               itemBuilder: (context, index) {
                 return InkWell(
                   onTap: () {
-                    routeTo(context, LoadsStatusScreen());
+                    navigateTo(context, LoadsStatusScreen());
                   },
                   child: Container(
                     margin: EdgeInsets.only(bottom: 15.h),

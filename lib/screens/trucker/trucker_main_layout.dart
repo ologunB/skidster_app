@@ -1,11 +1,17 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mms_app/app/colors.dart';
 
 import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
+import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/screens/general/message/messages_screen.dart';
 import 'package:mms_app/screens/general/profile/profile_screen.dart';
+import 'package:mms_app/screens/trucker/auth/set_profile_screen.dart';
 import 'package:mms_app/screens/user/loads/loads_screen.dart';
 
 import 'home/trucker_home_screen.dart';
@@ -31,6 +37,36 @@ class _TruckerMainLayoutState extends State<TruckerMainLayout> {
         MessagesScreen(),
         ProfileScreen(),
       ];
+
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String uid = FirebaseAuth.instance.currentUser.uid;
+
+  StreamSubscription trucksListner;
+
+  @override
+  void initState() {
+    trucksListner = _firestore
+        .collection('Truckers')
+        .doc('Added')
+        .collection(uid)
+        .orderBy('updated_at')
+        .snapshots()
+        .listen((event) {
+      if (event.docs.isEmpty) {
+        navigateTo(context, SetupProfileScreen());
+      } else {
+        print('truck isnt empty');
+      }
+    });
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    trucksListner.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

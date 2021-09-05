@@ -9,7 +9,7 @@ import 'package:mms_app/screens/general/profile/saved_loads.dart';
 import 'package:mms_app/screens/general/profile/saved_profiles.dart';
 import 'package:mms_app/screens/general/profile/support_screen.dart';
 import 'package:mms_app/screens/general/profile/terms_service_screen.dart';
-import 'package:mms_app/screens/general/profile/util_screen.dart';
+import 'package:mms_app/screens/general/profile/trucks_screen.dart';
 import 'package:mms_app/screens/trucker/auth/upload_driverlicense_screen.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
@@ -72,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 InkWell(
                   onTap: () {
-                    routeTo(context, GoPremiumScreen());
+                    navigateTo(context, GoPremiumScreen());
                   },
                   child: regularText('Upgrade Plan',
                       fontSize: 13.sp,
@@ -87,7 +87,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   InkWell(
                     onTap: () {
-                      routeTo(context, UploadDriverLicenceScreen());
+                      navigateTo(context, UploadDriverLicenceScreen());
                     },
                     child: Container(
                       height: 40.h,
@@ -124,7 +124,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               itemBuilder: (context, index) {
                 return InkWell(
                   onTap: () {
-                    int lag = AppCache.userType == UserType.TRUCKER ? 0 : 2;
+                    int lag = AppCache.userType == UserType.TRUCKER ? 1 : 2;
                     if (index == 8 - lag) {
                       Share.share('text', subject: 'Share App');
                       return;
@@ -190,7 +190,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           'https://play.google.com/store/apps/details?id=com.autoserveng.autoserve&hl=en');
                       return;
                     }
-                    routeTo(context, gotos(data()[index])[index]);
+                    navigateTo(context, gotos(data()[index])[index]);
                   },
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 13.h),
@@ -240,8 +240,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         'Terms of Service',
         'Privacy Policy',
         'Contact Support',
-        if (AppCache.userType == UserType.TRUCKER) 'Saved Profiles',
-        'Saved Loads',
+        if (AppCache.userType == UserType.USER) 'Saved Profiles',
+        if (AppCache.userType == UserType.TRUCKER) 'Saved Loads',
         'Rate App',
         'Invite others',
         'Logout',
@@ -249,12 +249,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   List<Widget> gotos(String a) => [
         EditProfileScreen(),
-        if (AppCache.userType == UserType.TRUCKER) UtilScreen(title: a),
+        if (AppCache.userType == UserType.TRUCKER) MyTrucksScreen(),
         TermsServiceScreen(),
         PrivacyPolicyScreen(),
         SupportScreen(),
-        if (AppCache.userType == UserType.TRUCKER) SavedProfilesScreen(),
-        SavedLoadsScreen(),
+        if (AppCache.userType == UserType.USER) SavedProfilesScreen(),
+        if (AppCache.userType == UserType.TRUCKER) SavedLoadsScreen(),
       ];
 
   List<String> images() => [
@@ -263,8 +263,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         'images/profile2.png',
         'images/profile3.png',
         'images/profile4.png',
-        if (AppCache.userType == UserType.TRUCKER) 'images/profile5.png',
-        'images/profile6.png',
+        if (AppCache.userType == UserType.USER) 'images/profile5.png',
+        if (AppCache.userType == UserType.TRUCKER) 'images/profile6.png',
         'images/profile7.png',
         'images/profile8.png',
         'images/profile9.png',

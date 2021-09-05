@@ -154,7 +154,7 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                         SizedBox(width: 12.h),
                         InkWell(
                           onTap: () {
-                            routeTo(context, FilterScreen());
+                            navigateTo(context, FilterScreen());
                           },
                           highlightColor: AppColors.white,
                           child: Image.asset('images/filter.png',
@@ -182,7 +182,7 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                         itemBuilder: (context, index) {
                           return InkWell(
                             onTap: () {
-                              routeTo(
+                              navigateTo(
                                   context, LoadsDetailsScreen(isTruck: true));
                             },
                             child: Container(
@@ -333,7 +333,7 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                     SizedBox(height: 15.h),
                     InkWell(
                       onTap: () {
-                        routeTo(context, LoadsStatusScreen());
+                        navigateTo(context, LoadsStatusScreen());
                       },
                       child: Container(
                         padding: EdgeInsets.all(15.h),
@@ -395,7 +395,7 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                     SizedBox(height: 15.h),
                     InkWell(
                       onTap: () {
-                        routeTo(context, LoadsStatusScreen());
+                        navigateTo(context, LoadsStatusScreen());
                       },
                       child: Container(
                         padding: EdgeInsets.all(15.h),

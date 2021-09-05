@@ -75,7 +75,7 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
             SizedBox(width: 12.h),
             InkWell(
               onTap: () {
-                routeTo(context, FilterScreen());
+                navigateTo(context, FilterScreen());
               },
               highlightColor: AppColors.white,
               child:
@@ -102,7 +102,7 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
             itemBuilder: (context, index) {
               return InkWell(
                 onTap: () {
-                  routeTo(context, FinderDetails());
+                  navigateTo(context, FinderDetails());
                 },
                 child: Row(
                   children: [

@@ -114,7 +114,7 @@ class _PostLoadWidgetState extends State<PostLoadWidget> {
             height: 50.h,
             textColor: AppColors.white,
             fontWeight: FontWeight.w600, onTap: () {
-          routeTo(context, ReviewLoadScreen());
+          navigateTo(context, ReviewLoadScreen());
         }),
       ],
     );

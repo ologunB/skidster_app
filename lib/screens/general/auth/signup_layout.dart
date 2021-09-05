@@ -55,7 +55,7 @@ class SignupLayout extends StatelessWidget {
                       fontSize: 17.sp,
                       height: 50.h,
                       fontWeight: FontWeight.w600, onTap: () {
-                    routeTo(context, SelectUserType());
+                    navigateTo(context, SelectUserType());
                   }),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

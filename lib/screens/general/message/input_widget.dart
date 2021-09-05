@@ -47,12 +47,12 @@ class _InputWidgetState extends State<InputWidget> {
     return SafeArea(
       top: false,
       child: Container(
-          padding: EdgeInsets.all(8.h),
+          padding: EdgeInsets.symmetric(horizontal: 16.h, vertical: 8.h),
           child: Column(
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  buildAddFile(),
+                  //     buildAddFile(),
                   Expanded(
                     child: AnimatedContainer(
                         duration: const Duration(milliseconds: 500),
@@ -151,32 +151,33 @@ class _InputWidgetState extends State<InputWidget> {
                     color: AppColors.white,
                   ),
                 ))
-            : widget.controller.text.trim().isEmpty
+            : /*widget.controller.text.trim().isEmpty
                 ? Image.asset(
                     'assets/images/mic.png',
                     height: 18.h,
                     width: 18.h,
                     // color: AppColors.green,
                   )
-                : GestureDetector(
-                    onTap: () {
-                      if (widget.controller.text.trim().isEmpty) {
-                        return;
-                      }
-                      widget.onSentMessage(widget.controller.text);
-                      widget.controller.clear();
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(6.h),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(6.h),
-                          color: AppColors.black),
-                      child: Icon(
-                        Icons.send,
-                        size: 18.h,
-                        color: AppColors.white,
-                      ),
-                    )),
+                :*/
+            GestureDetector(
+                onTap: () {
+                  if (widget.controller.text.trim().isEmpty) {
+                    return;
+                  }
+                  widget.onSentMessage(widget.controller.text);
+                  widget.controller.clear();
+                },
+                child: Container(
+                  padding: EdgeInsets.all(6.h),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(6.h),
+                      color: AppColors.primaryColor),
+                  child: Icon(
+                    Icons.send,
+                    size: 18.h,
+                    color: AppColors.white,
+                  ),
+                )),
         padding: EdgeInsets.only(left: 6.h, right: 6.h),
       );
 

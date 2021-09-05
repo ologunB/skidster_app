@@ -12,7 +12,7 @@ class AppNotificationsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        routeTo(context, NotificationsScreen());
+        navigateTo(context, NotificationsScreen());
       },
       child: Icon(
         Icons.notifications,

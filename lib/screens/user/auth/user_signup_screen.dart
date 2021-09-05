@@ -5,7 +5,6 @@ import 'package:logger/logger.dart';
 
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/routes/router.dart';
-import 'package:mms_app/core/storage/local_storage.dart';
 import 'package:mms_app/core/utils/show_alert_dialog.dart';
 import 'package:mms_app/core/utils/show_exception_alert_dialog.dart';
 import 'package:mms_app/screens/general/auth/login_layout.dart';
@@ -15,8 +14,6 @@ import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
 import 'package:mms_app/screens/widgets/utils.dart';
 
-import '../user_main_layout.dart';
-
 class UserSignupScreen extends StatefulWidget {
   const UserSignupScreen({Key key}) : super(key: key);
 
@@ -25,12 +22,10 @@ class UserSignupScreen extends StatefulWidget {
 }
 
 class _UserSignupScreenState extends State<UserSignupScreen> {
-  bool autoValidate = false;
-  GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
-  @override
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
@@ -125,7 +120,11 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
     );
   }
 
-  bool isLoading = false;
+   bool autoValidate = false;
+   GlobalKey<FormState> formKey = GlobalKey<FormState>();
+   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+   bool isLoading = false;
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   TextEditingController name = TextEditingController();
@@ -135,22 +134,6 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
   TextEditingController code = TextEditingController();
 
   Future<void> verifyNumber() async {
-    PhoneVerificationCompleted verificationCompleted =
-        (PhoneAuthCredential _credential) async {
-      code.text = _credential.smsCode;
-      _firebaseAuth
-          .signInWithCredential(_credential)
-          .then((UserCredential result) {
-        _firebaseAuth.signOut();
-        signup();
-        print(result.user.uid);
-      }).catchError((e) {
-        showExceptionAlertDialog(
-            context: context, exception: e, title: "Error");
-      });
-      print('automatically verified');
-    };
-
     setState(() {
       isLoading = true;
     });
@@ -158,13 +141,33 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
       await _firebaseAuth.verifyPhoneNumber(
           phoneNumber: phone.text,
           timeout: Duration(minutes: 5),
-          verificationCompleted: verificationCompleted,
+          verificationCompleted: (PhoneAuthCredential _credential) async {
+            code.text = _credential.smsCode;
+            _firebaseAuth
+                .signInWithCredential(_credential)
+                .then((UserCredential result) {
+              _firebaseAuth.signOut();
+              signup();
+              print(result.user.uid);
+            }).catchError((e) {
+              setState(() {
+                isLoading = false;
+              });
+              showExceptionAlertDialog(
+                  context: scaffoldKey.currentContext,
+                  exception: e,
+                  title: "Error");
+            });
+            print('automatically verified');
+          },
           verificationFailed: (a) {
             setState(() {
-              isLoading = true;
+              isLoading = false;
             });
             showExceptionAlertDialog(
-                context: context, exception: a.message, title: "Error");
+                context: scaffoldKey.currentContext,
+                exception: a.message,
+                title: "Error");
           },
           codeSent: (String verificationId, [int forceResendingToken]) {
             setState(() {
@@ -191,7 +194,7 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
                       ),
                       actions: <Widget>[
                         InkWell(
-                          onTap: () {
+                          onTap: () async {
                             setState(() {
                               isLoading = true;
                             });
@@ -201,6 +204,7 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
                                 PhoneAuthProvider.credential(
                                     verificationId: verificationId,
                                     smsCode: smsCode);
+                            code.text = '';
 
                             _firebaseAuth
                                 .signInWithCredential(_credential)
@@ -209,8 +213,12 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
                               signup();
                               print(result.user.uid);
                             }).catchError((e) {
+                              print(e);
+                              setState(() {
+                                isLoading = false;
+                              });
                               showExceptionAlertDialog(
-                                  context: context,
+                                  context: scaffoldKey.currentContext,
                                   exception: e,
                                   title: "Error");
                             });
@@ -231,15 +239,18 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
                       ],
                     ));
           },
-          codeAutoRetrievalTimeout: (a) {
+          codeAutoRetrievalTimeout: (e) {
             setState(() {
-              isLoading = true;
+              isLoading = false;
             });
-            print(a);
+            showExceptionAlertDialog(
+                context: scaffoldKey.currentContext,
+                exception: e,
+                title: "Error");
           });
     } catch (e) {
       setState(() {
-        isLoading = true;
+        isLoading = false;
       });
       showExceptionAlertDialog(context: context, exception: e, title: "Error");
     }

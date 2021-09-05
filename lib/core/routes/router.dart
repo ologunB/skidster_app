@@ -77,12 +77,20 @@ PageRoute<dynamic> _getPageRoute({String routeName, Widget view, Object args}) {
       builder: (_) => view);
 }
 
-void routeTo(BuildContext context, Widget view, {bool dialog = false}) {
+void navigateTo(BuildContext context, Widget view, {bool dialog = false}) {
   Navigator.push<void>(
       context,
       CupertinoPageRoute<dynamic>(
           builder: (BuildContext context) => view, fullscreenDialog: dialog));
 }
+
+void navigateReplacement(BuildContext context, Widget view, {bool dialog = false}) {
+  Navigator.pushReplacement(
+      context,
+      CupertinoPageRoute<dynamic>(
+          builder: (BuildContext context) => view, fullscreenDialog: dialog));
+}
+
 
 void routeToReplace(BuildContext context, Widget view) {
   Navigator.pushAndRemoveUntil<void>(

@@ -46,7 +46,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                 itemBuilder: (context, index) {
                   return InkWell(
                     onTap: () {
-                      routeTo(context, ChatDetailsView());
+                      navigateTo(context, ChatDetailsView());
                     },
                     child: Padding(
                       padding: EdgeInsets.symmetric(

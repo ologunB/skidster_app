@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
@@ -5,7 +7,6 @@ class Utils {
   static void offKeyboard() async {
     await SystemChannels.textInput.invokeMethod<dynamic>('TextInput.hide');
   }
-
 
   static String isValidPassword(String value) {
     value = value.trim();
@@ -23,6 +24,17 @@ class Utils {
       return 'Field cannot be Empty';
     }
     return null;
+  }
+
+  static String randomString() {
+    const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+    Random rnd = Random(DateTime.now().millisecondsSinceEpoch);
+    String result = "";
+    for (var i = 0; i < 12; i++) {
+      result += chars[rnd.nextInt(chars.length)];
+    }
+    return result;
   }
 
   static String validateEmail(String value) {

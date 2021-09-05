@@ -102,7 +102,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               item('Phone'),
               SizedBox(height: 8.h),
               CustomTextField(
-                hintText: 'Enter password',
+                hintText: 'Enter Phone',
                 controller: phone,
                 textInputType: TextInputType.text,
                 textInputAction: TextInputAction.done,
@@ -119,11 +119,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Widget item(String a) {
-    return regularText(
-      a,
-      fontSize: 13.sp,
-      color: AppColors.primaryColor,
-    );
+    return regularText(a, fontSize: 13.sp, color: AppColors.primaryColor);
   }
 
   Future<void> getImageGallery() async {
