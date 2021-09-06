@@ -37,6 +37,7 @@ dependencies:
   sms_autofill:
   another_flushbar: ^1.10.20
   firebase_storage: ^10.0.3
+  flutter_datetime_picker: ^1.5.1
 
 dev_dependencies:
   flutter_test:

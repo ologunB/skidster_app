@@ -176,7 +176,7 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
     try {
       await _firebaseAuth.verifyPhoneNumber(
           phoneNumber: phone.text,
-          timeout: Duration(minutes: 5),
+          timeout: Duration(minutes: 2),
           verificationCompleted: (PhoneAuthCredential _credential) async {
             code.text = _credential.smsCode;
             _firebaseAuth

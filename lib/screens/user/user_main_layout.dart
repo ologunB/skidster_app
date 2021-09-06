@@ -17,11 +17,23 @@ class UserMainLayout extends StatefulWidget {
   _UserMainLayoutState createState() => _UserMainLayoutState();
 }
 
+PageController userMainPageController = PageController();
+
 class _UserMainLayoutState extends State<UserMainLayout> {
   int currentIndex = 0;
 
+  @override
+  void initState() {
+    userMainPageController.addListener(() {
+      currentIndex = userMainPageController.page.toInt();
+      setState(() {});
+    });
+    super.initState();
+  }
+
   void changeIndex(int index) {
     currentIndex = index;
+    userMainPageController.jumpToPage(index);
     setState(() {});
   }
 
@@ -36,7 +48,11 @@ class _UserMainLayoutState extends State<UserMainLayout> {
   Widget build(BuildContext context) {
     SizeConfig.init(context);
     return Scaffold(
-      body: views()[currentIndex],
+      body: PageView(
+        physics: NeverScrollableScrollPhysics(),
+        controller: userMainPageController,
+        children: views(),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         selectedFontSize: 11.sp,
         unselectedFontSize: 11.sp,

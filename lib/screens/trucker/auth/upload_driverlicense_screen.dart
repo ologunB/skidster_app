@@ -44,6 +44,8 @@ class _UploadDriverLicenceScreenState extends State<UploadDriverLicenceScreen> {
               fontWeight: FontWeight.w600, onTap: () {
             if (file != null) {
               uploadItem();
+            } else {
+              Navigator.pop(context);
             }
           }),
         ),

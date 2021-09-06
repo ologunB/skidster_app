@@ -2,9 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mms_app/app/colors.dart';
+import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/core/models/truck_response.dart';
 import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/screens/trucker/auth/set_profile_screen.dart';
+import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/custom_loader.dart';
 import 'package:mms_app/screens/widgets/error_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
@@ -63,7 +65,7 @@ class _MyTrucksScreenState extends State<MyTrucksScreen> {
                       .collection('Truckers')
                       .doc('Added')
                       .collection(uid)
-                      .orderBy('updated_at')
+                      .orderBy('updated_at', descending: true)
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -80,10 +82,12 @@ class _MyTrucksScreenState extends State<MyTrucksScreen> {
                         myTrucks.add(model);
                       });
                       return myTrucks.isEmpty
-                          ? Center(
+                          ? Container(
+                              height: SizeConfig.screenHeight / 2,
+                              alignment: Alignment.center,
                               child: regularText(
                                 'Truck tray is Empty',
-                                fontSize: 13.sp,
+                                fontSize: 14.sp,
                                 color: AppColors.grey,
                               ),
                             )
@@ -112,10 +116,107 @@ class _MyTrucksScreenState extends State<MyTrucksScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      regularText(
-                                        '#${model.id}',
-                                        fontSize: 13.sp,
-                                        color: AppColors.grey,
+                                      Row(
+                                        children: [
+                                          regularText(
+                                            '#${model.id}',
+                                            fontSize: 13.sp,
+                                            color: AppColors.grey,
+                                          ),
+                                          Spacer(),
+                                          InkWell(
+                                            onTap: () {
+                                              showDialog<AlertDialog>(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        AlertDialog(
+                                                  content: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      regularText(
+                                                        'Are you sure you want\nto delete the Truck?',
+                                                        fontSize: 17.sp,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        color: AppColors
+                                                            .primaryColor,
+                                                      ),
+                                                      SizedBox(height: 10.h),
+                                                      Row(
+                                                        children: [
+                                                          Expanded(
+                                                            child:
+                                                                buttonWithBorder(
+                                                              'YES',
+                                                              buttonColor: AppColors
+                                                                  .primaryColor,
+                                                              fontSize: 17.sp,
+                                                              height: 40.h,
+                                                              textColor:
+                                                                  AppColors
+                                                                      .white,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                              onTap: () {
+                                                                delete(
+                                                                    model.id, context);
+                                                              },
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: 10.h),
+                                                          Expanded(
+                                                            child:
+                                                                buttonWithBorder(
+                                                              'NO',
+                                                              buttonColor:
+                                                                  AppColors
+                                                                      .white,
+                                                              fontSize: 17.sp,
+                                                              borderColor: AppColors
+                                                                  .primaryColor,
+                                                              height: 40.h,
+                                                              textColor: AppColors
+                                                                  .primaryColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                              onTap: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      )
+                                                    ],
+                                                  ),
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20)),
+                                                ),
+                                              );
+                                            },
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10.h,
+                                                  vertical: 6.h),
+                                              decoration: BoxDecoration(
+                                                  color: AppColors.red,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          6.h)),
+                                              child: regularText(
+                                                'Delete',
+                                                fontSize: 11.sp,
+                                                color: AppColors.white,
+                                              ),
+                                            ),
+                                          )
+                                        ],
                                       ),
                                       SizedBox(height: 10.h),
                                       regularText(
@@ -161,5 +262,20 @@ class _MyTrucksScreenState extends State<MyTrucksScreen> {
         color: AppColors.primaryColor,
       ),
     );
+  }
+
+  delete(String id, context) {
+    FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    String uid = FirebaseAuth.instance.currentUser.uid;
+    DocumentReference postRef =
+        _firestore.collection('Truckers').doc('Added').collection(uid).doc(id);
+
+    DocumentReference allTrucks = _firestore.collection('All-Truckers').doc(id);
+
+    WriteBatch writeBatch = _firestore.batch();
+    writeBatch.delete(postRef);
+    writeBatch.delete(allTrucks);
+    writeBatch.commit();
+    Navigator.pop(context);
   }
 }

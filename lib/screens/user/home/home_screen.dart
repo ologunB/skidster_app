@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mms_app/app/colors.dart';
+import 'package:mms_app/core/storage/local_storage.dart';
 import 'package:mms_app/screens/user/home/post_load_widget.dart';
 import 'package:mms_app/screens/widgets/notification_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
@@ -18,7 +19,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   bool isPostLoad = true;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(_) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -33,7 +34,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                 Row(
                   children: [
                     regularText(
-                      'Welcome John',
+                      'Welcome ${AppCache.getUser.name}',
                       fontSize: 22.sp,
                       fontWeight: FontWeight.w700,
                       color: AppColors.primaryColor,

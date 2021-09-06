@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mms_app/app/colors.dart';
+import 'package:mms_app/core/models/load_response.dart';
+import 'package:mms_app/core/routes/router.dart';
+import 'package:mms_app/screens/general/message/message_details.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/notification_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoadsDetailsScreen extends StatefulWidget {
-  const LoadsDetailsScreen({Key key, this.isTruck = false}) : super(key: key);
+  const LoadsDetailsScreen({Key key, this.isTruck = false, this.loadsModel})
+      : super(key: key);
 
   final bool isTruck;
+  final LoadsModel loadsModel;
 
   @override
   _LoadsDetailsScreenState createState() => _LoadsDetailsScreenState();
@@ -19,6 +26,8 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final LoadsModel loadsModel = widget.loadsModel;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(elevation: 0, backgroundColor: Colors.white),
@@ -37,14 +46,13 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                 ),
                 Spacer(),
                 AppNotificationsWidget()
-
               ],
             ),
             SizedBox(height: 16.h),
             Row(
               children: [
                 regularText(
-                  'Post ID',
+                  'Post ID: #${loadsModel.id.toUpperCase()}',
                   fontSize: 17.sp,
                   fontWeight: FontWeight.w700,
                   color: AppColors.grey,
@@ -82,14 +90,16 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                   Row(
                     children: [
                       regularText(
-                        'Washing Machine',
+                        loadsModel.title,
                         fontSize: 17.sp,
                         fontWeight: FontWeight.w700,
                         color: AppColors.grey,
                       ),
                       Spacer(),
                       regularText(
-                        'Mon, Apr 1',
+                        DateFormat('EEE MMM, dd').format(
+                            DateTime.fromMillisecondsSinceEpoch(
+                                widget.loadsModel.dateTime)),
                         fontSize: 15.sp,
                         color: AppColors.grey,
                       ),
@@ -108,7 +118,7 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                       ),
                       SizedBox(width: 10.h),
                       regularText(
-                        'Mississauga',
+                        loadsModel.pickup,
                         fontSize: 17.sp,
                         color: AppColors.primaryColor,
                       ),
@@ -128,7 +138,7 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                       ),
                       SizedBox(width: 10.h),
                       regularText(
-                        'Anywhere',
+                        loadsModel.dropoff,
                         fontSize: 17.sp,
                         color: AppColors.primaryColor,
                       ),
@@ -143,10 +153,10 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  item2('Item', ': Washing Machine'),
-                  item2('Weight', ': 5000 kg'),
-                  item2('Skids', ': Skids'),
-                  item2('Price', ': \$130'),
+                  item2('Item', ': ${loadsModel.title}'),
+                  item2('Weight', ': ${loadsModel.weight} kg'),
+                  item2('Skids', ': ${loadsModel.skids}'),
+                  item2('Price', ': \$${loadsModel.price}'),
                 ],
               ),
             ),
@@ -183,7 +193,7 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                           ),
                           SizedBox(width: 8.h),
                           regularText(
-                            'Jack',
+                            loadsModel.name,
                             fontSize: 17.sp,
                             fontWeight: FontWeight.w600,
                             color: AppColors.primaryColor,
@@ -219,8 +229,9 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                           textColor: AppColors.white,
                           fontSize: 17.sp,
                           height: 50.h,
-                          fontWeight: FontWeight.w600,
-                          onTap: () {}),
+                          fontWeight: FontWeight.w600, onTap: () {
+                        launch('tel:${loadsModel.phone}');
+                      }),
                       SizedBox(height: 8.h),
                       buttonWithBorder('Message',
                           borderColor: AppColors.primaryColor,
@@ -228,8 +239,9 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                           textColor: AppColors.primaryColor,
                           fontSize: 17.sp,
                           height: 50.h,
-                          fontWeight: FontWeight.w600,
-                          onTap: () {}),
+                          fontWeight: FontWeight.w600, onTap: () {
+                        navigateTo(context, ChatDetailsView());
+                      }),
                     ],
                   )
           ],

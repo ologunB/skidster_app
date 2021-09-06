@@ -48,11 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
               color: AppColors.primaryColor,
             ),
             SizedBox(height: 50.h),
-            regularText(
-              'Email',
-              fontSize: 11.sp,
-              color: AppColors.primaryColor,
-            ),
+            item('Email'),
             SizedBox(height: 8.h),
             CustomTextField(
               hintText: 'Your Email',
@@ -63,11 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
               textInputAction: TextInputAction.next,
             ),
             SizedBox(height: 16.h),
-            regularText(
-              'Password',
-              fontSize: 11.sp,
-              color: AppColors.primaryColor,
-            ),
+            item('Password'),
             SizedBox(height: 8.h),
             CustomTextField(
               hintText: 'Enter password',
@@ -94,6 +86,14 @@ class _LoginScreenState extends State<LoginScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget item(String a) {
+    return regularText(
+      a,
+      fontSize: 13.sp,
+      color: AppColors.primaryColor,
     );
   }
 

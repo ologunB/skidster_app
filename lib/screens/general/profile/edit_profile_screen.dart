@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mms_app/app/colors.dart';
+import 'package:mms_app/core/storage/local_storage.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/custom_textfield.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
@@ -13,8 +14,19 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  TextEditingController email = TextEditingController();
-  TextEditingController phone = TextEditingController();
+  TextEditingController name;
+
+  TextEditingController email;
+  TextEditingController phone;
+
+  @override
+  void initState() {
+    name = TextEditingController(text: AppCache.getUser.name);
+    email = TextEditingController(text: AppCache.getUser.email);
+    phone = TextEditingController(text: AppCache.getUser.phone);
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +95,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               SizedBox(height: 8.h),
               CustomTextField(
                 hintText: 'Enter name',
-                controller: phone,
+                controller: name,
                 textInputType: TextInputType.text,
                 textInputAction: TextInputAction.done,
               ),
@@ -108,13 +120,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 textInputAction: TextInputAction.done,
               ),
               SizedBox(height: 40.h),
-              buttonWithBorder('SAVE CHANGES',
-                  buttonColor: AppColors.primaryColor,
-                  fontSize: 15.sp,
-                  height: 50.h,
-                  textColor: AppColors.white,
-                  fontWeight: FontWeight.w600,
-                  onTap: () {})
+              buttonWithBorder(
+                'SAVE CHANGES',
+                buttonColor: AppColors.primaryColor,
+                fontSize: 15.sp,
+                height: 50.h,
+                textColor: AppColors.white,
+                fontWeight: FontWeight.w600,
+                onTap: () {},
+              )
             ]));
   }
 

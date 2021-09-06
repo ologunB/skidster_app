@@ -43,6 +43,8 @@ class _UploadCareerDocumentScreenState
               fontWeight: FontWeight.w600, onTap: () {
             if (file != null) {
               uploadItem();
+            } else {
+              Navigator.pop(context);
             }
           }),
         ),

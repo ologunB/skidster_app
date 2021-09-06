@@ -1,64 +1,53 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mms_app/app/colors.dart';
+import 'package:mms_app/core/models/load_response.dart';
+import 'package:mms_app/core/utils/navigator.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
+import 'package:mms_app/screens/widgets/snackbar.dart';
 
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
+import 'package:mms_app/screens/widgets/utils.dart';
+
+import '../../../locator.dart';
+import '../user_main_layout.dart';
 
 class ReviewLoadScreen extends StatefulWidget {
-  const ReviewLoadScreen({Key key}) : super(key: key);
+  const ReviewLoadScreen({Key key, this.loadsModel}) : super(key: key);
+
+  final LoadsModel loadsModel;
 
   @override
   _ReviewLoadScreenState createState() => _ReviewLoadScreenState();
 }
 
 class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
+  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(_) {
     return Scaffold(
+      key: scaffoldKey,
       backgroundColor: Colors.white,
       appBar: AppBar(elevation: 0, backgroundColor: Colors.white),
       bottomNavigationBar: Container(
         margin: EdgeInsets.symmetric(horizontal: 30.h, vertical: 10.h),
         child: SafeArea(
-          child: buttonWithBorder('Submit',
-              buttonColor: AppColors.primaryColor,
-              fontSize: 17.sp,
-              height: 50.h,
-              textColor: AppColors.white,
-              fontWeight: FontWeight.w600, onTap: () {
-            showDialog<AlertDialog>(
-              context: context,
-              builder: (BuildContext context) => AlertDialog(
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Align(
-                        alignment: Alignment.topRight,
-                        child: IconButton(
-                            icon: Icon(
-                              Icons.close,
-                              size: 24.h,
-                              color: AppColors.primaryColor,
-                            ),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            })),
-                    regularText(
-                      'Submitted',
-                      fontSize: 18.sp,
-                      textAlign: TextAlign.center,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.primaryColor,
-                    ),
-                    SizedBox(height: 30.h)
-                  ],
-                ),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-              ),
-            );
-          }),
+          child: buttonWithBorder(
+            'Submit',
+            buttonColor: AppColors.primaryColor,
+            fontSize: 17.sp,
+            height: 50.h,
+            busy: isLoading,
+            textColor: AppColors.white,
+            fontWeight: FontWeight.w600,
+            onTap: () {
+              addLoad(context);
+            },
+          ),
         ),
       ),
       body: Column(
@@ -119,7 +108,7 @@ class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
                         ),
                         SizedBox(width: 10.h),
                         regularText(
-                          'Mississauga',
+                          widget.loadsModel.pickup,
                           fontSize: 17.sp,
                           color: AppColors.primaryColor,
                         ),
@@ -139,7 +128,7 @@ class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
                         ),
                         SizedBox(width: 10.h),
                         regularText(
-                          'Anywhere',
+                          widget.loadsModel.dropoff,
                           fontSize: 17.sp,
                           color: AppColors.primaryColor,
                         ),
@@ -153,12 +142,16 @@ class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
                       color: AppColors.grey,
                     ),
                     regularText(
-                      'Monday, April 1 ',
+                      DateFormat('EEEE MMMM, dd').format(
+                          DateTime.fromMillisecondsSinceEpoch(
+                              widget.loadsModel.dateTime)),
                       fontSize: 17.sp,
                       color: AppColors.primaryColor,
                     ),
                     regularText(
-                      '10.00 am',
+                      DateFormat('hh:mm a').format(
+                          DateTime.fromMillisecondsSinceEpoch(
+                              widget.loadsModel.dateTime)),
                       fontSize: 15.sp,
                       color: AppColors.primaryColor,
                     ),
@@ -170,7 +163,7 @@ class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
                       color: AppColors.grey,
                     ),
                     regularText(
-                      'Washing Machine',
+                      widget.loadsModel.title,
                       fontSize: 17.sp,
                       color: AppColors.primaryColor,
                     ),
@@ -182,7 +175,7 @@ class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
                       color: AppColors.grey,
                     ),
                     regularText(
-                      '10 Skids',
+                      '${widget.loadsModel.skids} Skids',
                       fontSize: 17.sp,
                       color: AppColors.primaryColor,
                     ),
@@ -194,7 +187,7 @@ class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
                       color: AppColors.grey,
                     ),
                     regularText(
-                      '1000KG',
+                      '${widget.loadsModel.weight} KG',
                       fontSize: 17.sp,
                       color: AppColors.primaryColor,
                     ),
@@ -206,7 +199,7 @@ class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
                       color: AppColors.grey,
                     ),
                     regularText(
-                      '\$139',
+                      '\$40',
                       fontSize: 17.sp,
                       color: AppColors.primaryColor,
                     ),
@@ -217,5 +210,48 @@ class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
         ],
       ),
     );
+  }
+
+  bool isLoading = false;
+
+  void addLoad(context) async {
+    setState(() {
+      isLoading = true;
+    });
+    FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    String id = Utils.randomString(no: 5) +
+        DateTime.now().millisecondsSinceEpoch.toString();
+    String uid = FirebaseAuth.instance.currentUser.uid;
+    DocumentReference postRef =
+        _firestore.collection('Loaders').doc('Added').collection(uid).doc(id);
+    DocumentReference allTrucks = _firestore.collection('All-Loaders').doc(id);
+
+    Map<String, dynamic> mData = widget.loadsModel.toJson();
+    mData.update("id", (a) => id);
+    mData.update("uid", (a) => uid);
+
+    WriteBatch writeBatch = _firestore.batch();
+    writeBatch.set(postRef, mData);
+    writeBatch.set(allTrucks, mData);
+
+    try {
+      writeBatch.commit().timeout(Duration(seconds: 10), onTimeout: () {
+        showSnackBar(context, 'Error', 'Timed out');
+        setState(() {
+          isLoading = false;
+        });
+      }).then((value) {
+        setState(() {
+          isLoading = false;
+        });
+        Navigator.pop(context);
+        userMainPageController.jumpToPage(1);
+      });
+    } catch (e) {
+      showSnackBar(context, 'Error', e.toString());
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 }

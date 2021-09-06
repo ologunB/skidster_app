@@ -357,9 +357,12 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
     DocumentReference postRef =
         _firestore.collection('Truckers').doc('Added').collection(uid).doc(id);
 
+    DocumentReference allTrucks = _firestore.collection('All-Truckers').doc(id);
+
     Map<String, dynamic> mData = Map();
     mData.putIfAbsent("id", () => id);
     mData.putIfAbsent("truck_type", () => selectedTruckType);
+    mData.putIfAbsent("name", () => AppCache.getUser.name);
     mData.putIfAbsent("company_name", () => AppCache.getUser.companyName);
     mData.putIfAbsent("company_phone", () => AppCache.getUser.companyPhone);
     mData.putIfAbsent("address", () => AppCache.getUser.companyAddress);
@@ -367,11 +370,13 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
     mData.putIfAbsent("skids", () => skidsCapacity.text);
     mData.putIfAbsent("experience", () => drivingExperience.text);
     mData.putIfAbsent("is_insured", () => insured);
+    mData.putIfAbsent("trips_number", () => 3);
     mData.putIfAbsent("travel_pref", () => selectedTravelPreference);
     mData.putIfAbsent(
         "updated_at", () => DateTime.now().millisecondsSinceEpoch);
     WriteBatch writeBatch = _firestore.batch();
     writeBatch.set(postRef, mData);
+    writeBatch.set(allTrucks, mData);
 
     try {
       writeBatch.commit().timeout(Duration(seconds: 10), onTimeout: () {
@@ -380,7 +385,6 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
           isLoading = false;
         });
       }).then((value) {
-          
         if (!widget.isAdd) {
           navigateReplacement(context, UploadDriverLicenceScreen());
         }

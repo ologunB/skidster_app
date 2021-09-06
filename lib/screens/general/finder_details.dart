@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:mms_app/app/colors.dart';
+import 'package:mms_app/core/models/truck_response.dart';
+import 'package:mms_app/core/routes/router.dart';
+import 'package:mms_app/screens/general/message/message_details.dart';
 
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FinderDetails extends StatefulWidget {
-  const FinderDetails({Key key}) : super(key: key);
+  const FinderDetails({Key key, this.truckModel}) : super(key: key);
+
+  final TruckModel truckModel;
 
   @override
   _FinderDetailsState createState() => _FinderDetailsState();
 }
 
 class _FinderDetailsState extends State<FinderDetails> {
+  bool isFavorite = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,8 +56,9 @@ class _FinderDetailsState extends State<FinderDetails> {
                   textColor: AppColors.white,
                   fontSize: 17.sp,
                   height: 50.h,
-                  fontWeight: FontWeight.w600,
-                  onTap: () {}),
+                  fontWeight: FontWeight.w600, onTap: () {
+                launch('tel${widget.truckModel.companyPhone}');
+              }),
               SizedBox(height: 8.h),
               buttonWithBorder('Message',
                   borderColor: AppColors.primaryColor,
@@ -57,8 +66,9 @@ class _FinderDetailsState extends State<FinderDetails> {
                   textColor: AppColors.primaryColor,
                   fontSize: 17.sp,
                   height: 50.h,
-                  fontWeight: FontWeight.w600,
-                  onTap: () {}),
+                  fontWeight: FontWeight.w600, onTap: () {
+                navigateReplacement(context, ChatDetailsView());
+              }),
             ],
           ),
         ),
@@ -80,7 +90,7 @@ class _FinderDetailsState extends State<FinderDetails> {
           ),
           SizedBox(height: 12.h),
           regularText(
-            'Jack Bauer | Jack Logistic',
+            widget.truckModel.name + ' | ' + widget.truckModel.companyName,
             fontSize: 17.sp,
             textAlign: TextAlign.center,
             fontWeight: FontWeight.w700,
@@ -88,7 +98,7 @@ class _FinderDetailsState extends State<FinderDetails> {
           ),
           SizedBox(height: 12.h),
           regularText(
-            'Ontario, CA',
+            widget.truckModel.address,
             fontSize: 17.sp,
             textAlign: TextAlign.center,
             color: AppColors.white,
@@ -97,10 +107,16 @@ class _FinderDetailsState extends State<FinderDetails> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.favorite_border,
-                color: Colors.white,
-                size: 24.h,
+              InkWell(
+                onTap: () {
+                  isFavorite = !isFavorite;
+                  setState(() {});
+                },
+                child: Icon(
+                  isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: Colors.white,
+                  size: 24.h,
+                ),
               ),
               SizedBox(width: 12.h),
               Icon(
@@ -123,11 +139,13 @@ class _FinderDetailsState extends State<FinderDetails> {
               ),
               child: Column(
                 children: [
-                  item('Truck Type', ': type'),
-                  item('Skids Capacity', ': 100'),
+                  item('Truck Type', ': ${widget.truckModel.truckType}'),
+                  item('Skids Capacity', ': ${widget.truckModel.skids}'),
                   item('Truck trips ', ': Lorem'),
-                  item('Truck Driving Experience', ': 3 years'),
-                  item('Truck Insurance', ': YES'),
+                  item('Truck Driving Experience',
+                      ': ${widget.truckModel.experience} years'),
+                  item('Truck Insurance',
+                      ': ${widget.truckModel.isInsured == 1 ? 'YES' : 'NO'}'),
                 ],
               ),
             ),

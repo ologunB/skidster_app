@@ -26,12 +26,12 @@ class Utils {
     return null;
   }
 
-  static String randomString() {
+  static String randomString({int no= 12}) {
     const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
 
     Random rnd = Random(DateTime.now().millisecondsSinceEpoch);
     String result = "";
-    for (var i = 0; i < 12; i++) {
+    for (var i = 0; i < no; i++) {
       result += chars[rnd.nextInt(chars.length)];
     }
     return result;

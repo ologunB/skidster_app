@@ -1,12 +1,20 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:mms_app/app/colors.dart';
+import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
+import 'package:mms_app/core/models/truck_response.dart';
 import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/screens/general/filter_screen.dart';
 import 'package:mms_app/screens/general/finder_details.dart';
+import 'package:mms_app/screens/general/message/message_details.dart';
+import 'package:mms_app/screens/widgets/custom_loader.dart';
+import 'package:mms_app/screens/widgets/error_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FindTruckerWidget extends StatefulWidget {
   const FindTruckerWidget({Key key}) : super(key: key);
@@ -16,6 +24,9 @@ class FindTruckerWidget extends StatefulWidget {
 }
 
 class _FindTruckerWidgetState extends State<FindTruckerWidget> {
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String uid = FirebaseAuth.instance.currentUser.uid;
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -84,110 +95,160 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
           ],
         ),
         SizedBox(height: 12.h),
-        ListView.separated(
-            separatorBuilder: (context, index) {
-              return Padding(
-                padding: EdgeInsets.symmetric(vertical: 10.h),
-                child: Divider(
-                  height: 0,
-                  thickness: 1.h,
-                  color: AppColors.grey.withOpacity(.2),
-                ),
-              );
-            },
-            shrinkWrap: true,
-            padding: EdgeInsets.zero,
-            itemCount: 3,
-            physics: ClampingScrollPhysics(),
-            itemBuilder: (context, index) {
-              return InkWell(
-                onTap: () {
-                  navigateTo(context, FinderDetails());
-                },
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          regularText(
-                            'Jack Bauer | Jack Logistic',
-                            fontSize: 17.sp,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.primaryColor,
-                          ),
-                          SizedBox(height: 8.h),
-                          Row(
-                            children: [
-                              regularText(
-                                'Ontario, CA',
-                                fontSize: 17.sp,
-                                color: AppColors.primaryColor,
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 5.h),
-                                child: Icon(
-                                  Icons.arrow_forward_ios,
-                                  color: AppColors.primaryColor,
-                                  size: 16.h,
-                                ),
-                              ),
-                              regularText(
-                                'Ontario, CA',
-                                fontSize: 17.sp,
-                                color: AppColors.primaryColor,
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8.h),
-                          Container(
-                            height: 30.h,
-                            child: ListView(
-                              shrinkWrap: true,
-                              scrollDirection: Axis.horizontal,
+        StreamBuilder<QuerySnapshot>(
+            stream: _firestore
+                .collection('All-Truckers')
+                .orderBy('updated_at')
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CustomLoader();
+              } else if (snapshot.hasError) {
+                ErrorOccurredWidget(error: snapshot.error);
+              } else if (snapshot.hasData) {
+                List<TruckModel> myTrucks = [];
+
+                snapshot.data.docs.forEach((element) {
+                  TruckModel model = TruckModel.fromJson(element.data());
+                  //  Logger().d(model.toJson());
+
+                  myTrucks.add(model);
+                });
+                return myTrucks.isEmpty
+                    ? Container(
+                        height: SizeConfig.screenHeight / 3,
+                        alignment: Alignment.center,
+                        child: regularText(
+                          'Truck tray is Empty',
+                          fontSize: 13.sp,
+                          color: AppColors.grey,
+                        ),
+                      )
+                    : ListView.separated(
+                        separatorBuilder: (context, index) {
+                          return Padding(
+                            padding: EdgeInsets.symmetric(vertical: 10.h),
+                            child: Divider(
+                              height: 0,
+                              thickness: 1.h,
+                              color: AppColors.grey.withOpacity(.2),
+                            ),
+                          );
+                        },
+                        shrinkWrap: true,
+                        padding: EdgeInsets.zero,
+                        itemCount: myTrucks.length,
+                        physics: ClampingScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          TruckModel model = myTrucks[index];
+                          return InkWell(
+                            onTap: () {
+                              navigateTo(
+                                  context, FinderDetails(truckModel: model));
+                            },
+                            child: Row(
                               children: [
-                                item1('100 Skids'),
-                                item1('Truck Type'),
-                                item1('3years experience'),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      regularText(
+                                        model.name + ' | ' + model.companyName,
+                                        fontSize: 17.sp,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.primaryColor,
+                                      ),
+                                      SizedBox(height: 8.h),
+                                      Row(
+                                        children: [
+                                          regularText(
+                                            model.address,
+                                            fontSize: 17.sp,
+                                            color: AppColors.primaryColor,
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 5.h),
+                                            child: Icon(
+                                              Icons.arrow_forward_ios,
+                                              color: AppColors.primaryColor,
+                                              size: 16.h,
+                                            ),
+                                          ),
+                                          regularText(
+                                            'Ontario, CA',
+                                            fontSize: 17.sp,
+                                            color: AppColors.primaryColor,
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 8.h),
+                                      Container(
+                                        height: 30.h,
+                                        child: ListView(
+                                          shrinkWrap: true,
+                                          scrollDirection: Axis.horizontal,
+                                          children: [
+                                            item1('${model.skids} Skids'),
+                                            item1(model.truckType),
+                                            item1(
+                                                '${model.experience}years experience'),
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(width: 6.h),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        navigateTo(context, ChatDetailsView());
+                                      },
+                                      child: Image.asset(
+                                        'images/message_circle_icon.png',
+                                        height: 33.h,
+                                        width: 33.h,
+                                      ),
+                                    ),
+                                    SizedBox(width: 6.h),
+                                    InkWell(
+                                      onTap: () {
+                                        launch('tel:${model.companyPhone}');
+                                      },
+                                      child: Container(
+                                          height: 33.h,
+                                          width: 33.h,
+                                          decoration: BoxDecoration(
+                                              color: AppColors.grey
+                                                  .withOpacity(.5),
+                                              borderRadius:
+                                                  BorderRadius.circular(20.h)),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Image.asset(
+                                                'images/call.png',
+                                                height: 20.h,
+                                                width: 20.h,
+                                                color: AppColors.primaryColor,
+                                              ),
+                                            ],
+                                          )),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
-                          )
-                        ],
-                      ),
-                    ),
-                    SizedBox(width: 6.h),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          'images/message_circle_icon.png',
-                          height: 33.h,
-                          width: 33.h,
-                        ),
-                        SizedBox(width: 6.h),
-                        Container(
-                            height: 33.h,
-                            width: 33.h,
-                            decoration: BoxDecoration(
-                                color: AppColors.grey.withOpacity(.5),
-                                borderRadius: BorderRadius.circular(20.h)),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  'images/call.png',
-                                  height: 20.h,
-                                  width: 20.h,
-                                  color: AppColors.primaryColor,
-                                ),
-                              ],
-                            )),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            })
+                          );
+                        });
+              }
+              return Container();
+            }),
       ],
     );
   }

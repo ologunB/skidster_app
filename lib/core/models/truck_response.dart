@@ -6,6 +6,7 @@ class TruckModel {
   String travelPref;
   String truckType;
   String address;
+  String name;
   String companyName;
   String companyPhone;
   int updatedAt;
@@ -14,7 +15,7 @@ class TruckModel {
   TruckModel({
     this.id,
     this.address,
-    this.companyName,
+    this.companyName,this.name,
     this.isInsured,
     this.companyPhone,
     this.experience,
@@ -28,6 +29,7 @@ class TruckModel {
   TruckModel.fromJson(dynamic json) {
     id = json['id'];
     address = json['address'];
+    name = json['name'];
     companyName = json['company_name'];
     isInsured = json['is_insured'];
     companyPhone = json['company_phone'];
@@ -43,6 +45,7 @@ class TruckModel {
     final Map<String, dynamic> data = Map<String, dynamic>();
     data['id'] = this.id;
     data['address'] = this.address;
+    data['name'] = this.name;
     data['company_name'] = this.companyName;
     data['is_insured'] = this.isInsured;
     data['company_phone'] = this.companyPhone;
