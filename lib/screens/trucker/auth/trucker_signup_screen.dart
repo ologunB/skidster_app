@@ -10,6 +10,7 @@ import 'package:mms_app/core/utils/show_exception_alert_dialog.dart';
 import 'package:mms_app/screens/general/auth/login_layout.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/custom_textfield.dart';
+import 'package:mms_app/screens/widgets/snackbar.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
 import 'package:mms_app/screens/widgets/utils.dart';
@@ -45,7 +46,7 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
             autoValidate = true;
             setState(() {});
             if (formKey.currentState.validate()) {
-              verifyNumber();
+              verifyNumber(context);
             }
           }),
         ),
@@ -169,7 +170,7 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
   TextEditingController password = TextEditingController();
   TextEditingController code = TextEditingController();
 
-  Future<void> verifyNumber() async {
+  Future<void> verifyNumber(context) async {
     setState(() {
       isLoading = true;
     });
@@ -183,7 +184,7 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
                 .signInWithCredential(_credential)
                 .then((UserCredential result) {
               _firebaseAuth.signOut();
-              signup();
+              signup(context);
               print(result.user.uid);
             }).catchError((e) {
               setState(() {
@@ -223,7 +224,7 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
                       content: CustomTextField(
                         hintText: 'Enter OTP',
                         obscureText: false,
-                        maxLength: 15,
+                        maxLength: 6,
                         controller: code,
                         textAlign: TextAlign.center,
                         textInputType: TextInputType.number,
@@ -231,6 +232,10 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
                       actions: <Widget>[
                         InkWell(
                           onTap: () async {
+                            if (code.text.length < 6) {
+                              showSnackBar(context, null, 'Enter complete OTP');
+                              return;
+                            }
                             setState(() {
                               isLoading = true;
                             });
@@ -246,7 +251,7 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
                                 .signInWithCredential(_credential)
                                 .then((UserCredential result) {
                               _firebaseAuth.signOut();
-                              signup();
+                              signup(context);
                               print(result.user.uid);
                             }).catchError((e) {
                               print(e);
@@ -279,10 +284,6 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
             setState(() {
               isLoading = false;
             });
-            showExceptionAlertDialog(
-                context: scaffoldKey.currentContext,
-                exception: e,
-                title: "Error");
           });
     } catch (e) {
       setState(() {
@@ -292,7 +293,7 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
     }
   }
 
-  void signup() async {
+  void signup(context) async {
     await _firebaseAuth
         .createUserWithEmailAndPassword(
             email: email.text, password: password.text)

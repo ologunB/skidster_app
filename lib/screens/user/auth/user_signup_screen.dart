@@ -10,6 +10,7 @@ import 'package:mms_app/core/utils/show_exception_alert_dialog.dart';
 import 'package:mms_app/screens/general/auth/login_layout.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/custom_textfield.dart';
+import 'package:mms_app/screens/widgets/snackbar.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
 import 'package:mms_app/screens/widgets/utils.dart';
@@ -45,7 +46,7 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
             autoValidate = true;
             setState(() {});
             if (formKey.currentState.validate()) {
-              verifyNumber();
+              verifyNumber(context);
             }
           }),
         ),
@@ -133,21 +134,21 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
   TextEditingController password = TextEditingController();
   TextEditingController code = TextEditingController();
 
-  Future<void> verifyNumber() async {
+  Future<void> verifyNumber(context) async {
     setState(() {
       isLoading = true;
     });
     try {
       await _firebaseAuth.verifyPhoneNumber(
           phoneNumber: phone.text,
-          timeout: Duration(minutes: 5),
+          timeout: Duration(minutes: 2),
           verificationCompleted: (PhoneAuthCredential _credential) async {
             code.text = _credential.smsCode;
             _firebaseAuth
                 .signInWithCredential(_credential)
                 .then((UserCredential result) {
               _firebaseAuth.signOut();
-              signup();
+              signup(context);
               print(result.user.uid);
             }).catchError((e) {
               setState(() {
@@ -187,7 +188,7 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
                       content: CustomTextField(
                         hintText: 'Enter OTP',
                         obscureText: false,
-                        maxLength: 15,
+                        maxLength: 6,
                         controller: code,
                         textAlign: TextAlign.center,
                         textInputType: TextInputType.number,
@@ -195,6 +196,10 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
                       actions: <Widget>[
                         InkWell(
                           onTap: () async {
+                            if(code.text.length < 6){
+                              showSnackBar(context, null, 'Enter complete OTP');
+                              return;
+                            }
                             setState(() {
                               isLoading = true;
                             });
@@ -210,7 +215,7 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
                                 .signInWithCredential(_credential)
                                 .then((UserCredential result) {
                               _firebaseAuth.signOut();
-                              signup();
+                              signup(context);
                               print(result.user.uid);
                             }).catchError((e) {
                               print(e);
@@ -256,7 +261,7 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
     }
   }
 
-  void signup() async {
+  void signup(context) async {
     await _firebaseAuth
         .createUserWithEmailAndPassword(
             email: email.text, password: password.text)

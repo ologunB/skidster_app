@@ -229,6 +229,7 @@ class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
     Map<String, dynamic> mData = widget.loadsModel.toJson();
     mData.update("id", (a) => id);
     mData.update("uid", (a) => uid);
+    mData.update("updated_at", (a) => DateTime.now().millisecondsSinceEpoch);
 
     WriteBatch writeBatch = _firestore.batch();
     writeBatch.set(postRef, mData);

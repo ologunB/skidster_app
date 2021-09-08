@@ -1,20 +1,20 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:google_maps_webservice/places.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/models/load_response.dart';
 import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/core/storage/local_storage.dart';
+import 'package:mms_app/screens/user/home/get_address_view.dart';
 import 'package:mms_app/screens/user/home/review_load_screen.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/custom_textfield.dart';
 import 'package:mms_app/screens/widgets/snackbar.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
-import 'package:mms_app/screens/widgets/utils.dart';
 
 class PostLoadWidget extends StatefulWidget {
   const PostLoadWidget({Key key}) : super(key: key);
@@ -34,6 +34,7 @@ class _PostLoadWidgetState extends State<PostLoadWidget> {
   TextEditingController dateTime = TextEditingController();
 
   DateTime selectedDateTime;
+  Prediction dropoffData, pickupData;
 
   @override
   Widget build(_) {
@@ -55,7 +56,7 @@ class _PostLoadWidgetState extends State<PostLoadWidget> {
         item('How many skids'),
         SizedBox(height: 8.h),
         CustomTextField(
-          hintText: 'Input skids ',
+          hintText: 'Input skids',
           obscureText: false,
           controller: skids,
           textInputType: TextInputType.number,
@@ -65,7 +66,7 @@ class _PostLoadWidgetState extends State<PostLoadWidget> {
         item('Weight'),
         SizedBox(height: 8.h),
         CustomTextField(
-          hintText: 'Input Weight',
+          hintText: 'Input Weight - kg/lbs',
           obscureText: false,
           controller: weight,
           textInputType: TextInputType.number,
@@ -78,7 +79,18 @@ class _PostLoadWidgetState extends State<PostLoadWidget> {
           hintText: 'Enter Pickup Address',
           obscureText: false,
           controller: pickup,
-          textInputType: TextInputType.text,
+          readOnly: true,
+          onTap: () async {
+            navigateTo(
+                context,
+                GetAddressView(
+                  title: 'Pickup Address',
+                  selectPrediction: (a) {
+                    pickupData = a;
+                    pickup.text = pickupData.description;
+                  },
+                ));
+          },
           textInputAction: TextInputAction.next,
         ),
         SizedBox(height: 16.h),
@@ -88,7 +100,20 @@ class _PostLoadWidgetState extends State<PostLoadWidget> {
           hintText: 'Enter Dropoff Address',
           obscureText: false,
           controller: dropoff,
-          textInputType: TextInputType.number,
+          readOnly: true,
+          onTap: () {
+            navigateTo(
+                context,
+                GetAddressView(
+                  title: 'Dropoff Address',
+                  selectPrediction: (a) {
+                    dropoffData = a;
+                    pickup.text = dropoffData.description;
+                    Logger().d(dropoffData);
+                    setState(() {});
+                  },
+                ));
+          },
           textInputAction: TextInputAction.next,
         ),
         SizedBox(height: 16.h),
@@ -171,10 +196,6 @@ class _PostLoadWidgetState extends State<PostLoadWidget> {
       showSnackBar(context, null, 'Enter skids');
       return;
     }
-    if (weight.text.isEmpty) {
-      showSnackBar(context, null, 'Enter weight');
-      return;
-    }
     if (pickup.text.isEmpty) {
       showSnackBar(context, null, 'Enter pickup');
       return;
@@ -187,10 +208,9 @@ class _PostLoadWidgetState extends State<PostLoadWidget> {
     LoadsModel loadsModel = LoadsModel(
       title: title.text,
       skids: skids.text,
-      weight: weight.text,
+      weight: weight.text.isEmpty ? '' : weight.text,
       pickup: pickup.text,
       dropoff: dropoff.text,
-      updatedAt: DateTime.now().millisecondsSinceEpoch,
       dateTime: selectedDateTime.millisecondsSinceEpoch,
       price: sliderValue.toInt(),
       name: AppCache.getUser.name,
