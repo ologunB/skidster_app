@@ -8,7 +8,7 @@ import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/core/models/load_response.dart';
 import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/screens/general/filter_screen.dart';
-import 'package:mms_app/screens/user/loads/loads_details_screen.dart';
+import 'package:mms_app/screens/user/loads/loads_info_screen.dart';
 import 'package:mms_app/screens/user/loads/loads_status_screen.dart';
 import 'package:mms_app/screens/widgets/custom_loader.dart';
 import 'package:mms_app/screens/widgets/error_widget.dart';
@@ -192,7 +192,6 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                             ErrorOccurredWidget(error: snapshot.error);
                           } else if (snapshot.hasData) {
                             List<LoadsModel> myLoads = [];
-
                             snapshot.data.docs.forEach((element) {
                               LoadsModel model =
                                   LoadsModel.fromJson(element.data());
@@ -201,26 +200,16 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                               myLoads.add(model);
                             });
                             return myLoads.isEmpty
-                                ? Container(
-                                    height: SizeConfig.screenHeight / 3,
-                                    alignment: Alignment.center,
-                                    child: regularText(
-                                      'Loads tray is Empty',
-                                      fontSize: 13.sp,
-                                      color: AppColors.grey,
-                                    ),
-                                  )
-                                : Container(
-                                    height: 150.h,
-                                    child: ListView.builder(
-                                      shrinkWrap: true,
-                                      itemCount: myLoads.length,
-                                      scrollDirection: Axis.horizontal,
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 6.h, vertical: 8.h),
-                                      physics: ClampingScrollPhysics(),
-                                      itemBuilder: (context, index) {
-                                        LoadsModel model = myLoads[index];
+                                ? regularText(
+                                  'Loads tray is Empty',
+                                  fontSize: 13.sp,
+                                  color: AppColors.grey,
+                                )
+                                : SingleChildScrollView(
+                                    padding: EdgeInsets.all(8.h),
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      children: myLoads.map((model) {
                                         return InkWell(
                                           onTap: () {
                                             navigateTo(
@@ -230,11 +219,12 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                                                     isTruck: true));
                                           },
                                           child: Container(
-                                            margin: EdgeInsets.only(
-                                                bottom: 15.h, right: 10.h),
+                                            margin:
+                                                EdgeInsets.only(right: 10.h),
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 14.h,
                                                 vertical: 10.h),
+                                            width: SizeConfig.screenWidth * .9,
                                             decoration: BoxDecoration(
                                                 boxShadow: [
                                                   BoxShadow(
@@ -304,90 +294,102 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                                                     ],
                                                   ),
                                                 ),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    regularText(
-                                                      model.title,
-                                                      fontSize: 13.sp,
-                                                      color: AppColors.grey,
-                                                    ),
-                                                    SizedBox(height: 10.h),
-                                                    Row(
-                                                      children: [
-                                                        Container(
-                                                          height: 9.h,
-                                                          width: 9.h,
-                                                          decoration: BoxDecoration(
-                                                              border: Border.all(
-                                                                  width: 1.h,
-                                                                  color: AppColors
-                                                                      .primaryColor),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10.h)),
-                                                        ),
-                                                        SizedBox(width: 10.h),
-                                                        regularText(
-                                                          model.pickup,
-                                                          fontSize: 15.sp,
-                                                          color: AppColors
-                                                              .primaryColor,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        Container(
-                                                          height: 9.h,
-                                                          width: 9.h,
-                                                          decoration: BoxDecoration(
+
+                                                Expanded(
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      regularText(
+                                                        model.title,
+                                                        fontSize: 13.sp,
+                                                        color: AppColors.grey,
+                                                      ),
+                                                      SizedBox(height: 10.h),
+                                                      Row(
+                                                        children: [
+                                                          Container(
+                                                            height: 9.h,
+                                                            width: 9.h,
+                                                            decoration: BoxDecoration(
+                                                                border: Border.all(
+                                                                    width: 1.h,
+                                                                    color: AppColors
+                                                                        .primaryColor),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10.h)),
+                                                          ),
+                                                          SizedBox(width: 10.h),
+                                                          Expanded(
+                                                            child: regularText(
+                                                              model.pickup,
+                                                              fontSize: 15.sp,
                                                               color: AppColors
                                                                   .primaryColor,
-                                                              border: Border.all(
-                                                                  width: 1.h,
-                                                                  color: AppColors
-                                                                      .primaryColor),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10.h)),
-                                                        ),
-                                                        SizedBox(width: 10.h),
-                                                        regularText(
-                                                          model.dropoff,
-                                                          fontSize: 15.sp,
-                                                          color: AppColors
-                                                              .primaryColor,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    SizedBox(height: 10.h),
-                                                    Row(
-                                                      children: [
-                                                        item1(
-                                                            '${model.weight}kg'),
-                                                        item1(
-                                                            '\$${model.price}'),
-                                                        item1(
-                                                            '${model.skids} Skids'),
-                                                      ],
-                                                    )
-                                                  ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(height: 8.h),
+
+                                                      Row(
+                                                        children: [
+                                                          Container(
+                                                            height: 9.h,
+                                                            width: 9.h,
+                                                            decoration: BoxDecoration(
+                                                                color: AppColors
+                                                                    .primaryColor,
+                                                                border: Border.all(
+                                                                    width: 1.h,
+                                                                    color: AppColors
+                                                                        .primaryColor),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10.h)),
+                                                          ),
+                                                          SizedBox(width: 10.h),
+                                                          Expanded(
+                                                            child: regularText(
+                                                              model.dropoff,
+                                                              fontSize: 15.sp,
+                                                              color: AppColors
+                                                                  .primaryColor,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(height: 10.h),
+                                                      Row(
+                                                        children: [
+                                                          if (model.weight
+                                                              .isNotEmpty)
+                                                            item1(
+                                                                '${model.weight}kg'),
+                                                          item1(
+                                                              '\$${model.price}'),
+                                                          item1(
+                                                              '${model.skids} Skids'),
+                                                        ],
+                                                      )
+                                                    ],
+                                                  ),
                                                 )
                                               ],
                                             ),
                                           ),
                                         );
-                                      },
+                                      }).toList(),
                                     ),
                                   );
                           }
                           return Container();
                         }),
-                    SizedBox(height: 15.h),
+                    SizedBox(height: 10.h),
                     regularText(
                       'My Loads',
                       fontSize: 17.sp,

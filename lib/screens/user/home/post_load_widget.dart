@@ -88,6 +88,7 @@ class _PostLoadWidgetState extends State<PostLoadWidget> {
                   selectPrediction: (a) {
                     pickupData = a;
                     pickup.text = pickupData.description;
+                    setState(() {});
                   },
                 ));
           },
@@ -108,8 +109,7 @@ class _PostLoadWidgetState extends State<PostLoadWidget> {
                   title: 'Dropoff Address',
                   selectPrediction: (a) {
                     dropoffData = a;
-                    pickup.text = dropoffData.description;
-                    Logger().d(dropoffData);
+                    dropoff.text = dropoffData.description;
                     setState(() {});
                   },
                 ));

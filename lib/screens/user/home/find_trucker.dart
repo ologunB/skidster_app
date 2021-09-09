@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
+import 'package:mms_app/core/models/login_response.dart';
 import 'package:mms_app/core/models/truck_response.dart';
 import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/screens/general/filter_screen.dart';
@@ -206,7 +207,16 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
                                   children: [
                                     InkWell(
                                       onTap: () {
-                                        navigateTo(context, ChatDetailsView());
+                                        navigateTo(
+                                            context,
+                                            ChatDetailsView(
+                                              contact: UserData(
+                                                uid: model.uid,
+                                                name: model.name,
+                                                image: '',
+                                                phone: model.companyPhone,
+                                              ),
+                                            ));
                                       },
                                       child: Image.asset(
                                         'images/message_circle_icon.png',

@@ -29,20 +29,15 @@ class _GetAddressViewState extends State<GetAddressView> {
             color: AppColors.primaryColor,
             fontWeight: FontWeight.w600),
       ),
-      body: ListView(
-        shrinkWrap: true,
-        children: [
-          PlacesAutocompleteWidget(
-            language: 'EN',
-            selectPrediction: widget.selectPrediction,
-            onError: (PlacesAutocompleteResponse response) {
-              showSnackBar(context, 'Error', response.errorMessage,
-                  duration: 3);
-            },
-            apiKey: 'AIzaSyCJjJyC3Of4b4joSoyhtRYGxIvD_Tu7EAg',
-            components: <Component>[Component(Component.country, 'NG')],
-          ),
-        ],
+      body:  PlacesAutocompleteWidget(
+        language: 'EN',
+        selectPrediction: widget.selectPrediction,
+        onError: (PlacesAutocompleteResponse response) {
+          showSnackBar(context, 'Error', response.errorMessage,
+              duration: 3);
+        },
+        apiKey: 'AIzaSyCJjJyC3Of4b4joSoyhtRYGxIvD_Tu7EAg',
+        components: <Component>[Component(Component.country, 'CA')],
       ),
     );
   }

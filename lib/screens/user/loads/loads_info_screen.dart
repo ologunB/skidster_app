@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/models/load_response.dart';
+import 'package:mms_app/core/models/login_response.dart';
 import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/screens/general/message/message_details.dart';
+import 'package:mms_app/screens/user/loads/loads_status_screen.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/notification_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
@@ -23,17 +25,17 @@ class LoadsDetailsScreen extends StatefulWidget {
 
 class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
   bool favorite = false;
+  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     final LoadsModel loadsModel = widget.loadsModel;
-
     return Scaffold(
+      key: scaffoldKey,
       backgroundColor: Colors.white,
       appBar: AppBar(elevation: 0, backgroundColor: Colors.white),
       body: SafeArea(
         child: ListView(
-          shrinkWrap: true,
           padding: EdgeInsets.symmetric(horizontal: 20.h),
           children: [
             Row(
@@ -117,10 +119,12 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                             borderRadius: BorderRadius.circular(10.h)),
                       ),
                       SizedBox(width: 10.h),
-                      regularText(
-                        loadsModel.pickup,
-                        fontSize: 17.sp,
-                        color: AppColors.primaryColor,
+                      Expanded(
+                        child: regularText(
+                          loadsModel.pickup,
+                          fontSize: 17.sp,
+                          color: AppColors.primaryColor,
+                        ),
                       ),
                     ],
                   ),
@@ -137,10 +141,12 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                             borderRadius: BorderRadius.circular(10.h)),
                       ),
                       SizedBox(width: 10.h),
-                      regularText(
-                        loadsModel.dropoff,
-                        fontSize: 17.sp,
-                        color: AppColors.primaryColor,
+                      Expanded(
+                        child: regularText(
+                          loadsModel.dropoff,
+                          fontSize: 17.sp,
+                          color: AppColors.primaryColor,
+                        ),
                       ),
                     ],
                   ),
@@ -154,7 +160,8 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   item2('Item', ': ${loadsModel.title}'),
-                  item2('Weight', ': ${loadsModel.weight} kg'),
+                  if (loadsModel.weight.isNotEmpty)
+                    item2('Weight', ': ${loadsModel.weight} kg'),
                   item2('Skids', ': ${loadsModel.skids}'),
                   item2('Price', ': \$${loadsModel.price}'),
                 ],
@@ -162,14 +169,16 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
             ),
             SizedBox(height: 10.h),
             !widget.isTruck
-                ? Center(
-                    child: regularText(
-                      'Edit',
-                      fontSize: 17.sp,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.primaryColor,
-                    ),
-                  )
+                ? loadsModel?.isBooked == true
+                    ? SizedBox()
+                    : Center(
+                        child: regularText(
+                          'Edit',
+                          fontSize: 17.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.primaryColor,
+                        ),
+                      )
                 : Column(
                     children: [
                       Row(
@@ -211,12 +220,20 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              regularText('Click here ',
-                                  fontSize: 17.sp,
-                                  color: AppColors.primaryColor,
-                                  fontWeight: FontWeight.w600),
+                              InkWell(
+                                onTap: () {
+                                  navigateReplacement(
+                                      context,
+                                      LoadsStatusScreen(
+                                          loadsModel: widget.loadsModel));
+                                },
+                                child: regularText('Click here',
+                                    fontSize: 17.sp,
+                                    color: AppColors.primaryColor,
+                                    fontWeight: FontWeight.w600),
+                              ),
                               regularText(
-                                'if you have booked this load',
+                                ' if you have booked this load',
                                 fontSize: 17.sp,
                                 color: AppColors.primaryColor,
                               ),
@@ -240,7 +257,14 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                           fontSize: 17.sp,
                           height: 50.h,
                           fontWeight: FontWeight.w600, onTap: () {
-                        navigateTo(context, ChatDetailsView());
+                        navigateTo(
+                            context,
+                            ChatDetailsView(
+                                contact: UserData(
+                              name: loadsModel.name,
+                              uid: loadsModel.uid,
+                              image: loadsModel.image,
+                            )));
                       }),
                     ],
                   )

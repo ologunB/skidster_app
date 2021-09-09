@@ -11,6 +11,7 @@ class TruckModel {
   String companyPhone;
   int updatedAt;
   String uid;
+  String image;
 
   TruckModel({
     this.id,
@@ -23,7 +24,7 @@ class TruckModel {
     this.travelPref,
     this.skids,
     this.uid,
-    this.truckType,
+    this.truckType,this.image
   });
 
   TruckModel.fromJson(dynamic json) {
@@ -36,6 +37,7 @@ class TruckModel {
     experience = json['experience'];
     updatedAt = json['updated_at'];
     skids = json['skids'];
+    image = json['image'];
     truckType = json['truck_type'];
     travelPref = json['travel_pref'];
     uid = json['uid'];
@@ -51,6 +53,7 @@ class TruckModel {
     data['company_phone'] = this.companyPhone;
     data['experience'] = this.experience;
     data['updated_at'] = this.updatedAt;
+    data['image'] = this.image;
     data['skids'] = this.skids;
     data['truck_type'] = this.truckType;
     data['travel_pref'] = this.travelPref;

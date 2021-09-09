@@ -366,6 +366,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.1"
+  keyboard_attachable:
+    dependency: "direct main"
+    description:
+      name: keyboard_attachable
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.3"
   loading_overlay:
     dependency: "direct main"
     description:

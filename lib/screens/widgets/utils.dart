@@ -26,7 +26,7 @@ class Utils {
     return null;
   }
 
-  static String randomString({int no= 12}) {
+  static String randomString({int no = 12}) {
     const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
 
     Random rnd = Random(DateTime.now().millisecondsSinceEpoch);
@@ -58,6 +58,16 @@ class Utils {
       return;
     }
     currentFocus.unfocus();
+  }
+
+  static String conversationId(String from, String to) {
+    String val = '';
+    if (from.hashCode > to.hashCode) {
+      val = from + to;
+    } else {
+      val = to + from;
+    }
+    return val;
   }
 }
 

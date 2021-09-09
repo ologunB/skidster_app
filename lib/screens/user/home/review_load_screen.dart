@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/models/load_response.dart';
-import 'package:mms_app/core/utils/navigator.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/snackbar.dart';
 
@@ -12,7 +11,6 @@ import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
 import 'package:mms_app/screens/widgets/utils.dart';
 
-import '../../../locator.dart';
 import '../user_main_layout.dart';
 
 class ReviewLoadScreen extends StatefulWidget {
@@ -96,43 +94,66 @@ class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
                       fontWeight: FontWeight.w600,
                       color: AppColors.grey,
                     ),
-                    Row(
-                      children: [
-                        Container(
-                          height: 9.h,
-                          width: 9.h,
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  width: 1.h, color: AppColors.primaryColor),
-                              borderRadius: BorderRadius.circular(10.h)),
-                        ),
-                        SizedBox(width: 10.h),
-                        regularText(
-                          widget.loadsModel.pickup,
-                          fontSize: 17.sp,
-                          color: AppColors.primaryColor,
-                        ),
-                      ],
+                    SizedBox(height: 10.h),
+                    IntrinsicHeight(
+                      child: Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                height: 9.h,
+                                width: 9.h,
+                                margin: EdgeInsets.only(top: 3.h),
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        width: 1.h,
+                                        color: AppColors.primaryColor),
+                                    borderRadius: BorderRadius.circular(10.h)),
+                              ),
+                            ],
+                          ),
+                          SizedBox(width: 10.h),
+                          Expanded(
+                            child: regularText(
+                              widget.loadsModel.pickup,
+                              fontSize: 17.sp,
+                              color: AppColors.primaryColor,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(height: 10.h),
-                    Row(
-                      children: [
-                        Container(
-                          height: 9.h,
-                          width: 9.h,
-                          decoration: BoxDecoration(
+                    IntrinsicHeight(
+                      child: Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(top: 3.h),
+                                height: 9.h,
+                                width: 9.h,
+                                decoration: BoxDecoration(
+                                    color: AppColors.primaryColor,
+                                    border: Border.all(
+                                        width: 1.h,
+                                        color: AppColors.primaryColor),
+                                    borderRadius: BorderRadius.circular(10.h)),
+                              ),
+                            ],
+                          ),
+                          SizedBox(width: 10.h),
+                          Expanded(
+                            child: regularText(
+                              widget.loadsModel.dropoff,
+                              fontSize: 17.sp,
                               color: AppColors.primaryColor,
-                              border: Border.all(
-                                  width: 1.h, color: AppColors.primaryColor),
-                              borderRadius: BorderRadius.circular(10.h)),
-                        ),
-                        SizedBox(width: 10.h),
-                        regularText(
-                          widget.loadsModel.dropoff,
-                          fontSize: 17.sp,
-                          color: AppColors.primaryColor,
-                        ),
-                      ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(height: 30.h),
                     regularText(
@@ -180,18 +201,21 @@ class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
                       color: AppColors.primaryColor,
                     ),
                     SizedBox(height: 30.h),
-                    regularText(
-                      'Weight',
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.grey,
-                    ),
-                    regularText(
-                      '${widget.loadsModel.weight} KG',
-                      fontSize: 17.sp,
-                      color: AppColors.primaryColor,
-                    ),
-                    SizedBox(height: 30.h),
+                    if (widget.loadsModel.weight.isNotEmpty)
+                      regularText(
+                        'Weight',
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.grey,
+                      ),
+                    if (widget.loadsModel.weight.isNotEmpty)
+                      regularText(
+                        '${widget.loadsModel.weight} KG',
+                        fontSize: 17.sp,
+                        color: AppColors.primaryColor,
+                      ),
+                    if (widget.loadsModel.weight.isNotEmpty)
+                      SizedBox(height: 30.h),
                     regularText(
                       'Price',
                       fontSize: 13.sp,
@@ -199,7 +223,7 @@ class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
                       color: AppColors.grey,
                     ),
                     regularText(
-                      '\$40',
+                      'CA\$${widget.loadsModel.price}',
                       fontSize: 17.sp,
                       color: AppColors.primaryColor,
                     ),

@@ -17,6 +17,7 @@ Widget regularText(
     textAlign: textAlign,
     maxLines: maxLines,
     overflow: overflow,
+    softWrap: true,
     style: GoogleFonts.inter(
         color: color,
         letterSpacing: letterSpacing,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mms_app/app/colors.dart';
+import 'package:mms_app/core/models/login_response.dart';
 import 'package:mms_app/core/models/truck_response.dart';
 import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/screens/general/message/message_details.dart';
@@ -67,7 +68,16 @@ class _FinderDetailsState extends State<FinderDetails> {
                   fontSize: 17.sp,
                   height: 50.h,
                   fontWeight: FontWeight.w600, onTap: () {
-                navigateReplacement(context, ChatDetailsView());
+                navigateReplacement(
+                    context,
+                    ChatDetailsView(
+                      contact: UserData(
+                        uid: widget.truckModel.uid,
+                        name: widget.truckModel.name,
+                        image: widget.truckModel.image,
+                        phone: widget.truckModel.companyPhone,
+                      ),
+                    ));
               }),
             ],
           ),

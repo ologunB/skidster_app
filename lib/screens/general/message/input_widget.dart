@@ -49,6 +49,7 @@ class _InputWidgetState extends State<InputWidget> {
       child: Container(
           padding: EdgeInsets.symmetric(horizontal: 16.h, vertical: 8.h),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Row(
                 children: <Widget>[
@@ -100,6 +101,7 @@ class _InputWidgetState extends State<InputWidget> {
         //!widget.isBusy,
         maxLines: 3,
         minLines: 1,
+        textCapitalization: TextCapitalization.sentences,
         textInputAction: TextInputAction.newline,
         style: GoogleFonts.nunito(
             color: AppColors.black,
