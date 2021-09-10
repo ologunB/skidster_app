@@ -2,16 +2,12 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:mms_app/app/colors.dart';
-import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/core/models/load_response.dart';
 import 'package:mms_app/core/storage/local_storage.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
-import 'package:mms_app/screens/widgets/custom_loader.dart';
-import 'package:mms_app/screens/widgets/error_widget.dart';
 import 'package:mms_app/screens/widgets/snackbar.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
@@ -35,7 +31,7 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
 
   LoadsModel myLoad;
 
-  StreamSubscription adderStream;
+  StreamSubscription adderStream, add2stream;
 
   @override
   void initState() {
@@ -54,7 +50,22 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
           Logger().d(myLoad.toJson());
         }
       });
-      Logger().d(event.docs);
+    });
+    add2stream = _firestore
+        .collection('Loaders')
+        .doc('Completed')
+        .collection(uid)
+        .orderBy('updated_at', descending: true)
+        .snapshots()
+        .listen((event) {
+      event.docs.forEach((element) {
+        LoadsModel model = LoadsModel.fromJson(element.data());
+        if (model.id == widget.loadsModel.id) {
+          myLoad = model;
+          setState(() {});
+          Logger().d(myLoad.toJson());
+        }
+      });
     });
     super.initState();
   }
@@ -62,6 +73,7 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
   @override
   void dispose() {
     adderStream.cancel();
+    add2stream.cancel();
     super.dispose();
   }
 
@@ -375,7 +387,11 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
   bool isLoading = false;
 
   bookLoad(context, stage) async {
-    if (stage == 3) return;
+    print(stage);
+    if (stage == 3) {
+      setState(() {});
+      return;
+    }
     setState(() {
       isLoading = true;
     });
@@ -387,9 +403,21 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
         DateTime.now().millisecondsSinceEpoch.toString();
     DocumentReference postRef =
         _firestore.collection('Loaders').doc('Added').collection(uid).doc(id);
-    DocumentReference allTrucks = _firestore.collection('All-Loaders').doc(id);
     DocumentReference trucksLoad =
         _firestore.collection('Loaders').doc('Added').collection(myUid).doc(id);
+
+    DocumentReference completePostRef = _firestore
+        .collection('Loaders')
+        .doc('Completed')
+        .collection(uid)
+        .doc(id);
+    DocumentReference completeTrucksLoad = _firestore
+        .collection('Loaders')
+        .doc('Completed')
+        .collection(myUid)
+        .doc(id);
+    DocumentReference allTrucks = _firestore.collection('All-Loaders').doc(id);
+
     DocumentReference notifiDoc = _firestore
         .collection('Notifications')
         .doc('Added')
@@ -416,9 +444,7 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
     notifiData.putIfAbsent('person', () => AppCache.getUser.name);
     notifiData.putIfAbsent('text', () => userStagesText[stage + 1]);
     notifiData.putIfAbsent(
-      "updated_at",
-      () => DateTime.now().millisecondsSinceEpoch,
-    );
+        "updated_at", () => DateTime.now().millisecondsSinceEpoch);
     WriteBatch writeBatch = _firestore.batch();
     if (stage == 0) {
       // update user to processing
@@ -427,11 +453,34 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
       writeBatch.delete(allTrucks);
       // create new item for trucker¬
       writeBatch.set(trucksLoad, mData);
-    } else {
+    } else if (stage == 1) {
       // update user to processing
       writeBatch.update(postRef, mData);
       // create new item for trucker¬
       writeBatch.update(trucksLoad, mData);
+    } else if (stage == 2) {
+      if (myLoad == null) {
+        setState(() {
+          isLoading = false;
+        });
+        return;
+      }
+
+      Map<String, dynamic> _mData = myLoad.toJson();
+      _mData.update("stage", (a) => 3, ifAbsent: () => 3);
+      _mData.update(
+        "updated_at",
+        (a) => DateTime.now().millisecondsSinceEpoch,
+        ifAbsent: () => DateTime.now().millisecondsSinceEpoch,
+      );
+      // set user complete
+      writeBatch.set(completePostRef, _mData);
+      // set user complete
+      writeBatch.set(completeTrucksLoad, _mData);
+      // delete user progress
+      writeBatch.delete(postRef);
+      // delete trucker progress
+      writeBatch.delete(trucksLoad);
     }
     writeBatch.set(notifiDoc, notifiData);
 

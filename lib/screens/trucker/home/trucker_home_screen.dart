@@ -201,10 +201,10 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                             });
                             return myLoads.isEmpty
                                 ? regularText(
-                                  'Loads tray is Empty',
-                                  fontSize: 13.sp,
-                                  color: AppColors.grey,
-                                )
+                                    'Loads tray is Empty',
+                                    fontSize: 13.sp,
+                                    color: AppColors.grey,
+                                  )
                                 : SingleChildScrollView(
                                     padding: EdgeInsets.all(8.h),
                                     scrollDirection: Axis.horizontal,
@@ -294,7 +294,6 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                                                     ],
                                                   ),
                                                 ),
-
                                                 Expanded(
                                                   child: Column(
                                                     crossAxisAlignment:
@@ -334,7 +333,6 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                                                         ],
                                                       ),
                                                       SizedBox(height: 8.h),
-
                                                       Row(
                                                         children: [
                                                           Container(
@@ -415,50 +413,103 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                       ],
                     ),
                     SizedBox(height: 15.h),
-                    InkWell(
-                      onTap: () {
-                        navigateTo(context, LoadsStatusScreen());
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(15.h),
-                        decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                  color: AppColors.grey.withOpacity(.3),
-                                  spreadRadius: 2,
-                                  blurRadius: 10)
-                            ],
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10.h)),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            regularText(
-                              'Refrigerator',
-                              fontSize: 15.sp,
-                              color: AppColors.primaryColor,
-                            ),
-                            Row(
-                              children: [
-                                regularText(
-                                  'Citywhere > Knowhere',
-                                  fontSize: 15.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.primaryColor,
-                                ),
-                                Spacer(),
-                                regularText(
-                                  '30 Mar 2021',
-                                  fontSize: 11.sp,
-                                  color: AppColors.grey,
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 15.h),
+                    StreamBuilder<QuerySnapshot>(
+                        stream: _firestore
+                            .collection('Loaders')
+                            .doc('Added')
+                            .collection(uid)
+                            .orderBy('updated_at', descending: true)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CustomLoader();
+                          } else if (snapshot.hasError) {
+                            ErrorOccurredWidget(error: snapshot.error);
+                          } else if (snapshot.hasData) {
+                            List<LoadsModel> myLoads = [];
+                            snapshot.data.docs.forEach((element) {
+                              LoadsModel model =
+                                  LoadsModel.fromJson(element.data());
+                              //  Logger().d(model.toJson());
+
+                              myLoads.add(model);
+                            });
+                            return myLoads.isEmpty
+                                ? regularText(
+                                    'No Loads in progress',
+                                    fontSize: 13.sp,
+                                    color: AppColors.grey,
+                                  )
+                                : SingleChildScrollView(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 8.h),
+                                    child: Column(
+                                      children: myLoads.map((model) {
+                                        return InkWell(
+                                          onTap: () {
+                                            navigateTo(
+                                                context,
+                                                LoadsStatusScreen(
+                                                    loadsModel: model));
+                                          },
+                                          child: Container(
+                                            margin: EdgeInsets.only(bottom: 15.h),
+                                            padding: EdgeInsets.all(15.h),
+                                            decoration: BoxDecoration(
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                      color: AppColors.grey
+                                                          .withOpacity(.3),
+                                                      spreadRadius: 2,
+                                                      blurRadius: 10)
+                                                ],
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        10.h)),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                regularText(
+                                                  model.title,
+                                                  fontSize: 15.sp,
+                                                  color: AppColors.primaryColor,
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    regularText(
+                                                      '${last2(model.pickup)} > ${last2(model.dropoff)} ',
+                                                      fontSize: 15.sp,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: AppColors
+                                                          .primaryColor,
+                                                    ),
+                                                    Spacer(),
+                                                    regularText(
+                                                      DateFormat('dd MMM, yyyy')
+                                                          .format(DateTime
+                                                              .fromMillisecondsSinceEpoch(
+                                                                  model
+                                                                      .dateTime)),
+                                                      fontSize: 11.sp,
+                                                      color: AppColors.grey,
+                                                    ),
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  );
+                          }
+                          return Container();
+                        }),
+                    SizedBox(height: 5.h),
                     Row(
                       children: [
                         Container(
@@ -477,49 +528,98 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                       ],
                     ),
                     SizedBox(height: 15.h),
-                    InkWell(
-                      onTap: () {
-                        navigateTo(context, LoadsStatusScreen());
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(15.h),
-                        decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                  color: AppColors.grey.withOpacity(.3),
-                                  spreadRadius: 2,
-                                  blurRadius: 10)
-                            ],
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10.h)),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            regularText(
-                              'Refrigerator',
-                              fontSize: 15.sp,
-                              color: AppColors.primaryColor,
-                            ),
-                            Row(
-                              children: [
-                                regularText(
-                                  'Citywhere > Knowhere',
-                                  fontSize: 15.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.primaryColor,
-                                ),
-                                Spacer(),
-                                regularText(
-                                  'Completed',
-                                  fontSize: 11.sp,
-                                  color: AppColors.grey,
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
+                    StreamBuilder<QuerySnapshot>(
+                        stream: _firestore
+                            .collection('Loaders')
+                            .doc('Completed')
+                            .collection(uid)
+                            .orderBy('updated_at', descending: true)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CustomLoader();
+                          } else if (snapshot.hasError) {
+                            ErrorOccurredWidget(error: snapshot.error);
+                          } else if (snapshot.hasData) {
+                            List<LoadsModel> myLoads = [];
+                            snapshot.data.docs.forEach((element) {
+                              LoadsModel model =
+                                  LoadsModel.fromJson(element.data());
+                              //  Logger().d(model.toJson());
+
+                              myLoads.add(model);
+                            });
+                            return myLoads.isEmpty
+                                ? regularText(
+                                    'No Completed Loads',
+                                    fontSize: 13.sp,
+                                    color: AppColors.grey,
+                                  )
+                                : SingleChildScrollView(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 8.h),
+                                    child: Column(
+                                      children: myLoads.map((model) {
+                                        return InkWell(
+                                          onTap: () {
+                                            navigateTo(
+                                                context,
+                                                LoadsStatusScreen(
+                                                    loadsModel: model));
+                                          },
+                                          child: Container(
+                                            margin: EdgeInsets.only(bottom: 15.h),
+                                            padding: EdgeInsets.all(15.h),
+                                            decoration: BoxDecoration(
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                      color: AppColors.grey
+                                                          .withOpacity(.3),
+                                                      spreadRadius: 2,
+                                                      blurRadius: 10)
+                                                ],
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        10.h)),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                regularText(
+                                                  model.title,
+                                                  fontSize: 15.sp,
+                                                  color: AppColors.primaryColor,
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    regularText(
+                                                      '${last2(model.pickup)} > ${last2(model.dropoff)} ',
+                                                      fontSize: 15.sp,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: AppColors
+                                                          .primaryColor,
+                                                    ),
+                                                    Spacer(),
+                                                    regularText(
+                                                      'Completed',
+                                                      fontSize: 11.sp,
+                                                      color: AppColors.grey,
+                                                    ),
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  );
+                          }
+                          return Container();
+                        }),
                     SizedBox(height: 12.h),
                   ],
                 ))
@@ -527,6 +627,12 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
         ),
       ),
     );
+  }
+
+  String last2(String a) {
+    List<String> b = a.split(',');
+    print(a);
+    return b[b.length - 3].trim() + ', ' + b[b.length - 2].trim();
   }
 
   Widget item1(String a) {
