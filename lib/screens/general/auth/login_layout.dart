@@ -29,10 +29,13 @@ class LoginLayout extends StatefulWidget {
 }
 
 class _LoginLayoutState extends State<LoginLayout> {
+  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     AppCache.haveFirstView();
     return Scaffold(
+      key: scaffoldKey,
       body: Column(
         children: [
           SizedBox(height: 50.h),
@@ -171,7 +174,7 @@ class _LoginLayoutState extends State<LoginLayout> {
 
   bool isLoading = false;
 
-  Future signInWithGoogle(context) async {
+  Future signInWithGoogle(BuildContext buildContext) async {
     setState(() {
       isLoading = true;
     });
@@ -207,23 +210,22 @@ class _LoginLayoutState extends State<LoginLayout> {
                   isLoading = false;
                 });
 
+                navigateTo(buildContext, SelectUserType());
                 showAlertDialog(
                   context: context,
                   title: 'Alert',
-                  content: "User does not exist, create an account",
+                  content: "Account does not exist, create an account",
                   defaultActionText: 'OKAY',
                 );
-
-                navigateTo(context, SelectUserType());
                 return;
               }
               AppCache.setUser(document.data());
 
               UserData userData = UserData.fromJson(document.data());
               if (userData.type == 'customer') {
-                routeToReplace(context, UserMainLayout());
+                routeToReplace(buildContext, UserMainLayout());
               } else {
-                routeToReplace(context, TruckerMainLayout());
+                routeToReplace(buildContext, TruckerMainLayout());
               }
             }).catchError((e) {
               setState(() {
@@ -231,7 +233,7 @@ class _LoginLayoutState extends State<LoginLayout> {
               });
 
               showExceptionAlertDialog(
-                  context: context, exception: e, title: "Error");
+                  context: buildContext, exception: e, title: "Error");
               setState(() {
                 isLoading = false;
               });
@@ -245,20 +247,20 @@ class _LoginLayoutState extends State<LoginLayout> {
         } on FirebaseAuthException catch (e) {
           if (e.code == 'account-exists-with-different-credential') {
             showExceptionAlertDialog(
-              context: context,
+              context: buildContext,
               exception: 'Account exist with different credential',
               title: "Error",
             );
           } else if (e.code == 'invalid-credential') {
             showExceptionAlertDialog(
-              context: context,
+              context: buildContext,
               exception: 'Invalid credential',
               title: "Error",
             );
           }
         } catch (e) {
           showExceptionAlertDialog(
-            context: context,
+            context: buildContext,
             exception: e,
             title: "Error",
           );
@@ -266,7 +268,7 @@ class _LoginLayoutState extends State<LoginLayout> {
       }
     } catch (e) {
       showExceptionAlertDialog(
-        context: context,
+        context: buildContext,
         exception: e,
         title: "Error",
       );

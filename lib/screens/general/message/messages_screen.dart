@@ -83,8 +83,8 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
   @override
   void dispose() {
-    msgAddedStream.cancel();
-    msgChangedStream.cancel();
+    msgAddedStream?.cancel();
+    msgChangedStream?.cancel();
     super.dispose();
   }
 

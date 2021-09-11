@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -7,6 +6,7 @@ import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/core/models/load_response.dart';
 import 'package:mms_app/core/routes/router.dart';
+import 'package:mms_app/core/storage/local_storage.dart';
 import 'package:mms_app/screens/general/filter_screen.dart';
 import 'package:mms_app/screens/trucker/home/all_already_taken.dart';
 import 'package:mms_app/screens/user/loads/loads_info_screen.dart';
@@ -30,7 +30,7 @@ class TruckerHomeScreen extends StatefulWidget {
 class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
   bool isPostLoad = true;
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  String uid = FirebaseAuth.instance.currentUser.uid;
+  String uid = AppCache.getUser.uid;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +48,7 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                 Row(
                   children: [
                     regularText(
-                      'Welcome John',
+                      'Welcome ${AppCache.getUser.name}',
                       fontSize: 22.sp,
                       fontWeight: FontWeight.w700,
                       color: AppColors.primaryColor,

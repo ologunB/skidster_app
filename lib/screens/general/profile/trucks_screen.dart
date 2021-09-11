@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/core/models/truck_response.dart';
 import 'package:mms_app/core/routes/router.dart';
+import 'package:mms_app/core/storage/local_storage.dart';
 import 'package:mms_app/screens/trucker/auth/set_profile_screen.dart';
 import 'package:mms_app/screens/widgets/app_empty_widget.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
@@ -20,7 +20,7 @@ class MyTrucksScreen extends StatefulWidget {
 
 class _MyTrucksScreenState extends State<MyTrucksScreen> {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  String uid = FirebaseAuth.instance.currentUser.uid;
+  String uid = AppCache.getUser.uid;
 
   @override
   void initState() {
@@ -259,7 +259,6 @@ class _MyTrucksScreenState extends State<MyTrucksScreen> {
 
   delete(String id, context) {
     FirebaseFirestore _firestore = FirebaseFirestore.instance;
-    String uid = FirebaseAuth.instance.currentUser.uid;
     DocumentReference postRef =
         _firestore.collection('Truckers').doc('Added').collection(uid).doc(id);
 

@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/models/load_response.dart';
+import 'package:mms_app/core/storage/local_storage.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/snackbar.dart';
 
@@ -250,7 +250,7 @@ class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
     String id = widget?.loadsModel?.id ??
         Utils.randomString(no: 5) +
             DateTime.now().millisecondsSinceEpoch.toString();
-    String uid = FirebaseAuth.instance.currentUser.uid;
+    String uid = AppCache.getUser.uid;
     DocumentReference postRef =
         _firestore.collection('Loaders').doc('Added').collection(uid).doc(id);
     DocumentReference allTrucks = _firestore.collection('All-Loaders').doc(id);

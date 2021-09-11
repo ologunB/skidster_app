@@ -33,7 +33,8 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
     fromGoogle = FirebaseAuth.instance?.currentUser != null;
     if(fromGoogle){
       _uid = FirebaseAuth.instance?.currentUser?.uid;
-      _email = FirebaseAuth.instance?.currentUser?.uid;
+      _email = FirebaseAuth.instance?.currentUser?.email;
+      name.text = FirebaseAuth.instance?.currentUser?.displayName ?? '';
     }
     super.initState();
   }

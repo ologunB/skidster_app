@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
@@ -9,6 +8,7 @@ import 'package:mms_app/app/size_config/extensions.dart';
 import 'package:mms_app/core/models/login_response.dart';
 import 'package:mms_app/core/models/truck_response.dart';
 import 'package:mms_app/core/routes/router.dart';
+import 'package:mms_app/core/storage/local_storage.dart';
 import 'package:mms_app/screens/general/filter_screen.dart';
 import 'package:mms_app/screens/general/finder_details.dart';
 import 'package:mms_app/screens/general/message/message_details.dart';
@@ -28,7 +28,7 @@ class FindTruckerWidget extends StatefulWidget {
 
 class _FindTruckerWidgetState extends State<FindTruckerWidget> {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  String uid = FirebaseAuth.instance.currentUser.uid;
+  String uid = AppCache.getUser.uid;
 
   bool isLoading = false;
   List<TruckModel> myTrucks = [];

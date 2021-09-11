@@ -6,9 +6,11 @@ import 'package:logger/logger.dart';
 
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/routes/router.dart';
+import 'package:mms_app/core/storage/local_storage.dart';
 import 'package:mms_app/core/utils/show_alert_dialog.dart';
 import 'package:mms_app/core/utils/show_exception_alert_dialog.dart';
 import 'package:mms_app/screens/general/auth/login_layout.dart';
+import 'package:mms_app/screens/trucker/trucker_main_layout.dart';
 import 'package:mms_app/screens/user/home/get_address_view.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/custom_textfield.dart';
@@ -25,6 +27,21 @@ class TruckerSignupScreen extends StatefulWidget {
 }
 
 class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
+  bool fromGoogle = false;
+
+  String _uid, _email;
+
+  @override
+  void initState() {
+    fromGoogle = FirebaseAuth.instance?.currentUser != null;
+    if (fromGoogle) {
+      _uid = FirebaseAuth.instance?.currentUser?.uid;
+      _email = FirebaseAuth.instance?.currentUser?.email;
+      name.text = FirebaseAuth.instance?.currentUser?.displayName ?? '';
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -123,17 +140,6 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
               },
             ),
             SizedBox(height: 16.h),
-            item('Email'),
-            SizedBox(height: 8.h),
-            CustomTextField(
-              hintText: 'your@email.com',
-              validator: Utils.validateEmail,
-              obscureText: false,
-              controller: email,
-              textInputType: TextInputType.emailAddress,
-              textInputAction: TextInputAction.next,
-            ),
-            SizedBox(height: 16.h),
             item('Phone Number'),
             SizedBox(height: 8.h),
             CustomTextField(
@@ -144,26 +150,43 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
               textInputType: TextInputType.phone,
               textInputAction: TextInputAction.next,
             ),
-            SizedBox(height: 16.h),
-            item('Password'),
-            SizedBox(height: 8.h),
-            CustomTextField(
-              hintText: 'Enter password',
-              controller: password,
-              validator: Utils.isValidPassword,
-              obscureText: obscureText,
-              textInputAction: TextInputAction.done,
-              suffixIcon: InkWell(
-                  onTap: () {
-                    obscureText = !obscureText;
-                    setState(() {});
-                  },
-                  child: Icon(
-                    obscureText ? Icons.visibility_off : Icons.visibility,
-                    color: Colors.black,
-                  )),
-            ),
-            SizedBox(height: 16.h),
+            if (!fromGoogle)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 16.h),
+                  item('Email'),
+                  SizedBox(height: 8.h),
+                  CustomTextField(
+                    hintText: 'your@email.com',
+                    validator: Utils.validateEmail,
+                    obscureText: false,
+                    controller: email,
+                    textInputType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                  ),
+                  SizedBox(height: 16.h),
+                  item('Password'),
+                  SizedBox(height: 8.h),
+                  CustomTextField(
+                    hintText: 'Enter password',
+                    controller: password,
+                    validator: Utils.isValidPassword,
+                    obscureText: obscureText,
+                    textInputAction: TextInputAction.done,
+                    suffixIcon: InkWell(
+                        onTap: () {
+                          obscureText = !obscureText;
+                          setState(() {});
+                        },
+                        child: Icon(
+                          obscureText ? Icons.visibility_off : Icons.visibility,
+                          color: Colors.black,
+                        )),
+                  ),
+                  SizedBox(height: 16.h),
+                ],
+              ),
           ],
         ),
       ),
@@ -329,66 +352,100 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
   }
 
   void signup(context) async {
-    await _firebaseAuth
-        .createUserWithEmailAndPassword(
-            email: email.text, password: password.text)
-        .then((value) {
-      User user = value.user;
+    if (fromGoogle) {
+      Map<String, dynamic> mData = Map();
+      mData.putIfAbsent("name", () => name.text);
+      mData.putIfAbsent("phone", () => phone.text);
+      mData.putIfAbsent("email", () => _email);
 
-      Logger().d(user.uid);
-      if (user != null) {
-        user.sendEmailVerification().then((verify) {
-          Map<String, dynamic> mData = Map();
-          mData.putIfAbsent("name", () => name.text);
-          mData.putIfAbsent("company_name", () => companyName.text);
-          mData.putIfAbsent("company_phone", () => companyPhone.text);
-          mData.putIfAbsent("company_address", () => address.text);
-          mData.putIfAbsent("phone", () => phone.text);
-          mData.putIfAbsent("email", () => email.text);
-          mData.putIfAbsent("type", () => "trucker");
-          mData.putIfAbsent("uid", () => user.uid);
-          mData.putIfAbsent("plan", () => "free");
-          mData.putIfAbsent(
-              "updated_at", () => DateTime.now().millisecondsSinceEpoch);
+      mData.putIfAbsent("company_name", () => companyName.text);
+      mData.putIfAbsent("company_phone", () => companyPhone.text);
+      mData.putIfAbsent("company_address", () => address.text);
+      mData.putIfAbsent("type", () => "trucker");
+      mData.putIfAbsent("uid", () => _uid);
+      mData.putIfAbsent("plan", () => "free");
+      mData.putIfAbsent(
+          "updated_at", () => DateTime.now().millisecondsSinceEpoch);
 
-          FirebaseFirestore.instance
-              .collection("Users")
-              .doc(user.uid)
-              .set(mData)
-              .then((value) {
-            setState(() {
-              isLoading = false;
-            });
-            showAlertDialog(
-              context: context,
-              title: 'Alert',
-              content: "Verify your email in your inbox and login again!",
-              defaultActionText: 'OKAY',
-            );
-            _firebaseAuth.signOut();
-
-            routeToReplace(context, LoginLayout());
-          }).catchError((e) {
-            setState(() {
-              isLoading = false;
-            });
-            showExceptionAlertDialog(
-                context: context, exception: e, title: "Error");
-            return;
-          });
-        });
-      } else {
+      FirebaseFirestore.instance
+          .collection("Users")
+          .doc(_uid)
+          .set(mData)
+          .then((value) {
+        AppCache.setUser(mData);
+        routeToReplace(scaffoldKey.currentContext, TruckerMainLayout());
+      }).catchError((e) {
         setState(() {
           isLoading = false;
         });
-      }
-      return;
-    }).catchError((e) {
-      setState(() {
-        isLoading = false;
+        showExceptionAlertDialog(
+            context: scaffoldKey.currentContext, exception: e, title: "Error");
+        return;
       });
-      showExceptionAlertDialog(context: context, exception: e, title: "Error");
       return;
-    });
+    } else {
+      await _firebaseAuth
+          .createUserWithEmailAndPassword(
+              email: email.text, password: password.text)
+          .then((value) {
+        User user = value.user;
+
+        Logger().d(user.uid);
+        if (user != null) {
+          user.sendEmailVerification().then((verify) {
+            Map<String, dynamic> mData = Map();
+            mData.putIfAbsent("name", () => name.text);
+            mData.putIfAbsent("company_name", () => companyName.text);
+            mData.putIfAbsent("company_phone", () => companyPhone.text);
+            mData.putIfAbsent("company_address", () => address.text);
+            mData.putIfAbsent("phone", () => phone.text);
+            mData.putIfAbsent("email", () => email.text);
+            mData.putIfAbsent("type", () => "trucker");
+            mData.putIfAbsent("uid", () => user.uid);
+            mData.putIfAbsent("plan", () => "free");
+            mData.putIfAbsent(
+                "updated_at", () => DateTime.now().millisecondsSinceEpoch);
+
+            FirebaseFirestore.instance
+                .collection("Users")
+                .doc(user.uid)
+                .set(mData)
+                .then((value) {
+              setState(() {
+                isLoading = false;
+              });
+              showAlertDialog(
+                context: context,
+                title: 'Alert',
+                content: "Verify your email in your inbox and login again!",
+                defaultActionText: 'OKAY',
+              );
+              _firebaseAuth.signOut();
+
+              routeToReplace(context, LoginLayout());
+            }).catchError((e) {
+              setState(() {
+                isLoading = false;
+              });
+              showExceptionAlertDialog(
+                  context: context, exception: e, title: "Error");
+              return;
+            });
+          });
+        } else {
+          setState(() {
+            isLoading = false;
+          });
+        }
+        return;
+      }).catchError((e) {
+        setState(() {
+          isLoading = false;
+        });
+        showExceptionAlertDialog(
+            context: context, exception: e, title: "Error");
+        return;
+      });
+    }
   }
 }

@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mms_app/app/colors.dart';
+import 'package:mms_app/core/storage/local_storage.dart';
 import 'package:mms_app/core/utils/show_exception_alert_dialog.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
@@ -98,7 +98,7 @@ class _UploadCareerDocumentScreenState
   bool isLoading = false;
 
   void uploadItem() async {
-    String uid = FirebaseAuth.instance.currentUser.uid;
+    String uid = AppCache.getUser.uid;
 
     setState(() {
       isLoading = true;

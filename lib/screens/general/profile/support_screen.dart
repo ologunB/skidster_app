@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/storage/local_storage.dart';
@@ -64,7 +63,7 @@ class _SupportScreenState extends State<SupportScreen> {
                   return;
                 }
                 FirebaseFirestore _firestore = FirebaseFirestore.instance;
-                String uid = FirebaseAuth.instance.currentUser.uid;
+                String uid = AppCache.getUser.uid;
                 String id = Utils.randomString(no: 5) +
                     DateTime.now().millisecondsSinceEpoch.toString();
 

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -33,7 +32,7 @@ class LoadsStatusNotifiScreen extends StatefulWidget {
 class _LoadsStatusNotifiScreenState extends State<LoadsStatusNotifiScreen> {
   bool favorite = false;
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  String uid = FirebaseAuth.instance.currentUser.uid;
+  String uid = AppCache.getUser.uid;
 
   LoadsModel myLoad;
 

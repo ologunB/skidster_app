@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -357,7 +356,7 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
     FirebaseFirestore _firestore = FirebaseFirestore.instance;
     String id = Utils.randomString(no: 5) +
         DateTime.now().millisecondsSinceEpoch.toString();
-    String uid = FirebaseAuth.instance.currentUser.uid;
+    String uid = AppCache.getUser.uid;
     DocumentReference postRef =
         _firestore.collection('Truckers').doc('Added').collection(uid).doc(id);
 

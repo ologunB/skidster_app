@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mms_app/app/colors.dart';
-import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/core/models/load_response.dart';
 import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/core/storage/local_storage.dart';
@@ -28,7 +26,7 @@ class LoadsScreen extends StatefulWidget {
 
 class _LoadsScreenState extends State<LoadsScreen> {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  String uid = FirebaseAuth.instance.currentUser.uid;
+  String uid = AppCache.getUser.uid;
 
   int progressLength = 2;
 

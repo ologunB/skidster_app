@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/core/models/truck_response.dart';
 import 'package:mms_app/core/routes/router.dart';
+import 'package:mms_app/core/storage/local_storage.dart';
 import 'package:mms_app/screens/widgets/app_empty_widget.dart';
 import 'package:mms_app/screens/widgets/custom_loader.dart';
 import 'package:mms_app/screens/widgets/error_widget.dart';
@@ -24,7 +24,7 @@ class SavedProfilesScreen extends StatefulWidget {
 
 class _SavedProfilesScreenState extends State<SavedProfilesScreen> {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  String uid = FirebaseAuth.instance.currentUser.uid;
+  String uid = AppCache.getUser.uid;
 
   @override
   Widget build(BuildContext context) {
