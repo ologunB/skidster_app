@@ -37,6 +37,7 @@ class _UserMainLayoutState extends State<UserMainLayout> {
 
   @override
   void initState() {
+    userMainPageController = PageController();
     adderStream = _firestore.snapshots().listen((event) {
       notificationCount = 0;
       event.docs.forEach((element) {

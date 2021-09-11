@@ -5,6 +5,7 @@ import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/core/models/truck_response.dart';
 import 'package:mms_app/core/routes/router.dart';
+import 'package:mms_app/screens/widgets/app_empty_widget.dart';
 import 'package:mms_app/screens/widgets/custom_loader.dart';
 import 'package:mms_app/screens/widgets/error_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
@@ -71,24 +72,7 @@ class _SavedProfilesScreenState extends State<SavedProfilesScreen> {
                         myLoads.add(model);
                       });
                       return myLoads.isEmpty
-                          ? Container(
-                              height: SizeConfig.screenHeight / 3,
-                              alignment: Alignment.center,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    'images/empty.png',
-                                    height: 100.h,
-                                  ),
-                                  regularText(
-                                    'No saved profiles',
-                                    fontSize: 16.sp,
-                                    color: AppColors.grey,
-                                  ),
-                                ],
-                              ),
-                            )
+                          ? AppEmptyWidget(text: 'No saved Profiles')
                           : ListView.builder(
                               padding: EdgeInsets.symmetric(horizontal: 20.h),
                               shrinkWrap: true,

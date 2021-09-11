@@ -35,7 +35,7 @@ class AppNotificationsWidget extends StatelessWidget {
                   ),
                   child: regularText(
                     notificationCount.toString(),
-                    fontSize: 14.sp,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w600,
                     color: AppColors.white,
                   ),

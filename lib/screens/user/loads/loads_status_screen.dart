@@ -44,34 +44,30 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
         .collection('Loaders')
         .doc('Added')
         .collection(uid)
-        .orderBy('updated_at', descending: true)
+        .doc(widget.loadsModel.id)
         .snapshots()
         .listen((event) {
-      event.docs.forEach((element) {
-        LoadsModel model = LoadsModel.fromJson(element.data());
-        if (model.id == widget.loadsModel.id) {
-          myLoad = model;
-          setState(() {});
-          Logger().d(myLoad.toJson());
-        }
-      });
+      Logger().d(event.data());
+      if (event.data() == null) {
+        return;
+      }
+      myLoad = LoadsModel.fromJson(event.data());
+      setState(() {});
     });
 
     add2stream = _firestore
         .collection('Loaders')
         .doc('Completed')
         .collection(uid)
-        .orderBy('updated_at', descending: true)
+        .doc(widget.loadsModel.id)
         .snapshots()
         .listen((event) {
-      event.docs.forEach((element) {
-        LoadsModel model = LoadsModel.fromJson(element.data());
-        if (model.id == widget.loadsModel.id) {
-          myLoad = model;
-          setState(() {});
-          Logger().d(myLoad.toJson());
-        }
-      });
+      Logger().d(event.data());
+      if (event.data() == null) {
+        return;
+      }
+      myLoad = LoadsModel.fromJson(event.data());
+      setState(() {});
     });
     super.initState();
   }

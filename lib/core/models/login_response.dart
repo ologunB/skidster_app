@@ -5,8 +5,8 @@ class UserData {
   String companyPhone;
   String companyAddress;
   String plan;
-  bool isEmailVerified;
-  bool isPhoneVerified;
+  String carrierDocs;
+  String driverLicense;
   String name;
   String phone;
   String type;
@@ -15,9 +15,9 @@ class UserData {
 
   UserData(
       {this.plan,
-      this.isEmailVerified,
+      this.carrierDocs,
       this.email,
-      this.isPhoneVerified,
+      this.driverLicense,
       this.updatedAt,
       this.name,
       this.phone,
@@ -28,9 +28,9 @@ class UserData {
 
   UserData.fromJson(dynamic json) {
     plan = json['plan'];
-    isEmailVerified = json['is_email_verified'];
+    carrierDocs = json['carrier_doc'];
     email = json['email'];
-    isPhoneVerified = json['is_phone_verified'];
+    driverLicense = json['driver_license'];
     updatedAt = json['updated_at'];
     name = json['name'];
     companyName = json['company_name'];
@@ -45,9 +45,9 @@ class UserData {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
     data['plan'] = this.plan;
-    data['is_email_verified'] = this.isEmailVerified;
+    data['carrier_doc'] = this.carrierDocs;
     data['email'] = this.email;
-    data['is_phone_verified'] = this.isPhoneVerified;
+    data['driver_license'] = this.driverLicense;
     data['updated_at'] = this.updatedAt;
     data['name'] = this.name;
     data['company_name'] = this.companyName;

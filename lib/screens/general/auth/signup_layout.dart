@@ -1,15 +1,28 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:logger/logger.dart';
 import 'package:mms_app/app/colors.dart';
+import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/core/routes/router.dart';
- import 'package:mms_app/screens/general/auth/select_signup_type.dart';
+import 'package:mms_app/core/utils/show_alert_dialog.dart';
+import 'package:mms_app/core/utils/show_exception_alert_dialog.dart';
+import 'package:mms_app/screens/general/auth/select_signup_type.dart';
 
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
 
-class SignupLayout extends StatelessWidget {
+class SignupLayout extends StatefulWidget {
+  const SignupLayout({Key key}) : super(key: key);
+
+  @override
+  _SignupLayoutState createState() => _SignupLayoutState();
+}
+
+class _SignupLayoutState extends State<SignupLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,26 +85,42 @@ class SignupLayout extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Container(
-                    height: 50.h,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        color: Color(0xffF82A2A),
-                        borderRadius: BorderRadius.circular(8.h),
-                        border: Border.all(color: Color(0xffF82A2A))),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset('images/google.png',
-                            height: 20.h, width: 20.h),
-                        SizedBox(width: 10.h),
-                        regularText(
-                          'Continue with Google',
-                          fontSize: 17.sp,
-                          color: AppColors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ],
+                  InkWell(
+                    onTap: () {
+                      signInWithGoogle(context);
+                    },
+                    child: Container(
+                      height: 50.h,
+                      alignment: Alignment.center,
+                      width: SizeConfig.screenWidth,
+                      decoration: BoxDecoration(
+                          color: Color(0xffF82A2A),
+                          borderRadius: BorderRadius.circular(8.h),
+                          border: Border.all(color: Color(0xffF82A2A))),
+                      child: isLoading
+                          ? SizedBox(
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                              height: 20.h,
+                              width: 20.h,
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset('images/google.png',
+                                    height: 20.h, width: 20.h),
+                                SizedBox(width: 10.h),
+                                regularText(
+                                  'Continue with Google',
+                                  fontSize: 17.sp,
+                                  color: AppColors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ],
+                            ),
                     ),
                   ),
                   SizedBox(height: 24.h),
@@ -131,5 +160,73 @@ class SignupLayout extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  bool isLoading = false;
+
+  Future signInWithGoogle(context) async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+
+      final GoogleSignInAccount googleSignInAccount =
+          await googleSignIn.signIn();
+
+      if (googleSignInAccount != null) {
+        final GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
+
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleSignInAuthentication.accessToken,
+          idToken: googleSignInAuthentication.idToken,
+        );
+
+        try {
+          final UserCredential value =
+              await _firebaseAuth.signInWithCredential(credential);
+
+          if (value.user != null) {
+            setState(() {
+              isLoading = false;
+            });
+            navigateTo(context, SelectUserType());
+          } else {
+            setState(() {
+              isLoading = false;
+            });
+          }
+        } on FirebaseAuthException catch (e) {
+          if (e.code == 'account-exists-with-different-credential') {
+            showExceptionAlertDialog(
+              context: context,
+              exception: 'Account exist with different credential',
+              title: "Error",
+            );
+          } else if (e.code == 'invalid-credential') {
+            showExceptionAlertDialog(
+              context: context,
+              exception: 'Invalid credential',
+              title: "Error",
+            );
+          }
+        } catch (e) {
+          showExceptionAlertDialog(
+            context: context,
+            exception: e,
+            title: "Error",
+          );
+        }
+      }
+    } catch (e) {
+      showExceptionAlertDialog(
+        context: context,
+        exception: e,
+        title: "Error",
+      );
+    }
   }
 }

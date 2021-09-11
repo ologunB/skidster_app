@@ -8,6 +8,7 @@ import 'package:mms_app/core/models/load_response.dart';
 import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/core/storage/local_storage.dart';
 import 'package:mms_app/screens/user/loads/loads_status_screen.dart';
+import 'package:mms_app/screens/widgets/app_empty_widget.dart';
 import 'package:mms_app/screens/widgets/custom_loader.dart';
 import 'package:mms_app/screens/widgets/error_widget.dart';
 import 'package:mms_app/screens/widgets/notification_widget.dart';
@@ -87,24 +88,7 @@ class _LoadsScreenState extends State<LoadsScreen> {
                       myLoads.add(model);
                     });
                     return myLoads.isEmpty
-                        ? Container(
-                            height: SizeConfig.screenHeight / 3,
-                            alignment: Alignment.center,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  'images/empty.png',
-                                  height: 100.h,
-                                ),
-                                regularText(
-                                  'Load tray is Empty',
-                                  fontSize: 16.sp,
-                                  color: AppColors.grey,
-                                ),
-                              ],
-                            ),
-                          )
+                        ? AppEmptyWidget(text: 'No Load in progress')
                         : ListView(
                             physics: ClampingScrollPhysics(),
                             shrinkWrap: true,
@@ -275,7 +259,9 @@ class _LoadsScreenState extends State<LoadsScreen> {
                                                   SingleChildScrollView(
                                                     scrollDirection:
                                                         Axis.horizontal,
-                                                    child: Row(mainAxisSize: MainAxisSize.min,
+                                                    child: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
                                                       children: [
                                                         if (model
                                                             .weight.isNotEmpty)
@@ -284,7 +270,6 @@ class _LoadsScreenState extends State<LoadsScreen> {
                                                             '\$50-\$${model.price}'),
                                                         item1(
                                                             '${model.skids} Skids'),
-
                                                         if (model.isBooked ??
                                                             false)
                                                           Container(
@@ -385,24 +370,7 @@ class _LoadsScreenState extends State<LoadsScreen> {
                       myLoads.add(model);
                     });
                     return myLoads.isEmpty
-                        ? Container(
-                            height: SizeConfig.screenHeight / 3,
-                            alignment: Alignment.center,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  'images/empty.png',
-                                  height: 100.h,
-                                ),
-                                regularText(
-                                  'No Completed Load',
-                                  fontSize: 16.sp,
-                                  color: AppColors.grey,
-                                ),
-                              ],
-                            ),
-                          )
+                        ? AppEmptyWidget(text: 'No Completed Load')
                         : ListView.builder(
                             padding: EdgeInsets.symmetric(horizontal: 20.h),
                             shrinkWrap: true,

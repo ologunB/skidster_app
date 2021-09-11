@@ -5,9 +5,11 @@ import 'package:logger/logger.dart';
 
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/routes/router.dart';
+import 'package:mms_app/core/storage/local_storage.dart';
 import 'package:mms_app/core/utils/show_alert_dialog.dart';
 import 'package:mms_app/core/utils/show_exception_alert_dialog.dart';
 import 'package:mms_app/screens/general/auth/login_layout.dart';
+import 'package:mms_app/screens/user/user_main_layout.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/custom_textfield.dart';
 import 'package:mms_app/screens/widgets/snackbar.dart';
@@ -23,6 +25,19 @@ class UserSignupScreen extends StatefulWidget {
 }
 
 class _UserSignupScreenState extends State<UserSignupScreen> {
+  bool fromGoogle = false;
+
+  String _uid, _email;
+  @override
+  void initState() {
+    fromGoogle = FirebaseAuth.instance?.currentUser != null;
+    if(fromGoogle){
+      _uid = FirebaseAuth.instance?.currentUser?.uid;
+      _email = FirebaseAuth.instance?.currentUser?.uid;
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +51,7 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
       bottomNavigationBar: Container(
         margin: EdgeInsets.symmetric(horizontal: 30.h, vertical: 10.h),
         child: SafeArea(
-          child: buttonWithBorder('Sign Up',
+          child: buttonWithBorder(fromGoogle ? 'Complete' : 'Sign Up',
               buttonColor: AppColors.primaryColor,
               fontSize: 17.sp,
               height: 50.h,
@@ -58,7 +73,7 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
           padding: EdgeInsets.symmetric(horizontal: 30.h),
           children: [
             regularText(
-              'Create Account',
+              fromGoogle ? 'Complete Signup' : 'Create Account',
               fontSize: 40.sp,
               fontWeight: FontWeight.w700,
               color: AppColors.primaryColor,
@@ -87,36 +102,42 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
               controller: phone,
             ),
             SizedBox(height: 16.h),
-            item('Email'),
-            SizedBox(height: 8.h),
-            CustomTextField(
-              hintText: 'Your Email',
-              validator: Utils.validateEmail,
-              obscureText: false,
-              textInputType: TextInputType.emailAddress,
-              textInputAction: TextInputAction.next,
-              controller: email,
-            ),
-            SizedBox(height: 16.h),
-            item('Password'),
-            SizedBox(height: 8.h),
-            CustomTextField(
-              hintText: 'Enter password',
-              validator: Utils.isValidPassword,
-              obscureText: obscureText,
-              textInputAction: TextInputAction.done,
-              controller: password,
-              suffixIcon: InkWell(
-                  onTap: () {
-                    obscureText = !obscureText;
-                    setState(() {});
-                  },
-                  child: Icon(
-                    obscureText ? Icons.visibility_off : Icons.visibility,
-                    color: Colors.black,
-                  )),
-            ),
-            SizedBox(height: 16.h),
+            if (!fromGoogle)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  item('Email'),
+                  SizedBox(height: 8.h),
+                  CustomTextField(
+                    hintText: 'Your Email',
+                    validator: Utils.validateEmail,
+                    obscureText: false,
+                    textInputType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                    controller: email,
+                  ),
+                  SizedBox(height: 16.h),
+                  item('Password'),
+                  SizedBox(height: 8.h),
+                  CustomTextField(
+                    hintText: 'Enter password',
+                    validator: Utils.isValidPassword,
+                    obscureText: obscureText,
+                    textInputAction: TextInputAction.done,
+                    controller: password,
+                    suffixIcon: InkWell(
+                        onTap: () {
+                          obscureText = !obscureText;
+                          setState(() {});
+                        },
+                        child: Icon(
+                          obscureText ? Icons.visibility_off : Icons.visibility,
+                          color: Colors.black,
+                        )),
+                  ),
+                  SizedBox(height: 16.h),
+                ],
+              ),
           ],
         ),
       ),
@@ -144,7 +165,7 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
   TextEditingController phone = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
-  TextEditingController code = TextEditingController( );
+  TextEditingController code = TextEditingController();
 
   bool alreadyVerified;
 
@@ -160,7 +181,7 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
             code.text = _credential.smsCode;
             Navigator.pop(context);
             Logger().d(code.text);
-               _firebaseAuth
+            _firebaseAuth
                 .signInWithCredential(_credential)
                 .then((UserCredential result) {
               _firebaseAuth.signOut();
@@ -308,67 +329,96 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
   }
 
   void signup(context) async {
-    await _firebaseAuth
-        .createUserWithEmailAndPassword(
-            email: email.text, password: password.text)
-        .then((value) {
-      User user = value.user;
+    if (fromGoogle) {
+      Map<String, dynamic> mData = Map();
+      mData.putIfAbsent("name", () => name.text);
+      mData.putIfAbsent("phone", () => phone.text);
+      mData.putIfAbsent("email", () => _email);
+      mData.putIfAbsent("type", () => "customer");
+      mData.putIfAbsent("uid", () => _uid);
+      mData.putIfAbsent("plan", () => "free");
+      mData.putIfAbsent(
+          "updated_at", () => DateTime.now().millisecondsSinceEpoch);
 
-      Logger().d(user.uid);
-      if (user != null) {
-        user.sendEmailVerification().then((verify) {
-          Map<String, dynamic> mData = Map();
-          mData.putIfAbsent("name", () => name.text);
-          mData.putIfAbsent("phone", () => phone.text);
-          mData.putIfAbsent("email", () => email.text);
-          mData.putIfAbsent("type", () => "customer");
-          mData.putIfAbsent("uid", () => user.uid);
-          mData.putIfAbsent("plan", () => "free");
-          mData.putIfAbsent(
-              "updated_at", () => DateTime.now().millisecondsSinceEpoch);
-
-          FirebaseFirestore.instance
-              .collection("Users")
-              .doc(user.uid)
-              .set(mData)
-              .then((value) {
-            setState(() {
-              isLoading = false;
-            });
-            showAlertDialog(
-              context: scaffoldKey.currentContext,
-              title: 'Alert',
-              content: "Verify your email in your inbox and login again!",
-              defaultActionText: 'OKAY',
-            );
-            _firebaseAuth.signOut();
-
-            routeToReplace(scaffoldKey.currentContext, LoginLayout());
-          }).catchError((e) {
-            setState(() {
-              isLoading = false;
-            });
-            showExceptionAlertDialog(
-                context: scaffoldKey.currentContext,
-                exception: e,
-                title: "Error");
-            return;
-          });
-        });
-      } else {
+      FirebaseFirestore.instance
+          .collection("Users")
+          .doc(_uid)
+          .set(mData)
+          .then((value) {
+        AppCache.setUser(mData);
+        routeToReplace(scaffoldKey.currentContext, UserMainLayout());
+      }).catchError((e) {
         setState(() {
           isLoading = false;
         });
-      }
-      return;
-    }).catchError((e) {
-      Logger().d(e);
-      setState(() {
-        isLoading = false;
+        showExceptionAlertDialog(
+            context: scaffoldKey.currentContext, exception: e, title: "Error");
+        return;
       });
-      showExceptionAlertDialog(
-          context: scaffoldKey.currentContext, exception: e, title: "Error");
       return;
-    });
+    } else {
+      await _firebaseAuth
+          .createUserWithEmailAndPassword(
+              email: email.text, password: password.text)
+          .then((value) {
+        User user = value.user;
+
+        Logger().d(user.uid);
+        if (user != null) {
+          user.sendEmailVerification().then((verify) {
+            Map<String, dynamic> mData = Map();
+            mData.putIfAbsent("name", () => name.text);
+            mData.putIfAbsent("phone", () => phone.text);
+            mData.putIfAbsent("email", () => email.text);
+            mData.putIfAbsent("type", () => "customer");
+            mData.putIfAbsent("uid", () => user.uid);
+            mData.putIfAbsent("plan", () => "free");
+            mData.putIfAbsent(
+                "updated_at", () => DateTime.now().millisecondsSinceEpoch);
+
+            FirebaseFirestore.instance
+                .collection("Users")
+                .doc(user.uid)
+                .set(mData)
+                .then((value) {
+              setState(() {
+                isLoading = false;
+              });
+              showAlertDialog(
+                context: scaffoldKey.currentContext,
+                title: 'Alert',
+                content: "Verify your email in your inbox and login again!",
+                defaultActionText: 'OKAY',
+              );
+              _firebaseAuth.signOut();
+
+              routeToReplace(scaffoldKey.currentContext, LoginLayout());
+            }).catchError((e) {
+              setState(() {
+                isLoading = false;
+              });
+              showExceptionAlertDialog(
+                  context: scaffoldKey.currentContext,
+                  exception: e,
+                  title: "Error");
+              return;
+            });
+          });
+        } else {
+          setState(() {
+            isLoading = false;
+          });
+        }
+        return;
+      }).catchError((e) {
+        Logger().d(e);
+        setState(() {
+          isLoading = false;
+        });
+        showExceptionAlertDialog(
+            context: scaffoldKey.currentContext, exception: e, title: "Error");
+        return;
+      });
+    }
   }
 }

@@ -6,6 +6,7 @@ import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/core/models/truck_response.dart';
 import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/screens/trucker/auth/set_profile_screen.dart';
+import 'package:mms_app/screens/widgets/app_empty_widget.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/custom_loader.dart';
 import 'package:mms_app/screens/widgets/error_widget.dart';
@@ -82,15 +83,7 @@ class _MyTrucksScreenState extends State<MyTrucksScreen> {
                         myTrucks.add(model);
                       });
                       return myTrucks.isEmpty
-                          ? Container(
-                              height: SizeConfig.screenHeight / 2,
-                              alignment: Alignment.center,
-                              child: regularText(
-                                'Truck tray is Empty',
-                                fontSize: 14.sp,
-                                color: AppColors.grey,
-                              ),
-                            )
+                          ? AppEmptyWidget(text: 'Trucks tray is Empty')
                           : ListView.builder(
                               shrinkWrap: true,
                               itemCount: myTrucks.length,
@@ -119,7 +112,7 @@ class _MyTrucksScreenState extends State<MyTrucksScreen> {
                                       Row(
                                         children: [
                                           regularText(
-                                            '#${model.id}',
+                                            '#${model.id.toUpperCase()}',
                                             fontSize: 13.sp,
                                             color: AppColors.grey,
                                           ),
@@ -161,8 +154,8 @@ class _MyTrucksScreenState extends State<MyTrucksScreen> {
                                                                   FontWeight
                                                                       .w400,
                                                               onTap: () {
-                                                                delete(
-                                                                    model.id, context);
+                                                                delete(model.id,
+                                                                    context);
                                                               },
                                                             ),
                                                           ),

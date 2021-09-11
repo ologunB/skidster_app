@@ -1,17 +1,34 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mms_app/app/colors.dart';
+import 'package:mms_app/app/size_config/config.dart';
+import 'package:mms_app/core/models/login_response.dart';
 import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/core/storage/local_storage.dart';
+import 'package:mms_app/core/utils/show_alert_dialog.dart';
+import 'package:mms_app/core/utils/show_exception_alert_dialog.dart';
 import 'package:mms_app/screens/general/auth/login_screen.dart';
+import 'package:mms_app/screens/general/auth/select_signup_type.dart';
 import 'package:mms_app/screens/general/auth/signup_layout.dart';
+import 'package:mms_app/screens/trucker/trucker_main_layout.dart';
+import 'package:mms_app/screens/user/user_main_layout.dart';
 
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
 
-class LoginLayout extends StatelessWidget {
+class LoginLayout extends StatefulWidget {
+  const LoginLayout({Key key}) : super(key: key);
+
+  @override
+  _LoginLayoutState createState() => _LoginLayoutState();
+}
+
+class _LoginLayoutState extends State<LoginLayout> {
   @override
   Widget build(BuildContext context) {
     AppCache.haveFirstView();
@@ -75,26 +92,42 @@ class LoginLayout extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Container(
-                    height: 50.h,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        color: Color(0xffF82A2A),
-                        borderRadius: BorderRadius.circular(8.h),
-                        border: Border.all(color: Color(0xffF82A2A))),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset('images/google.png',
-                            height: 20.h, width: 20.h),
-                        SizedBox(width: 10.h),
-                        regularText(
-                          'Continue with Google',
-                          fontSize: 17.sp,
-                          color: AppColors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ],
+                  InkWell(
+                    onTap: () {
+                      signInWithGoogle(context);
+                    },
+                    child: Container(
+                      height: 50.h,
+                      alignment: Alignment.center,
+                      width: SizeConfig.screenWidth,
+                      decoration: BoxDecoration(
+                          color: Color(0xffF82A2A),
+                          borderRadius: BorderRadius.circular(8.h),
+                          border: Border.all(color: Color(0xffF82A2A))),
+                      child: isLoading
+                          ? SizedBox(
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                              height: 20.h,
+                              width: 20.h,
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset('images/google.png',
+                                    height: 20.h, width: 20.h),
+                                SizedBox(width: 10.h),
+                                regularText(
+                                  'Continue with Google',
+                                  fontSize: 17.sp,
+                                  color: AppColors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ],
+                            ),
                     ),
                   ),
                   SizedBox(height: 24.h),
@@ -134,5 +167,109 @@ class LoginLayout extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  bool isLoading = false;
+
+  Future signInWithGoogle(context) async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+
+      final GoogleSignInAccount googleSignInAccount =
+          await googleSignIn.signIn();
+
+      if (googleSignInAccount != null) {
+        final GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
+
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleSignInAuthentication.accessToken,
+          idToken: googleSignInAuthentication.idToken,
+        );
+
+        try {
+          final UserCredential value =
+              await _firebaseAuth.signInWithCredential(credential);
+
+          if (value.user != null) {
+            FirebaseFirestore.instance
+                .collection('Users')
+                .doc(value.user.uid)
+                .get()
+                .then((document) {
+              if (!document.exists) {
+                setState(() {
+                  isLoading = false;
+                });
+
+                showAlertDialog(
+                  context: context,
+                  title: 'Alert',
+                  content: "User does not exist, create an account",
+                  defaultActionText: 'OKAY',
+                );
+
+                navigateTo(context, SelectUserType());
+                return;
+              }
+              AppCache.setUser(document.data());
+
+              UserData userData = UserData.fromJson(document.data());
+              if (userData.type == 'customer') {
+                routeToReplace(context, UserMainLayout());
+              } else {
+                routeToReplace(context, TruckerMainLayout());
+              }
+            }).catchError((e) {
+              setState(() {
+                isLoading = false;
+              });
+
+              showExceptionAlertDialog(
+                  context: context, exception: e, title: "Error");
+              setState(() {
+                isLoading = false;
+              });
+              return;
+            });
+          } else {
+            setState(() {
+              isLoading = false;
+            });
+          }
+        } on FirebaseAuthException catch (e) {
+          if (e.code == 'account-exists-with-different-credential') {
+            showExceptionAlertDialog(
+              context: context,
+              exception: 'Account exist with different credential',
+              title: "Error",
+            );
+          } else if (e.code == 'invalid-credential') {
+            showExceptionAlertDialog(
+              context: context,
+              exception: 'Invalid credential',
+              title: "Error",
+            );
+          }
+        } catch (e) {
+          showExceptionAlertDialog(
+            context: context,
+            exception: e,
+            title: "Error",
+          );
+        }
+      }
+    } catch (e) {
+      showExceptionAlertDialog(
+        context: context,
+        exception: e,
+        title: "Error",
+      );
+    }
   }
 }

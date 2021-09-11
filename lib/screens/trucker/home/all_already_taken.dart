@@ -93,10 +93,19 @@ class _AllAlreadyTakenState extends State<AllAlreadyTaken> {
                         ? Container(
                             height: SizeConfig.screenHeight / 3,
                             alignment: Alignment.center,
-                            child: regularText(
-                              'Load tray is Empty',
-                              fontSize: 14.sp,
-                              color: AppColors.grey,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  'images/empty.png',
+                                  height: 100.h,
+                                ),
+                                regularText(
+                                  'Loads tray is Empty',
+                                  fontSize: 16.sp,
+                                  color: AppColors.grey,
+                                ),
+                              ],
                             ),
                           )
                         : ListView.builder(

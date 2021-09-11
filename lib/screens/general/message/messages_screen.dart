@@ -10,6 +10,7 @@ import 'package:mms_app/core/models/home_chat_model.dart';
 import 'package:mms_app/core/models/login_response.dart';
 import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/core/storage/local_storage.dart';
+import 'package:mms_app/screens/widgets/app_empty_widget.dart';
 import 'package:mms_app/screens/widgets/notification_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
@@ -111,24 +112,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
               ),
             ),
             allChats.isEmpty
-                ? Container(
-                    height: SizeConfig.screenHeight / 3,
-                    alignment: Alignment.center,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          'images/empty.png',
-                          height: 100.h,
-                        ),
-                        regularText(
-                          'Chat is Empty',
-                          fontSize: 16.sp,
-                          color: AppColors.grey,
-                        ),
-                      ],
-                    ),
-                  )
+                ? AppEmptyWidget(text: 'Chat is Empty')
                 : Expanded(
                     child: ListView.separated(
                       itemCount: allChats.length,

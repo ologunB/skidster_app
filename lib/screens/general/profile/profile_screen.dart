@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mms_app/app/colors.dart';
+import 'package:mms_app/core/models/login_response.dart';
 import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/core/storage/local_storage.dart';
 import 'package:mms_app/screens/general/auth/login_layout.dart';
@@ -10,7 +12,9 @@ import 'package:mms_app/screens/general/profile/saved_profiles.dart';
 import 'package:mms_app/screens/general/profile/support_screen.dart';
 import 'package:mms_app/screens/general/profile/terms_service_screen.dart';
 import 'package:mms_app/screens/general/profile/trucks_screen.dart';
+import 'package:mms_app/screens/trucker/auth/upload_carierdocs_screen.dart';
 import 'package:mms_app/screens/trucker/auth/upload_driverlicense_screen.dart';
+import 'package:mms_app/screens/trucker/trucker_main_layout.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
@@ -83,29 +87,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             SizedBox(height: 8.h),
             if (AppCache.userType == UserType.TRUCKER)
-              Row(
-                children: [
-                  InkWell(
-                    onTap: () {
-                      navigateTo(context, UploadDriverLicenceScreen());
-                    },
-                    child: Container(
-                      height: 40.h,
-                      alignment: Alignment.center,
-                      margin: EdgeInsets.only(bottom: 10.h),
-                      padding: EdgeInsets.symmetric(horizontal: 15.h),
-                      decoration: BoxDecoration(
-                          color: Color(0xffFFEBA3),
-                          borderRadius: BorderRadius.circular(10.h)),
-                      child: regularText(
-                        'Please verify your profile',
-                        fontSize: 15.sp,
-                        color: AppColors.primaryColor,
+              if (!hasLicense || !hasCarrierDoc)
+                Row(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        if (!hasLicense) {
+                          navigateTo(context, UploadDriverLicenceScreen());
+                        } else if (!hasCarrierDoc) {
+                          navigateTo(context, UploadCareerDocumentScreen());
+                        }
+                      },
+                      child: Container(
+                        height: 40.h,
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.only(bottom: 10.h),
+                        padding: EdgeInsets.symmetric(horizontal: 15.h),
+                        decoration: BoxDecoration(
+                            color: Color(0xffFFEBA3),
+                            borderRadius: BorderRadius.circular(10.h)),
+                        child: regularText(
+                          'Please verify your profile',
+                          fontSize: 15.sp,
+                          color: AppColors.primaryColor,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
             ListView.separated(
               physics: ClampingScrollPhysics(),
               shrinkWrap: true,

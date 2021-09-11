@@ -11,6 +11,8 @@ import 'package:mms_app/screens/general/filter_screen.dart';
 import 'package:mms_app/screens/trucker/home/all_already_taken.dart';
 import 'package:mms_app/screens/user/loads/loads_info_screen.dart';
 import 'package:mms_app/screens/user/loads/loads_status_screen.dart';
+import 'package:mms_app/screens/widgets/app_empty_widget.dart';
+import 'package:mms_app/screens/widgets/app_separator.dart';
 import 'package:mms_app/screens/widgets/custom_loader.dart';
 import 'package:mms_app/screens/widgets/error_widget.dart';
 import 'package:mms_app/screens/widgets/notification_widget.dart';
@@ -219,11 +221,7 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                               myLoads.add(model);
                             });
                             return myLoads.isEmpty
-                                ? regularText(
-                                    'Loads tray is Empty',
-                                    fontSize: 13.sp,
-                                    color: AppColors.grey,
-                                  )
+                                ? AppEmptyWidget(text: 'Loads tray is Empty')
                                 : SingleChildScrollView(
                                     padding: EdgeInsets.all(8.h),
                                     scrollDirection: Axis.horizontal,
@@ -325,60 +323,86 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                                                         color: AppColors.grey,
                                                       ),
                                                       SizedBox(height: 10.h),
-                                                      Row(
-                                                        children: [
-                                                          Container(
-                                                            height: 9.h,
-                                                            width: 9.h,
-                                                            decoration: BoxDecoration(
-                                                                border: Border.all(
-                                                                    width: 1.h,
-                                                                    color: AppColors
-                                                                        .primaryColor),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10.h)),
-                                                          ),
-                                                          SizedBox(width: 10.h),
-                                                          Expanded(
-                                                            child: regularText(
-                                                              model.pickup,
-                                                              fontSize: 15.sp,
-                                                              color: AppColors
-                                                                  .primaryColor,
+                                                      IntrinsicHeight(
+                                                        child: Row(
+                                                          children: [
+                                                            Padding(
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      vertical:
+                                                                          4.h),
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  Container(
+                                                                    height: 9.h,
+                                                                    width: 9.h,
+                                                                    decoration: BoxDecoration(
+                                                                        border: Border.all(
+                                                                            width: 1
+                                                                                .h,
+                                                                            color: AppColors
+                                                                                .primaryColor),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(10.h)),
+                                                                  ),
+                                                                  Expanded(
+                                                                      child:
+                                                                         SizedBox()?? MySeparator()),
+                                                                  Container(
+                                                                    height: 9.h,
+                                                                    width: 9.h,
+                                                                    decoration: BoxDecoration(
+                                                                        color: AppColors
+                                                                            .primaryColor,
+                                                                        border: Border.all(
+                                                                            width: 1
+                                                                                .h,
+                                                                            color: AppColors
+                                                                                .primaryColor),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(10.h)),
+                                                                  ),
+                                                                ],
+                                                              ),
                                                             ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      SizedBox(height: 8.h),
-                                                      Row(
-                                                        children: [
-                                                          Container(
-                                                            height: 9.h,
-                                                            width: 9.h,
-                                                            decoration: BoxDecoration(
-                                                                color: AppColors
-                                                                    .primaryColor,
-                                                                border: Border.all(
-                                                                    width: 1.h,
+                                                            SizedBox(
+                                                                width: 10.h),
+                                                            Expanded(
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Expanded(
+                                                                    child:
+                                                                        regularText(
+                                                                      model
+                                                                          .pickup,
+                                                                      fontSize:
+                                                                          15.sp,
+                                                                      color: AppColors
+                                                                          .primaryColor,
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                      height:
+                                                                          10.h),
+                                                                  regularText(
+                                                                    model
+                                                                        .dropoff,
+                                                                    fontSize:
+                                                                        15.sp,
                                                                     color: AppColors
-                                                                        .primaryColor),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10.h)),
-                                                          ),
-                                                          SizedBox(width: 10.h),
-                                                          Expanded(
-                                                            child: regularText(
-                                                              model.dropoff,
-                                                              fontSize: 15.sp,
-                                                              color: AppColors
-                                                                  .primaryColor,
-                                                            ),
-                                                          ),
-                                                        ],
+                                                                        .primaryColor,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            )
+                                                          ],
+                                                        ),
                                                       ),
                                                       SizedBox(height: 10.h),
                                                       Row(
@@ -418,8 +442,7 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                         Spacer(),
                         InkWell(
                           onTap: () {
-                            navigateTo(
-                                context, AllAlreadyTaken(type: 'Added'));
+                            navigateTo(context, AllAlreadyTaken(type: 'Added'));
                           },
                           child: regularText('View all',
                               fontSize: 15.sp,

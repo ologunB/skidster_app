@@ -4,11 +4,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:logger/logger.dart';
 import 'package:mms_app/app/colors.dart';
 
 import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
+import 'package:mms_app/core/models/login_response.dart';
 import 'package:mms_app/core/routes/router.dart';
+import 'package:mms_app/core/storage/local_storage.dart';
 import 'package:mms_app/screens/general/message/messages_screen.dart';
 import 'package:mms_app/screens/general/profile/profile_screen.dart';
 import 'package:mms_app/screens/trucker/auth/set_profile_screen.dart';
@@ -22,6 +25,9 @@ class TruckerMainLayout extends StatefulWidget {
   @override
   _TruckerMainLayoutState createState() => _TruckerMainLayoutState();
 }
+
+bool hasLicense = true;
+bool hasCarrierDoc = true;
 
 class _TruckerMainLayoutState extends State<TruckerMainLayout> {
   int currentIndex = 0;
@@ -41,6 +47,8 @@ class _TruckerMainLayoutState extends State<TruckerMainLayout> {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String uid = FirebaseAuth.instance.currentUser.uid;
 
+
+
   StreamSubscription trucksListner;
 
   @override
@@ -57,6 +65,23 @@ class _TruckerMainLayoutState extends State<TruckerMainLayout> {
       } else {
         print('truck isnt empty');
       }
+    });
+
+    _firestore.collection('Users').doc(AppCache.getUser.uid).snapshots().listen((event) {
+      Logger().d(event.data());
+      UserData userData = UserData.fromJson(event.data());
+      AppCache.setUser(event.data());
+      if (userData.driverLicense == null) {
+        hasLicense = false;
+      }else{
+        hasLicense = true;
+      }
+      if (userData.carrierDocs == null) {
+        hasCarrierDoc = false;
+      }else{
+        hasCarrierDoc = true;
+      }
+      setState(() {});
     });
 
     super.initState();

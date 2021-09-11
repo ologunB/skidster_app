@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 
 import 'package:mms_app/app/colors.dart';
-import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
 import 'package:mms_app/core/models/login_response.dart';
 import 'package:mms_app/core/models/truck_response.dart';
@@ -13,6 +12,7 @@ import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/screens/general/filter_screen.dart';
 import 'package:mms_app/screens/general/finder_details.dart';
 import 'package:mms_app/screens/general/message/message_details.dart';
+import 'package:mms_app/screens/widgets/app_empty_widget.dart';
 import 'package:mms_app/screens/widgets/custom_loader.dart';
 import 'package:mms_app/screens/widgets/error_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
@@ -34,6 +34,7 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
   List<TruckModel> myTrucks = [];
 
   TextEditingController searchController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -46,7 +47,8 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
             Expanded(
               child: TextFormField(
                 cursorHeight: 15.h,
-                maxLines: 1,controller: searchController,
+                maxLines: 1,
+                controller: searchController,
                 style: GoogleFonts.inter(
                   color: AppColors.primaryColor,
                   fontSize: 17.sp,
@@ -89,12 +91,12 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
                 ),
                 textAlign: TextAlign.start,
                 onChanged: (a) async {
-                   isLoading = true;
+                  isLoading = true;
                   setState(() {});
                   await FirebaseFirestore.instance
                       .collection("All-Truckers")
-                      .where("name", isGreaterThanOrEqualTo: a )
-                     //  .where("address", isGreaterThanOrEqualTo: a)
+                      .where("name", isGreaterThanOrEqualTo: a)
+                      //  .where("address", isGreaterThanOrEqualTo: a)
                       .get()
                       .then((value) {
                     Logger().d(value.size);
@@ -134,7 +136,7 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
               } else if (snapshot.hasError) {
                 ErrorOccurredWidget(error: snapshot.error);
               } else if (snapshot.hasData) {
-                if(searchController.text.isEmpty){
+                if (searchController.text.isEmpty) {
                   myTrucks.clear();
                   snapshot.data.docs.forEach((element) {
                     TruckModel model = TruckModel.fromJson(element.data());
@@ -144,26 +146,11 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
                 }
 
                 return myTrucks.isEmpty
-                    ?
-                Container(
-                  height: SizeConfig.screenHeight / 3,
-                  alignment: Alignment.center,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'images/empty.png',
-                        height: 100.h,
-                      ),
-                      regularText(
-                        searchController.text.isNotEmpty ? 'No Trucker was found':  'Truck tray is Empty',
-                        fontSize: 16.sp,
-                        color: AppColors.grey,
-                      ),
-                    ],
-                  ),
-                )
-
+                    ? AppEmptyWidget(
+                        text: searchController.text.isNotEmpty
+                            ? 'No Trucker was found'
+                            : 'Truck tray is Empty',
+                      )
                     : ListView.separated(
                         separatorBuilder: (context, index) {
                           return Padding(
@@ -320,5 +307,4 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
       ],
     );
   }
-
 }

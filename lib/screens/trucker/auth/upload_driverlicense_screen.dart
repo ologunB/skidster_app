@@ -7,6 +7,7 @@ import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/core/utils/show_exception_alert_dialog.dart';
 import 'package:mms_app/screens/trucker/auth/upload_carierdocs_screen.dart';
+import 'package:mms_app/screens/trucker/trucker_main_layout.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
@@ -130,7 +131,11 @@ class _UploadDriverLicenceScreenState extends State<UploadDriverLicenceScreen> {
         setState(() {
           isLoading = false;
         });
-        navigateReplacement(context, UploadCareerDocumentScreen());
+        if (!hasCarrierDoc) {
+          navigateReplacement(context, UploadCareerDocumentScreen());
+        } else {
+          Navigator.pop(context);
+        }
       }).catchError((e) {
         setState(() {
           isLoading = false;

@@ -146,6 +146,8 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                     ],
                   ),
                   SizedBox(height: 10.h),
+
+
                   Row(
                     children: [
                       Container(

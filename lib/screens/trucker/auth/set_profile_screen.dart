@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/core/storage/local_storage.dart';
+import 'package:mms_app/screens/trucker/auth/upload_carierdocs_screen.dart';
 import 'package:mms_app/screens/trucker/auth/upload_driverlicense_screen.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/custom_textfield.dart';
@@ -13,6 +14,8 @@ import 'package:mms_app/screens/widgets/snackbar.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
 import 'package:mms_app/screens/widgets/utils.dart';
+
+import '../trucker_main_layout.dart';
 
 class SetupProfileScreen extends StatefulWidget {
   const SetupProfileScreen({this.isAdd = false});
@@ -352,7 +355,8 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
       isLoading = true;
     });
     FirebaseFirestore _firestore = FirebaseFirestore.instance;
-    String id = 'TR' + DateTime.now().millisecondsSinceEpoch.toString();
+    String id = Utils.randomString(no: 5) +
+        DateTime.now().millisecondsSinceEpoch.toString();
     String uid = FirebaseAuth.instance.currentUser.uid;
     DocumentReference postRef =
         _firestore.collection('Truckers').doc('Added').collection(uid).doc(id);
@@ -386,7 +390,13 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
         });
       }).then((value) {
         if (!widget.isAdd) {
-          navigateReplacement(context, UploadDriverLicenceScreen());
+          if (!hasLicense) {
+            navigateReplacement(context, UploadDriverLicenceScreen());
+          } else if (!hasCarrierDoc) {
+            navigateReplacement(context, UploadCareerDocumentScreen());
+          } else {
+            Navigator.pop(context);
+          }
         }
         setState(() {
           textListener.text = 'mama';
