@@ -144,15 +144,26 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
                 }
 
                 return myTrucks.isEmpty
-                    ? Container(
-                        height: SizeConfig.screenHeight / 3,
-                        alignment: Alignment.center,
-                        child: regularText(
-                          searchController.text.isNotEmpty ? 'No Trucker was found':  'Truck tray is Empty',
-                          fontSize: 13.sp,
-                          color: AppColors.grey,
-                        ),
-                      )
+                    ?
+                Container(
+                  height: SizeConfig.screenHeight / 3,
+                  alignment: Alignment.center,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'images/empty.png',
+                        height: 100.h,
+                      ),
+                      regularText(
+                        searchController.text.isNotEmpty ? 'No Trucker was found':  'Truck tray is Empty',
+                        fontSize: 16.sp,
+                        color: AppColors.grey,
+                      ),
+                    ],
+                  ),
+                )
+
                     : ListView.separated(
                         separatorBuilder: (context, index) {
                           return Padding(

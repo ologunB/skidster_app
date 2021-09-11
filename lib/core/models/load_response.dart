@@ -11,7 +11,7 @@ class LoadsModel {
   int updatedAt;
   int dateTime;
   int stage;
-  String uid;
+  String loaderUid;
   String image;
   String truckerName;
   String truckerUid;
@@ -28,7 +28,7 @@ class LoadsModel {
       this.updatedAt,
       this.weight,
       this.skids,
-      this.uid,
+      this.loaderUid,
       this.image,
       this.pickup,
       this.dateTime,
@@ -49,7 +49,7 @@ class LoadsModel {
     skids = json['skids'];
     pickup = json['pickup'];
     weight = json['weight'];
-    uid = json['uid'];
+    loaderUid = json['uid'];
     image = json['image'];
     dateTime = json['date_time'];
     isBooked = json['is_booked'];
@@ -73,7 +73,7 @@ class LoadsModel {
     data['skids'] = this.skids;
     data['pickup'] = this.pickup;
     data['weight'] = this.weight;
-    data['uid'] = this.uid;
+    data['uid'] = this.loaderUid;
     data['date_time'] = this.dateTime;
     data['is_booked'] = this.isBooked;
     data['trucker_name'] = this.truckerName;

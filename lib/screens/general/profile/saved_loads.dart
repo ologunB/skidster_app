@@ -69,15 +69,24 @@ class _SavedLoadsScreenState extends State<SavedLoadsScreen> {
                         myLoads.add(model);
                       });
                       return myLoads.isEmpty
-                          ? Container(
-                              height: SizeConfig.screenHeight / 3,
-                              alignment: Alignment.center,
-                              child: regularText(
-                                'No saved Loads',
-                                fontSize: 14.sp,
-                                color: AppColors.grey,
-                              ),
-                            )
+                          ?Container(
+                        height: SizeConfig.screenHeight / 3,
+                        alignment: Alignment.center,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              'images/empty.png',
+                              height: 100.h,
+                            ),
+                            regularText(
+                              'No saved Loads',
+                              fontSize: 16.sp,
+                              color: AppColors.grey,
+                            ),
+                          ],
+                        ),
+                      )
                           : ListView.builder(
                               padding: EdgeInsets.symmetric(horizontal: 20.h),
                               shrinkWrap: true,

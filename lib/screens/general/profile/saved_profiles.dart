@@ -74,10 +74,19 @@ class _SavedProfilesScreenState extends State<SavedProfilesScreen> {
                           ? Container(
                               height: SizeConfig.screenHeight / 3,
                               alignment: Alignment.center,
-                              child: regularText(
-                                'No saved profiles',
-                                fontSize: 14.sp,
-                                color: AppColors.grey,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    'images/empty.png',
+                                    height: 100.h,
+                                  ),
+                                  regularText(
+                                    'No saved profiles',
+                                    fontSize: 16.sp,
+                                    color: AppColors.grey,
+                                  ),
+                                ],
                               ),
                             )
                           : ListView.builder(

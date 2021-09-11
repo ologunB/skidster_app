@@ -90,10 +90,19 @@ class _LoadsScreenState extends State<LoadsScreen> {
                         ? Container(
                             height: SizeConfig.screenHeight / 3,
                             alignment: Alignment.center,
-                            child: regularText(
-                              'Load tray is Empty',
-                              fontSize: 14.sp,
-                              color: AppColors.grey,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  'images/empty.png',
+                                  height: 100.h,
+                                ),
+                                regularText(
+                                  'Load tray is Empty',
+                                  fontSize: 16.sp,
+                                  color: AppColors.grey,
+                                ),
+                              ],
                             ),
                           )
                         : ListView(
@@ -263,42 +272,47 @@ class _LoadsScreenState extends State<LoadsScreen> {
                                                     ],
                                                   ),
                                                   SizedBox(height: 10.h),
-                                                  Row(
-                                                    children: [
-                                                      if (model
-                                                          .weight.isNotEmpty)
-                                                        item1(model.weight),
-                                                      item1('\$50-\$${model.price}'),
-                                                      item1(
-                                                          '${model.skids} Skids'),
-                                                      Spacer(),
-                                                      if (model.isBooked ??
-                                                          false)
-                                                        Container(
-                                                          margin:
-                                                              EdgeInsets.only(
-                                                                  right: 6.h),
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  horizontal:
-                                                                      10.h,
-                                                                  vertical:
-                                                                      6.h),
-                                                          decoration: BoxDecoration(
-                                                              color:
-                                                                  Colors.green,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          6.h)),
-                                                          child: regularText(
-                                                            'Booked',
-                                                            fontSize: 11.sp,
-                                                            color:
-                                                                AppColors.white,
+                                                  SingleChildScrollView(
+                                                    scrollDirection:
+                                                        Axis.horizontal,
+                                                    child: Row(mainAxisSize: MainAxisSize.min,
+                                                      children: [
+                                                        if (model
+                                                            .weight.isNotEmpty)
+                                                          item1(model.weight),
+                                                        item1(
+                                                            '\$50-\$${model.price}'),
+                                                        item1(
+                                                            '${model.skids} Skids'),
+
+                                                        if (model.isBooked ??
+                                                            false)
+                                                          Container(
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    right: 6.h),
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        10.h,
+                                                                    vertical:
+                                                                        6.h),
+                                                            decoration: BoxDecoration(
+                                                                color: Colors
+                                                                    .green,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            6.h)),
+                                                            child: regularText(
+                                                              'Booked',
+                                                              fontSize: 11.sp,
+                                                              color: AppColors
+                                                                  .white,
+                                                            ),
                                                           ),
-                                                        ),
-                                                    ],
+                                                      ],
+                                                    ),
                                                   )
                                                 ],
                                               ),
@@ -374,10 +388,19 @@ class _LoadsScreenState extends State<LoadsScreen> {
                         ? Container(
                             height: SizeConfig.screenHeight / 3,
                             alignment: Alignment.center,
-                            child: regularText(
-                              'No Completed Load',
-                              fontSize: 14.sp,
-                              color: AppColors.grey,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  'images/empty.png',
+                                  height: 100.h,
+                                ),
+                                regularText(
+                                  'No Completed Load',
+                                  fontSize: 16.sp,
+                                  color: AppColors.grey,
+                                ),
+                              ],
                             ),
                           )
                         : ListView.builder(

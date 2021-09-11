@@ -386,7 +386,7 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                                                           if (model.weight
                                                               .isNotEmpty)
                                                             item1(
-                                                                '${model.weight}kg'),
+                                                                '${model.weight}'),
                                                           item1(
                                                               '\$${model.price}'),
                                                           item1(

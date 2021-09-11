@@ -98,6 +98,7 @@ class _EditLoadScreenState extends State<EditLoadScreen> {
             physics: ClampingScrollPhysics(),
             padding: EdgeInsets.all(20.h),
             children: [
+              item('What are you shipping'),
               SizedBox(height: 8.h),
               CustomTextField(
                 hintText: 'Enter what are you shipping',
@@ -330,6 +331,7 @@ class _EditLoadScreenState extends State<EditLoadScreen> {
     }
 
     LoadsModel loadsModel = LoadsModel(
+      id: widget.loadsModel.id,
       title: title.text,
       skids: skids.text,
       weight: weight.text.isEmpty ? '' : (weight.text + selectedTruckType),
@@ -340,6 +342,7 @@ class _EditLoadScreenState extends State<EditLoadScreen> {
       name: AppCache.getUser.name,
       phone: AppCache.getUser.phone,
     );
-    navigateTo(context, ReviewLoadScreen(loadsModel: loadsModel, isUpdate: true));
+    navigateTo(
+        context, ReviewLoadScreen(loadsModel: loadsModel, isUpdate: true));
   }
 }

@@ -199,7 +199,7 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                 children: [
                   item2('Item', ': ${loadsModel.title}'),
                   if (loadsModel.weight.isNotEmpty)
-                    item2('Weight', ': ${loadsModel.weight} kg'),
+                    item2('Weight', ': ${loadsModel.weight}'),
                   item2('Skids', ': ${loadsModel.skids}'),
                   item2('Price', ': \$50 - \$${loadsModel.price}'),
                 ],
@@ -256,7 +256,7 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                                     isTruck:
                                         AppCache.userType == UserType.TRUCKER,
                                     truckModel: TruckModel(
-                                      uid: loadsModel?.uid,
+                                      uid: loadsModel?.loaderUid,
                                       id: loadsModel.id,
                                       name: loadsModel.name,
                                       address: loadsModel.pickup,
@@ -325,7 +325,7 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                             ChatDetailsView(
                                 contact: UserData(
                               name: loadsModel.name,
-                              uid: loadsModel.uid,
+                              uid: loadsModel.loaderUid,
                               image: loadsModel.image,
                             )));
                       }),
@@ -333,21 +333,6 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                   )
           ],
         ),
-      ),
-    );
-  }
-
-  Widget item1(String a) {
-    return Container(
-      margin: EdgeInsets.only(right: 6.h),
-      padding: EdgeInsets.symmetric(horizontal: 10.h, vertical: 6.h),
-      decoration: BoxDecoration(
-          color: AppColors.grey.withOpacity(.2),
-          borderRadius: BorderRadius.circular(6.h)),
-      child: regularText(
-        a,
-        fontSize: 11.sp,
-        color: AppColors.primaryColor,
       ),
     );
   }

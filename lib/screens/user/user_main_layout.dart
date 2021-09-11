@@ -1,9 +1,14 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mms_app/app/colors.dart';
 
 import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
+import 'package:mms_app/core/models/notification_model.dart';
+import 'package:mms_app/core/storage/local_storage.dart';
 import 'package:mms_app/screens/general/message/messages_screen.dart';
 import 'package:mms_app/screens/general/profile/profile_screen.dart';
 
@@ -18,17 +23,43 @@ class UserMainLayout extends StatefulWidget {
 }
 
 PageController userMainPageController = PageController();
+int notificationCount = 0;
 
 class _UserMainLayoutState extends State<UserMainLayout> {
   int currentIndex = 0;
 
+  StreamSubscription adderStream, add2stream;
+
+  CollectionReference _firestore = FirebaseFirestore.instance
+      .collection('Notifications')
+      .doc('Added')
+      .collection(AppCache.getUser.uid);
+
   @override
   void initState() {
+    adderStream = _firestore.snapshots().listen((event) {
+      notificationCount = 0;
+      event.docs.forEach((element) {
+        NotifiModel model = NotifiModel.fromJson(element.data());
+        if (model?.isRead == false) {
+          notificationCount++;
+        }
+        setState(() {});
+      });
+    });
+
     userMainPageController.addListener(() {
       currentIndex = userMainPageController.page.toInt();
       setState(() {});
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    adderStream?.cancel();
+    add2stream?.cancel();
+    super.dispose();
   }
 
   void changeIndex(int index) {

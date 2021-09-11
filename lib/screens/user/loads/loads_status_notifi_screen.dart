@@ -18,18 +18,19 @@ import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
 import 'package:mms_app/screens/widgets/utils.dart';
 
-class LoadsStatusScreen extends StatefulWidget {
-  final LoadsModel loadsModel;
+class LoadsStatusNotifiScreen extends StatefulWidget {
+  final String id;
   final bool isTruck;
 
-  const LoadsStatusScreen({Key key, this.loadsModel, this.isTruck = true})
+  const LoadsStatusNotifiScreen({Key key, this.id, this.isTruck = true})
       : super(key: key);
 
   @override
-  _LoadsStatusScreenState createState() => _LoadsStatusScreenState();
+  _LoadsStatusNotifiScreenState createState() =>
+      _LoadsStatusNotifiScreenState();
 }
 
-class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
+class _LoadsStatusNotifiScreenState extends State<LoadsStatusNotifiScreen> {
   bool favorite = false;
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String uid = FirebaseAuth.instance.currentUser.uid;
@@ -37,6 +38,8 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
   LoadsModel myLoad;
 
   StreamSubscription adderStream, add2stream;
+
+  bool bodyIsLoading = true;
 
   @override
   void initState() {
@@ -49,14 +52,14 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
         .listen((event) {
       event.docs.forEach((element) {
         LoadsModel model = LoadsModel.fromJson(element.data());
-        if (model.id == widget.loadsModel.id) {
+        if (model.id == widget.id) {
+          bodyIsLoading = false;
           myLoad = model;
           setState(() {});
           Logger().d(myLoad.toJson());
         }
       });
     });
-
     add2stream = _firestore
         .collection('Loaders')
         .doc('Completed')
@@ -66,7 +69,7 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
         .listen((event) {
       event.docs.forEach((element) {
         LoadsModel model = LoadsModel.fromJson(element.data());
-        if (model.id == widget.loadsModel.id) {
+        if (model.id == widget.id) {
           myLoad = model;
           setState(() {});
           Logger().d(myLoad.toJson());
@@ -78,14 +81,13 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
 
   @override
   void dispose() {
-    adderStream?.cancel();
-    add2stream?.cancel();
+    adderStream.cancel();
+    add2stream.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    myLoad = myLoad == null ? widget.loadsModel : myLoad;
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(elevation: 0, backgroundColor: Colors.white),
@@ -185,7 +187,7 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
                               DateTime.now().millisecondsSinceEpoch.toString();
 
                           Map<String, dynamic> mData = Map();
-                          mData.putIfAbsent("id", () => widget.loadsModel.id);
+                          mData.putIfAbsent("id", () => widget.id);
                           mData.putIfAbsent(
                               "reporter", () => AppCache.getUser.uid);
                           mData.putIfAbsent("updated_at",
@@ -263,8 +265,7 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
                   PopupMenuButton(
                       onSelected: (int a) {
                         if (a == 0) {
-                          Clipboard.setData(
-                              ClipboardData(text: widget.loadsModel.id));
+                          Clipboard.setData(ClipboardData(text: widget.id));
                           showSnackBar(
                             context,
                             'Copied',
@@ -301,13 +302,13 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    item2('Item', ': ${widget.loadsModel.title}'),
-                    if (widget.loadsModel.weight.isNotEmpty)
-                      item2('Weight', ': ${widget.loadsModel.weight} kg'),
-                    item2('Skids', ': ${widget.loadsModel.skids}'),
-                    item2('Price', ': CA\$${widget.loadsModel.price}'),
-                    item2('Pickup Address', ': ${widget.loadsModel.pickup}'),
-                    item2('DropOff Address', ': ${widget.loadsModel.dropoff}'),
+                    item2('Item', ': ${myLoad.title}'),
+                    if (myLoad.weight.isNotEmpty)
+                      item2('Weight', ': ${myLoad.weight} kg'),
+                    item2('Skids', ': ${myLoad.skids}'),
+                    item2('Price', ': CA\$${myLoad.price}'),
+                    item2('Pickup Address', ': ${myLoad.pickup}'),
+                    item2('DropOff Address', ': ${myLoad.dropoff}'),
                   ],
                 ),
               ),
@@ -470,8 +471,8 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
       isLoading = true;
     });
     FirebaseFirestore _firestore = FirebaseFirestore.instance;
-    String id = widget.loadsModel.id;
-    String uid = widget.loadsModel.loaderUid;
+    String id = widget.id;
+    String uid = myLoad.loaderUid;
     String myUid = AppCache.getUser.uid;
     String rand = Utils.randomString(no: 5) +
         DateTime.now().millisecondsSinceEpoch.toString();
@@ -498,7 +499,7 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
         .collection(uid)
         .doc(rand);
 
-    Map<String, dynamic> mData = widget.loadsModel.toJson();
+    Map<String, dynamic> mData = myLoad.toJson();
     if (stage == 0) {
       mData.update("trucker_name", (a) => AppCache.getUser.name);
       mData.update("trucker_phone", (a) => AppCache.getUser.phone);
@@ -516,8 +517,7 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
 
     Map<String, dynamic> notifiData = Map();
     notifiData.putIfAbsent('id', () => rand);
-    notifiData.putIfAbsent('load_id', () => widget.loadsModel.id);
-    notifiData.putIfAbsent('is_read', () => false);
+    notifiData.putIfAbsent('load_id', () => widget.id);
     notifiData.putIfAbsent('person', () => AppCache.getUser.name);
     notifiData.putIfAbsent('text', () => userStagesText[stage + 1]);
     notifiData.putIfAbsent(

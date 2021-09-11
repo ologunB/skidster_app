@@ -14,7 +14,8 @@ import 'package:mms_app/screens/widgets/utils.dart';
 import '../user_main_layout.dart';
 
 class ReviewLoadScreen extends StatefulWidget {
-  const ReviewLoadScreen({Key key, this.loadsModel, this.isUpdate= false}) : super(key: key);
+  const ReviewLoadScreen({Key key, this.loadsModel, this.isUpdate = false})
+      : super(key: key);
 
   final LoadsModel loadsModel;
   final bool isUpdate;
@@ -56,7 +57,7 @@ class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
             child: Row(
               children: [
                 regularText(
-                  widget.isUpdate?  'Review Update Load': 'Review Post Load',
+                  widget.isUpdate ? 'Review Update Load' : 'Review Post Load',
                   fontSize: 22.sp,
                   fontWeight: FontWeight.w700,
                   color: AppColors.primaryColor,
@@ -90,7 +91,9 @@ class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
                       EdgeInsets.symmetric(horizontal: 30.h, vertical: 20.h),
                   children: [
                     regularText(
-                     widget.isUpdate?  'Review Update Load': 'Review Post Load',
+                      widget.isUpdate
+                          ? 'Review Update Load'
+                          : 'Review Post Load',
                       fontSize: 13.sp,
                       fontWeight: FontWeight.w600,
                       color: AppColors.grey,
@@ -244,8 +247,9 @@ class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
       isLoading = true;
     });
     FirebaseFirestore _firestore = FirebaseFirestore.instance;
-    String id = Utils.randomString(no: 5) +
-        DateTime.now().millisecondsSinceEpoch.toString();
+    String id = widget?.loadsModel?.id ??
+        Utils.randomString(no: 5) +
+            DateTime.now().millisecondsSinceEpoch.toString();
     String uid = FirebaseAuth.instance.currentUser.uid;
     DocumentReference postRef =
         _firestore.collection('Loaders').doc('Added').collection(uid).doc(id);
@@ -257,8 +261,13 @@ class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
     mData.update("updated_at", (a) => DateTime.now().millisecondsSinceEpoch);
 
     WriteBatch writeBatch = _firestore.batch();
-    writeBatch.set(postRef, mData);
-    writeBatch.set(allTrucks, mData);
+    if (widget.isUpdate) {
+      writeBatch.update(postRef, mData);
+      writeBatch.update(allTrucks, mData);
+    } else {
+      writeBatch.set(postRef, mData);
+      writeBatch.set(allTrucks, mData);
+    }
 
     try {
       writeBatch.commit().timeout(Duration(seconds: 10), onTimeout: () {
@@ -270,8 +279,14 @@ class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
         setState(() {
           isLoading = false;
         });
-        Navigator.pop(context);
-        userMainPageController.jumpToPage(1);
+        if (widget.isUpdate) {
+          Navigator.pop(context);
+          Navigator.pop(context);
+          Navigator.pop(context);
+        } else {
+          Navigator.pop(context);
+          userMainPageController.jumpToPage(1);
+        }
       });
     } catch (e) {
       showSnackBar(context, 'Error', e.toString());

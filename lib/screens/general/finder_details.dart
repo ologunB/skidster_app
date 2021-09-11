@@ -98,9 +98,9 @@ class _FinderDetailsState extends State<FinderDetails> {
 
   @override
   void dispose() {
-    streams1.cancel();
-    streams2.cancel();
-    streams3.cancel();
+    streams1?.cancel();
+    streams2?.cancel();
+    streams3?.cancel();
     super.dispose();
   }
 

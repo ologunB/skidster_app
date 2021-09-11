@@ -114,11 +114,19 @@ class _MessagesScreenState extends State<MessagesScreen> {
                 ? Container(
                     height: SizeConfig.screenHeight / 3,
                     alignment: Alignment.center,
-                    child: regularText(
-                      'Chat is Empty',
-                      fontSize: 17.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primaryColor,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'images/empty.png',
+                          height: 100.h,
+                        ),
+                        regularText(
+                          'Chat is Empty',
+                          fontSize: 16.sp,
+                          color: AppColors.grey,
+                        ),
+                      ],
                     ),
                   )
                 : Expanded(
