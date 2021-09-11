@@ -202,7 +202,7 @@ class _FilterScreenState extends State<FilterScreen> {
                   sliderValue2 = a;
                   setState(() {});
                 },
-                min: 0,
+                min: 1,
                 label: '$sliderValue2',
                 max: 100,
                 activeColor: AppColors.primaryColor),
@@ -210,7 +210,7 @@ class _FilterScreenState extends State<FilterScreen> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 30.h),
             child: regularText(
-              'Radius 30 miles',
+              'Radius ${sliderValue2.toInt()} KM',
               fontSize: 14.sp,
               color: AppColors.primaryColor,
             ),

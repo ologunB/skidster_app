@@ -1,16 +1,23 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/models/load_response.dart';
 import 'package:mms_app/core/models/login_response.dart';
+import 'package:mms_app/core/models/truck_response.dart';
 import 'package:mms_app/core/routes/router.dart';
+import 'package:mms_app/core/storage/local_storage.dart';
+import 'package:mms_app/screens/general/finder_details.dart';
 import 'package:mms_app/screens/general/message/message_details.dart';
 import 'package:mms_app/screens/user/loads/loads_status_screen.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/notification_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
+import 'package:mms_app/screens/widgets/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'edit_load_screen.dart';
 
 class LoadsDetailsScreen extends StatefulWidget {
   const LoadsDetailsScreen({Key key, this.isTruck = false, this.loadsModel})
@@ -26,6 +33,22 @@ class LoadsDetailsScreen extends StatefulWidget {
 class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
   bool favorite = false;
   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  @override
+  void initState() {
+    _firestore
+        .collection('Loaders')
+        .doc('Saved')
+        .collection(AppCache.getUser.uid)
+        .doc(widget.loadsModel.id)
+        .get()
+        .then((value) {
+      favorite = value.exists;
+      setState(() {});
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,8 +86,23 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                 if (widget.isTruck)
                   InkWell(
                     onTap: () {
-                      favorite = !favorite;
-                      setState(() {});
+                      DocumentReference postRef = _firestore
+                          .collection('Loaders')
+                          .doc('Saved')
+                          .collection(AppCache.getUser.uid)
+                          .doc(widget.loadsModel.id);
+
+                      postRef.get().then((value) {
+                        if (value.exists) {
+                          postRef.delete();
+                          favorite = !favorite;
+                          setState(() {});
+                        } else {
+                          postRef.set(widget.loadsModel.toJson());
+                          favorite = !favorite;
+                          setState(() {});
+                        }
+                      });
                     },
                     child: Icon(
                       favorite ? Icons.favorite : Icons.favorite_border,
@@ -163,7 +201,7 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                   if (loadsModel.weight.isNotEmpty)
                     item2('Weight', ': ${loadsModel.weight} kg'),
                   item2('Skids', ': ${loadsModel.skids}'),
-                  item2('Price', ': \$${loadsModel.price}'),
+                  item2('Price', ': \$50 - \$${loadsModel.price}'),
                 ],
               ),
             ),
@@ -172,11 +210,20 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                 ? loadsModel?.isBooked == true
                     ? SizedBox()
                     : Center(
-                        child: regularText(
-                          'Edit',
-                          fontSize: 17.sp,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.primaryColor,
+                        child: InkWell(
+                          onTap: () {
+                            navigateTo(
+                                context,
+                                EditLoadScreen(
+                                  loadsModel: widget.loadsModel,
+                                ));
+                          },
+                          child: regularText(
+                            'Edit',
+                            fontSize: 17.sp,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.primaryColor,
+                          ),
                         ),
                       )
                 : Column(
@@ -201,11 +248,27 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                             color: AppColors.grey,
                           ),
                           SizedBox(width: 8.h),
-                          regularText(
-                            loadsModel.name,
-                            fontSize: 17.sp,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.primaryColor,
+                          InkWell(
+                            onTap: () {
+                              navigateTo(
+                                  context,
+                                  FinderDetails(
+                                    isTruck:
+                                        AppCache.userType == UserType.TRUCKER,
+                                    truckModel: TruckModel(
+                                      uid: loadsModel?.uid,
+                                      id: loadsModel.id,
+                                      name: loadsModel.name,
+                                      address: loadsModel.pickup,
+                                      companyPhone: loadsModel.phone,
+                                    ),
+                                  ));
+                            },
+                            child: regularText(loadsModel?.name,
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.primaryColor,
+                                decoration: TextDecoration.underline),
                           ),
                         ],
                       ),

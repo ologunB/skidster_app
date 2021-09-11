@@ -14,9 +14,10 @@ import 'package:mms_app/screens/widgets/utils.dart';
 import '../user_main_layout.dart';
 
 class ReviewLoadScreen extends StatefulWidget {
-  const ReviewLoadScreen({Key key, this.loadsModel}) : super(key: key);
+  const ReviewLoadScreen({Key key, this.loadsModel, this.isUpdate= false}) : super(key: key);
 
   final LoadsModel loadsModel;
+  final bool isUpdate;
 
   @override
   _ReviewLoadScreenState createState() => _ReviewLoadScreenState();
@@ -55,7 +56,7 @@ class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
             child: Row(
               children: [
                 regularText(
-                  'Review Post Load',
+                  widget.isUpdate?  'Review Update Load': 'Review Post Load',
                   fontSize: 22.sp,
                   fontWeight: FontWeight.w700,
                   color: AppColors.primaryColor,
@@ -89,7 +90,7 @@ class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
                       EdgeInsets.symmetric(horizontal: 30.h, vertical: 20.h),
                   children: [
                     regularText(
-                      'Review Post Load',
+                     widget.isUpdate?  'Review Update Load': 'Review Post Load',
                       fontSize: 13.sp,
                       fontWeight: FontWeight.w600,
                       color: AppColors.grey,
@@ -210,7 +211,7 @@ class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
                       ),
                     if (widget.loadsModel.weight.isNotEmpty)
                       regularText(
-                        '${widget.loadsModel.weight} KG',
+                        '${widget.loadsModel.weight}',
                         fontSize: 17.sp,
                         color: AppColors.primaryColor,
                       ),
@@ -223,7 +224,7 @@ class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
                       color: AppColors.grey,
                     ),
                     regularText(
-                      'CA\$${widget.loadsModel.price}',
+                      'CA\$50 - CA\$${widget.loadsModel.price}',
                       fontSize: 17.sp,
                       color: AppColors.primaryColor,
                     ),

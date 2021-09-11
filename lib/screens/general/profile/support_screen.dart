@@ -1,9 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mms_app/app/colors.dart';
+import 'package:mms_app/core/storage/local_storage.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/custom_textfield.dart';
+import 'package:mms_app/screens/widgets/snackbar.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
+import 'package:mms_app/screens/widgets/utils.dart';
 
 class SupportScreen extends StatefulWidget {
   @override
@@ -11,6 +16,8 @@ class SupportScreen extends StatefulWidget {
 }
 
 class _SupportScreenState extends State<SupportScreen> {
+  TextEditingController controller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,6 +38,7 @@ class _SupportScreenState extends State<SupportScreen> {
               ),
               SizedBox(height: 18.h),
               CustomTextField(
+                controller: controller,
                 hintText: 'Enter Feedback...',
                 textInputType: TextInputType.text,
                 textInputAction: TextInputAction.done,
@@ -42,8 +50,30 @@ class _SupportScreenState extends State<SupportScreen> {
                   buttonColor: AppColors.primaryColor,
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w700,
-                  height: 50.h,
-                  onTap: () {})
+                  height: 50.h, onTap: () {
+                FirebaseFirestore _firestore = FirebaseFirestore.instance;
+                String uid = FirebaseAuth.instance.currentUser.uid;
+                String id = Utils.randomString(no: 5) +
+                    DateTime.now().millisecondsSinceEpoch.toString();
+
+                Map<String, dynamic> mData = Map();
+                mData.putIfAbsent("id", () => id);
+                mData.putIfAbsent("uid", () => uid);
+                mData.putIfAbsent("text", () => controller.text);
+                mData.putIfAbsent(
+                    "updated_at", () => DateTime.now().millisecondsSinceEpoch);
+
+                _firestore
+                    .collection('Support')
+                    .doc('Unattended')
+                    .collection('Unattended')
+                    .doc(id)
+                    .set(mData)
+                    .then((value) {});
+                controller.text = '';
+                showSnackBar(
+                    context, 'Thanks', 'Your message will be responded to');
+              })
             ]));
   }
 }

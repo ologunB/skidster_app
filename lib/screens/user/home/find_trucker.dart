@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:logger/logger.dart';
 
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/app/size_config/config.dart';
@@ -15,6 +16,7 @@ import 'package:mms_app/screens/general/message/message_details.dart';
 import 'package:mms_app/screens/widgets/custom_loader.dart';
 import 'package:mms_app/screens/widgets/error_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
+import 'package:mms_app/screens/widgets/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class FindTruckerWidget extends StatefulWidget {
@@ -28,6 +30,10 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String uid = FirebaseAuth.instance.currentUser.uid;
 
+  bool isLoading = false;
+  List<TruckModel> myTrucks = [];
+
+  TextEditingController searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -40,7 +46,7 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
             Expanded(
               child: TextFormField(
                 cursorHeight: 15.h,
-                maxLines: 1,
+                maxLines: 1,controller: searchController,
                 style: GoogleFonts.inter(
                   color: AppColors.primaryColor,
                   fontSize: 17.sp,
@@ -82,6 +88,27 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
                   ),
                 ),
                 textAlign: TextAlign.start,
+                onChanged: (a) async {
+                   isLoading = true;
+                  setState(() {});
+                  await FirebaseFirestore.instance
+                      .collection("All-Truckers")
+                      .where("name", isGreaterThanOrEqualTo: a )
+                     //  .where("address", isGreaterThanOrEqualTo: a)
+                      .get()
+                      .then((value) {
+                    Logger().d(value.size);
+                    myTrucks.clear();
+                    value.docs.forEach((element) {
+                      TruckModel model = TruckModel.fromJson(element.data());
+                      //  Logger().d(model.toJson());
+
+                      myTrucks.add(model);
+                    });
+                    isLoading = false;
+                    setState(() {});
+                  });
+                },
               ),
             ),
             SizedBox(width: 12.h),
@@ -107,20 +134,21 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
               } else if (snapshot.hasError) {
                 ErrorOccurredWidget(error: snapshot.error);
               } else if (snapshot.hasData) {
-                List<TruckModel> myTrucks = [];
+                if(searchController.text.isEmpty){
+                  myTrucks.clear();
+                  snapshot.data.docs.forEach((element) {
+                    TruckModel model = TruckModel.fromJson(element.data());
+                    //  Logger().d(model.toJson());
+                    myTrucks.add(model);
+                  });
+                }
 
-                snapshot.data.docs.forEach((element) {
-                  TruckModel model = TruckModel.fromJson(element.data());
-                  //  Logger().d(model.toJson());
-
-                  myTrucks.add(model);
-                });
                 return myTrucks.isEmpty
                     ? Container(
                         height: SizeConfig.screenHeight / 3,
                         alignment: Alignment.center,
                         child: regularText(
-                          'Truck tray is Empty',
+                          searchController.text.isNotEmpty ? 'No Trucker was found':  'Truck tray is Empty',
                           fontSize: 13.sp,
                           color: AppColors.grey,
                         ),
@@ -164,11 +192,11 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
                                       Row(
                                         children: [
                                           regularText(
-                                            model.address,
+                                            Utils.last2(model.address),
                                             fontSize: 17.sp,
                                             color: AppColors.primaryColor,
                                           ),
-                                          Padding(
+                                          /*  Padding(
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 5.h),
                                             child: Icon(
@@ -181,7 +209,7 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
                                             'Ontario, CA',
                                             fontSize: 17.sp,
                                             color: AppColors.primaryColor,
-                                          ),
+                                          ),*/
                                         ],
                                       ),
                                       SizedBox(height: 8.h),
@@ -281,4 +309,5 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
       ],
     );
   }
+
 }

@@ -8,6 +8,7 @@ import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/core/models/load_response.dart';
 import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/screens/general/filter_screen.dart';
+import 'package:mms_app/screens/trucker/home/all_already_taken.dart';
 import 'package:mms_app/screens/user/loads/loads_info_screen.dart';
 import 'package:mms_app/screens/user/loads/loads_status_screen.dart';
 import 'package:mms_app/screens/widgets/custom_loader.dart';
@@ -15,6 +16,7 @@ import 'package:mms_app/screens/widgets/error_widget.dart';
 import 'package:mms_app/screens/widgets/notification_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
+import 'package:mms_app/screens/widgets/utils.dart';
 
 class TruckerHomeScreen extends StatefulWidget {
   const TruckerHomeScreen({Key key}) : super(key: key);
@@ -172,17 +174,34 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                       ],
                     ),
                     SizedBox(height: 15.h),
-                    regularText(
-                      'Recently Added Loads',
-                      fontSize: 17.sp,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.grey,
+                    Row(
+                      children: [
+                        regularText(
+                          'Recently Added Loads',
+                          fontSize: 17.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.grey,
+                        ),
+                        Spacer(),
+                        InkWell(
+                          onTap: () {
+                            navigateTo(
+                                context, AllAlreadyTaken(type: 'Recent'));
+                          },
+                          child: regularText('View all',
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primaryColor,
+                              decoration: TextDecoration.underline),
+                        ),
+                      ],
                     ),
                     SizedBox(height: 15.h),
                     StreamBuilder<QuerySnapshot>(
                         stream: _firestore
                             .collection('All-Loaders')
                             .orderBy('updated_at', descending: true)
+                            .limit(50)
                             .snapshots(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
@@ -388,11 +407,27 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                           return Container();
                         }),
                     SizedBox(height: 10.h),
-                    regularText(
-                      'My Loads',
-                      fontSize: 17.sp,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.grey,
+                    Row(
+                      children: [
+                        regularText(
+                          'My Loads',
+                          fontSize: 17.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.grey,
+                        ),
+                        Spacer(),
+                        InkWell(
+                          onTap: () {
+                            navigateTo(
+                                context, AllAlreadyTaken(type: 'Added'));
+                          },
+                          child: regularText('View all',
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primaryColor,
+                              decoration: TextDecoration.underline),
+                        ),
+                      ],
                     ),
                     SizedBox(height: 15.h),
                     Row(
@@ -419,6 +454,7 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                             .doc('Added')
                             .collection(uid)
                             .orderBy('updated_at', descending: true)
+                            .limit(5)
                             .snapshots(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
@@ -454,7 +490,8 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                                                     loadsModel: model));
                                           },
                                           child: Container(
-                                            margin: EdgeInsets.only(bottom: 15.h),
+                                            margin:
+                                                EdgeInsets.only(bottom: 15.h),
                                             padding: EdgeInsets.all(15.h),
                                             decoration: BoxDecoration(
                                                 boxShadow: [
@@ -480,7 +517,7 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                                                 Row(
                                                   children: [
                                                     regularText(
-                                                      '${last2(model.pickup)} > ${last2(model.dropoff)} ',
+                                                      '${Utils.last2(model.pickup)} > ${Utils.last2(model.dropoff)} ',
                                                       fontSize: 15.sp,
                                                       fontWeight:
                                                           FontWeight.w600,
@@ -525,6 +562,18 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                             color: AppColors.white,
                           ),
                         ),
+                        Spacer(),
+                        InkWell(
+                          onTap: () {
+                            navigateTo(
+                                context, AllAlreadyTaken(type: 'Completed'));
+                          },
+                          child: regularText('View all',
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primaryColor,
+                              decoration: TextDecoration.underline),
+                        ),
                       ],
                     ),
                     SizedBox(height: 15.h),
@@ -534,6 +583,7 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                             .doc('Completed')
                             .collection(uid)
                             .orderBy('updated_at', descending: true)
+                            .limit(2)
                             .snapshots(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
@@ -569,7 +619,8 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                                                     loadsModel: model));
                                           },
                                           child: Container(
-                                            margin: EdgeInsets.only(bottom: 15.h),
+                                            margin:
+                                                EdgeInsets.only(bottom: 15.h),
                                             padding: EdgeInsets.all(15.h),
                                             decoration: BoxDecoration(
                                                 boxShadow: [
@@ -595,7 +646,7 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                                                 Row(
                                                   children: [
                                                     regularText(
-                                                      '${last2(model.pickup)} > ${last2(model.dropoff)} ',
+                                                      '${Utils.last2(model.pickup)} > ${Utils.last2(model.dropoff)} ',
                                                       fontSize: 15.sp,
                                                       fontWeight:
                                                           FontWeight.w600,
@@ -627,12 +678,6 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
         ),
       ),
     );
-  }
-
-  String last2(String a) {
-    List<String> b = a.split(',');
-    print(a);
-    return b[b.length - 3].trim() + ', ' + b[b.length - 2].trim();
   }
 
   Widget item1(String a) {

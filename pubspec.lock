@@ -282,13 +282,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
-  google_geocoding:
-    dependency: "direct main"
-    description:
-      name: google_geocoding
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.0"
   google_maps_webservice:
     dependency: "direct main"
     description:

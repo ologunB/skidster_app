@@ -23,7 +23,7 @@ class UserSignupScreen extends StatefulWidget {
 }
 
 class _UserSignupScreenState extends State<UserSignupScreen> {
-   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
@@ -82,6 +82,7 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
               obscureText: false,
               maxLength: 15,
               validator: Utils.isValidName,
+              textInputType: TextInputType.phone,
               textInputAction: TextInputAction.next,
               controller: phone,
             ),
@@ -102,9 +103,18 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
             CustomTextField(
               hintText: 'Enter password',
               validator: Utils.isValidPassword,
-              obscureText: true,
+              obscureText: obscureText,
               textInputAction: TextInputAction.done,
               controller: password,
+              suffixIcon: InkWell(
+                  onTap: () {
+                    obscureText = !obscureText;
+                    setState(() {});
+                  },
+                  child: Icon(
+                    obscureText ? Icons.visibility_off : Icons.visibility,
+                    color: Colors.black,
+                  )),
             ),
             SizedBox(height: 16.h),
           ],
@@ -112,6 +122,8 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
       ),
     );
   }
+
+  bool obscureText = true;
 
   Widget item(String a) {
     return regularText(
@@ -121,18 +133,20 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
     );
   }
 
-   bool autoValidate = false;
-   GlobalKey<FormState> formKey = GlobalKey<FormState>();
-   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  bool autoValidate = false;
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-   bool isLoading = false;
+  bool isLoading = false;
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   TextEditingController name = TextEditingController();
   TextEditingController phone = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
-  TextEditingController code = TextEditingController();
+  TextEditingController code = TextEditingController( );
+
+  bool alreadyVerified;
 
   Future<void> verifyNumber(context) async {
     setState(() {
@@ -144,7 +158,9 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
           timeout: Duration(minutes: 2),
           verificationCompleted: (PhoneAuthCredential _credential) async {
             code.text = _credential.smsCode;
-            _firebaseAuth
+            Navigator.pop(context);
+            Logger().d(code.text);
+               _firebaseAuth
                 .signInWithCredential(_credential)
                 .then((UserCredential result) {
               _firebaseAuth.signOut();
@@ -176,7 +192,7 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
             });
             showDialog(
                 context: context,
-                barrierDismissible: false,
+                barrierDismissible: true,
                 builder: (context) => AlertDialog(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.h)),
@@ -192,14 +208,8 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
                         controller: code,
                         textAlign: TextAlign.center,
                         textInputType: TextInputType.number,
-                      ),
-                      actions: <Widget>[
-                        InkWell(
-                          onTap: () async {
-                            if(code.text.length < 6){
-                              showSnackBar(context, null, 'Enter complete OTP');
-                              return;
-                            }
+                        onChanged: (a) {
+                          if (a.length == 6) {
                             setState(() {
                               isLoading = true;
                             });
@@ -227,18 +237,58 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
                                   exception: e,
                                   title: "Error");
                             });
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 8.h, horizontal: 16.h),
-                            margin: EdgeInsets.all(10.h),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                color: AppColors.grey),
-                            child: regularText('DONE',
-                                fontSize: 12,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600),
+                          }
+                        },
+                      ),
+                      actions: <Widget>[
+                        Container(
+                          margin: EdgeInsets.all(10.h),
+                          child: InkWell(
+                            onTap: () async {
+                              if (code.text.length < 6) {
+                                showSnackBar(
+                                    context, null, 'Enter complete OTP');
+                                return;
+                              }
+                              setState(() {
+                                isLoading = true;
+                              });
+                              Navigator.pop(context);
+                              String smsCode = code.text.trim();
+                              PhoneAuthCredential _credential =
+                                  PhoneAuthProvider.credential(
+                                      verificationId: verificationId,
+                                      smsCode: smsCode);
+                              code.text = '';
+
+                              _firebaseAuth
+                                  .signInWithCredential(_credential)
+                                  .then((UserCredential result) {
+                                _firebaseAuth.signOut();
+                                signup(context);
+                                print(result.user.uid);
+                              }).catchError((e) {
+                                print(e);
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                showExceptionAlertDialog(
+                                    context: scaffoldKey.currentContext,
+                                    exception: e,
+                                    title: "Error");
+                              });
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 8.h, horizontal: 16.h),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  color: AppColors.grey),
+                              child: regularText('DONE',
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600),
+                            ),
                           ),
                         )
                       ],
@@ -248,10 +298,6 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
             setState(() {
               isLoading = false;
             });
-            showExceptionAlertDialog(
-                context: scaffoldKey.currentContext,
-                exception: e,
-                title: "Error");
           });
     } catch (e) {
       setState(() {
@@ -290,20 +336,22 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
               isLoading = false;
             });
             showAlertDialog(
-              context: context,
+              context: scaffoldKey.currentContext,
               title: 'Alert',
               content: "Verify your email in your inbox and login again!",
               defaultActionText: 'OKAY',
             );
             _firebaseAuth.signOut();
 
-            routeToReplace(context, LoginLayout());
+            routeToReplace(scaffoldKey.currentContext, LoginLayout());
           }).catchError((e) {
             setState(() {
               isLoading = false;
             });
             showExceptionAlertDialog(
-                context: context, exception: e, title: "Error");
+                context: scaffoldKey.currentContext,
+                exception: e,
+                title: "Error");
             return;
           });
         });
@@ -314,10 +362,12 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
       }
       return;
     }).catchError((e) {
+      Logger().d(e);
       setState(() {
         isLoading = false;
       });
-      showExceptionAlertDialog(context: context, exception: e, title: "Error");
+      showExceptionAlertDialog(
+          context: scaffoldKey.currentContext, exception: e, title: "Error");
       return;
     });
   }

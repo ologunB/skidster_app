@@ -267,11 +267,37 @@ class _LoadsScreenState extends State<LoadsScreen> {
                                                     children: [
                                                       if (model
                                                           .weight.isNotEmpty)
-                                                        item1(
-                                                            '${model.weight}kg'),
-                                                      item1('\$${model.price}'),
+                                                        item1(model.weight),
+                                                      item1('\$50-\$${model.price}'),
                                                       item1(
                                                           '${model.skids} Skids'),
+                                                      Spacer(),
+                                                      if (model.isBooked ??
+                                                          false)
+                                                        Container(
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  right: 6.h),
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      10.h,
+                                                                  vertical:
+                                                                      6.h),
+                                                          decoration: BoxDecoration(
+                                                              color:
+                                                                  Colors.green,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          6.h)),
+                                                          child: regularText(
+                                                            'Booked',
+                                                            fontSize: 11.sp,
+                                                            color:
+                                                                AppColors.white,
+                                                          ),
+                                                        ),
                                                     ],
                                                   )
                                                 ],

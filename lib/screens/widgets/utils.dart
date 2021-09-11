@@ -69,6 +69,18 @@ class Utils {
     }
     return val;
   }
+
+  static String last2(String a) {
+    List<String> b = a.split(',').reversed.toList();
+    int length = b.length;
+    if (length > 3) {
+      return b[2].trim() + ', ' + b[1].trim();
+    } else if (length > 2) {
+      return b[2].trim() + ', ' + b[1].trim();
+    } else {
+      return a;
+    }
+  }
 }
 
 extension customStringExtension on String {

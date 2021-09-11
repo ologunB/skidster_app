@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
@@ -36,6 +37,8 @@ class _PostLoadWidgetState extends State<PostLoadWidget> {
   DateTime selectedDateTime;
   Prediction dropoffData, pickupData;
 
+  String selectedTruckType = 'KG';
+
   @override
   Widget build(_) {
     return ListView(
@@ -63,14 +66,79 @@ class _PostLoadWidgetState extends State<PostLoadWidget> {
           textInputAction: TextInputAction.next,
         ),
         SizedBox(height: 16.h),
-        item('Weight'),
+        item('Weight(Optional)'),
         SizedBox(height: 8.h),
-        CustomTextField(
-          hintText: 'Input Weight - kg/lbs',
-          obscureText: false,
-          controller: weight,
-          textInputType: TextInputType.number,
-          textInputAction: TextInputAction.next,
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 15.h, vertical: 3.h),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: AppColors.grey, width: 1.h),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  keyboardType: TextInputType.number,
+                  textInputAction: TextInputAction.next,
+                  controller: weight,
+                  style: GoogleFonts.inter(
+                    color: AppColors.primaryColor,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 17.sp,
+                    letterSpacing: 0.4,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Input Weight',
+                    hintStyle: GoogleFonts.inter(
+                      color: AppColors.textGrey,
+                      fontSize: 17.sp,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    border: InputBorder.none,
+                    focusedErrorBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                  ),
+                ),
+              ),
+              Spacer(),
+              DropdownButton<String>(
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xFF7c7c7c),
+                ),
+                isExpanded: false,
+                value: selectedTruckType,
+                underline: SizedBox(),
+                icon: Icon(
+                  Icons.keyboard_arrow_down,
+                  color: Colors.black,
+                  size: 24.h,
+                ),
+                onChanged: (a) {
+                  selectedTruckType = a;
+                  setState(() {});
+                },
+                items:
+                    ['KG', 'LBS'].map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.h),
+                      child: Text(value,
+                          style: TextStyle(
+                            color: AppColors.primaryColor,
+                            fontSize: 17.sp,
+                            fontWeight: FontWeight.w500,
+                          )),
+                    ),
+                  );
+                }).toList(),
+              )
+            ],
+          ),
         ),
         SizedBox(height: 16.h),
         item('Pickup Address'),
@@ -147,19 +215,20 @@ class _PostLoadWidgetState extends State<PostLoadWidget> {
           children: [
             item('Price Range'),
             Spacer(),
-            item('\$0-\$${sliderValue.toInt()}'),
+            item('CA\$50-CA\$${sliderValue.toInt()}'),
           ],
         ),
         Slider(
-            value: sliderValue,
-            onChanged: (a) {
-              sliderValue = a;
-              setState(() {});
-            },
-            min: 100,
-            label: '$sliderValue',
-            max: 10000,
-            activeColor: AppColors.primaryColor),
+          value: sliderValue,
+          onChanged: (a) {
+            sliderValue = a;
+            setState(() {});
+          },
+          min: 50,
+          label: '$sliderValue',
+          max: 10000,
+          activeColor: AppColors.primaryColor,
+        ),
         SizedBox(height: 30.h),
         buttonWithBorder(
           'Continue',
@@ -208,7 +277,7 @@ class _PostLoadWidgetState extends State<PostLoadWidget> {
     LoadsModel loadsModel = LoadsModel(
       title: title.text,
       skids: skids.text,
-      weight: weight.text.isEmpty ? '' : weight.text,
+      weight: weight.text.isEmpty ? '' : (weight.text + selectedTruckType),
       pickup: pickup.text,
       dropoff: dropoff.text,
       dateTime: selectedDateTime.millisecondsSinceEpoch,

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_webservice/places.dart';
 import 'package:logger/logger.dart';
 
 import 'package:mms_app/app/colors.dart';
@@ -8,6 +9,7 @@ import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/core/utils/show_alert_dialog.dart';
 import 'package:mms_app/core/utils/show_exception_alert_dialog.dart';
 import 'package:mms_app/screens/general/auth/login_layout.dart';
+import 'package:mms_app/screens/user/home/get_address_view.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/custom_textfield.dart';
 import 'package:mms_app/screens/widgets/snackbar.dart';
@@ -86,13 +88,13 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
               controller: companyName,
             ),
             SizedBox(height: 16.h),
-            item('Business Number'),
+            item('Business Number(Optional)'),
             SizedBox(height: 8.h),
             CustomTextField(
               hintText: '+12 890 ',
-              validator: Utils.isValidName,
+              //   validator: Utils.isValidName,
               obscureText: false,
-              textInputType: TextInputType.number,
+              textInputType: TextInputType.phone,
               controller: companyPhone,
               textInputAction: TextInputAction.next,
             ),
@@ -106,6 +108,19 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
               controller: address,
               textInputType: TextInputType.text,
               textInputAction: TextInputAction.next,
+              readOnly: true,
+              onTap: () {
+                navigateTo(
+                    context,
+                    GetAddressView(
+                      title: 'Select Address',
+                      selectPrediction: (a) {
+                        addressData = a;
+                        address.text = a.description;
+                        setState(() {});
+                      },
+                    ));
+              },
             ),
             SizedBox(height: 16.h),
             item('Email'),
@@ -126,7 +141,7 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
               validator: Utils.isValidName,
               obscureText: false,
               controller: phone,
-              textInputType: TextInputType.number,
+              textInputType: TextInputType.phone,
               textInputAction: TextInputAction.next,
             ),
             SizedBox(height: 16.h),
@@ -136,8 +151,17 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
               hintText: 'Enter password',
               controller: password,
               validator: Utils.isValidPassword,
-              obscureText: true,
+              obscureText: obscureText,
               textInputAction: TextInputAction.done,
+              suffixIcon: InkWell(
+                  onTap: () {
+                    obscureText = !obscureText;
+                    setState(() {});
+                  },
+                  child: Icon(
+                    obscureText ? Icons.visibility_off : Icons.visibility,
+                    color: Colors.black,
+                  )),
             ),
             SizedBox(height: 16.h),
           ],
@@ -145,6 +169,8 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
       ),
     );
   }
+
+  bool obscureText = true;
 
   Widget item(String a) {
     return regularText(
@@ -169,6 +195,9 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
   TextEditingController companyPhone = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController code = TextEditingController();
+  Prediction addressData;
+
+  bool _isDialogShowing = false;
 
   Future<void> verifyNumber(context) async {
     setState(() {
@@ -180,11 +209,12 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
           timeout: Duration(minutes: 2),
           verificationCompleted: (PhoneAuthCredential _credential) async {
             code.text = _credential.smsCode;
+            Navigator.pop(context);
             _firebaseAuth
                 .signInWithCredential(_credential)
                 .then((UserCredential result) {
               _firebaseAuth.signOut();
-              signup(context);
+              signup(scaffoldKey.currentContext);
               print(result.user.uid);
             }).catchError((e) {
               setState(() {
@@ -212,25 +242,29 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
             });
             showDialog(
                 context: context,
-                barrierDismissible: false,
-                builder: (context) => AlertDialog(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.h)),
-                      title: regularText('Enter SMS Code',
-                          fontSize: 14.sp,
-                          textAlign: TextAlign.center,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.black),
-                      content: CustomTextField(
-                        hintText: 'Enter OTP',
-                        obscureText: false,
-                        maxLength: 6,
-                        controller: code,
+                barrierDismissible: true,
+                builder: (context) {
+                  _isDialogShowing = true;
+                  return AlertDialog(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.h)),
+                    title: regularText('Enter SMS Code',
+                        fontSize: 14.sp,
                         textAlign: TextAlign.center,
-                        textInputType: TextInputType.number,
-                      ),
-                      actions: <Widget>[
-                        InkWell(
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.black),
+                    content: CustomTextField(
+                      hintText: 'Enter OTP',
+                      obscureText: false,
+                      maxLength: 6,
+                      controller: code,
+                      textAlign: TextAlign.center,
+                      textInputType: TextInputType.number,
+                    ),
+                    actions: <Widget>[
+                      Container(
+                        margin: EdgeInsets.all(10.h),
+                        child: InkWell(
                           onTap: () async {
                             if (code.text.length < 6) {
                               showSnackBar(context, null, 'Enter complete OTP');
@@ -251,7 +285,7 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
                                 .signInWithCredential(_credential)
                                 .then((UserCredential result) {
                               _firebaseAuth.signOut();
-                              signup(context);
+                              signup(scaffoldKey.currentContext);
                               print(result.user.uid);
                             }).catchError((e) {
                               print(e);
@@ -267,7 +301,6 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
                           child: Container(
                             padding: EdgeInsets.symmetric(
                                 vertical: 8.h, horizontal: 16.h),
-                            margin: EdgeInsets.all(10.h),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
                                 color: AppColors.grey),
@@ -276,9 +309,11 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600),
                           ),
-                        )
-                      ],
-                    ));
+                        ),
+                      )
+                    ],
+                  );
+                });
           },
           codeAutoRetrievalTimeout: (e) {
             setState(() {

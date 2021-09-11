@@ -64,10 +64,19 @@ class _LoginScreenState extends State<LoginScreen> {
             CustomTextField(
               hintText: 'Enter password',
               validator: Utils.isValidPassword,
-              obscureText: true,
               controller: password,
               textInputType: TextInputType.text,
+              obscureText: obscureText,
               textInputAction: TextInputAction.done,
+              suffixIcon: InkWell(
+                  onTap: () {
+                    obscureText = !obscureText;
+                    setState(() {});
+                  },
+                  child: Icon(
+                    obscureText ? Icons.visibility_off : Icons.visibility,
+                    color: Colors.black,
+                  )),
             ),
             SizedBox(height: 40.h),
             buttonWithBorder('Sign In',
@@ -88,6 +97,8 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
+  bool obscureText = true;
 
   Widget item(String a) {
     return regularText(

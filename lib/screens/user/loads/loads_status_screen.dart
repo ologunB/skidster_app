@@ -2,11 +2,16 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/models/load_response.dart';
+import 'package:mms_app/core/models/truck_response.dart';
+import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/core/storage/local_storage.dart';
+import 'package:mms_app/screens/general/finder_details.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/snackbar.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
@@ -170,28 +175,84 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
                     color: AppColors.primaryColor,
                   ),
                   Spacer(),
-                  InkWell(
-                    onTap: () {},
-                    child: Icon(
-                      Icons.info_outline,
-                      size: 24.h,
-                      color: AppColors.grey,
-                    ),
-                  )
+                  PopupMenuButton(
+                      onSelected: (int a) {
+                        if (a == 0) {
+                          Clipboard.setData(
+                              ClipboardData(text: widget.loadsModel.title));
+
+                          FirebaseFirestore _firestore =
+                              FirebaseFirestore.instance;
+                          String id = Utils.randomString(no: 5) +
+                              DateTime.now().millisecondsSinceEpoch.toString();
+
+                          Map<String, dynamic> mData = Map();
+                          mData.putIfAbsent("id", () => widget.loadsModel.id);
+                          mData.putIfAbsent(
+                              "reporter", () => AppCache.getUser.uid);
+                          mData.putIfAbsent("updated_at",
+                              () => DateTime.now().millisecondsSinceEpoch);
+
+                          _firestore
+                              .collection('Support')
+                              .doc('Reports')
+                              .collection('Unattended')
+                              .doc(id)
+                              .set(mData)
+                              .then((value) {});
+
+                          showSnackBar(
+                            context,
+                            'Copied',
+                            'The Load has been reported',
+                            color: AppColors.primaryColor,
+                          );
+                        }
+                      },
+                      child: Icon(
+                        Icons.info_outline,
+                        size: 24.h,
+                        color: AppColors.grey,
+                      ),
+                      itemBuilder: (BuildContext context) =>
+                          <PopupMenuEntry<int>>[
+                            const PopupMenuItem<int>(
+                                value: 0, child: Text('Report Load')),
+                          ])
                 ],
               ),
               SizedBox(height: 16.h),
               progressIndicator(myLoad?.stage ?? 0),
-              SizedBox(height: 16.h),
+              SizedBox(height: 8.h),
               if (myLoad?.truckerName != null)
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: 15.h),
-                  child: regularText(
-                    'Booked by: ${myLoad?.truckerName}',
-                    fontSize: 17.sp,
-                    color: AppColors.primaryColor,
-                  ),
-                ),
+                    padding: EdgeInsets.symmetric(vertical: 15.h),
+                    child: Row(
+                      children: [
+                        regularText(
+                          'Booked by:  ',
+                          fontSize: 17.sp,
+                          color: AppColors.primaryColor,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            navigateTo(
+                                context,
+                                FinderDetails(
+                                  truckModel: TruckModel(
+                                    uid: myLoad?.truckerUid,
+                                    id: myLoad.id,
+                                  ),
+                                ));
+                          },
+                          child: regularText(myLoad?.truckerName,
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primaryColor,
+                              decoration: TextDecoration.underline),
+                        ),
+                      ],
+                    )),
               Row(
                 children: [
                   regularText(
@@ -201,14 +262,29 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
                     color: AppColors.grey,
                   ),
                   SizedBox(width: 10.h),
-                  InkWell(
-                    onTap: () {},
-                    child: Icon(
-                      Icons.info_outline,
-                      size: 18.h,
-                      color: AppColors.grey,
-                    ),
-                  )
+                  PopupMenuButton(
+                      onSelected: (int a) {
+                        if (a == 0) {
+                          Clipboard.setData(
+                              ClipboardData(text: widget.loadsModel.title));
+                          showSnackBar(
+                            context,
+                            'Copied',
+                            'The Load ID has been copied',
+                            color: AppColors.primaryColor,
+                          );
+                        }
+                      },
+                      child: Icon(
+                        Icons.info_outline,
+                        size: 18.h,
+                        color: AppColors.grey,
+                      ),
+                      itemBuilder: (BuildContext context) =>
+                          <PopupMenuEntry<int>>[
+                            const PopupMenuItem<int>(
+                                value: 0, child: Text('Copy ID')),
+                          ])
                 ],
               ),
               SizedBox(height: 10.h),
