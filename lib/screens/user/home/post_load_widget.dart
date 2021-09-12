@@ -274,9 +274,9 @@ class _PostLoadWidgetState extends State<PostLoadWidget> {
     }
 
     LoadsModel loadsModel = LoadsModel(
-      title: title.text,
-      skids: skids.text,
-      weight: weight.text.isEmpty ? '' : (weight.text + selectedTruckType),
+      title: title.text.trim(),
+      skids: skids.text.trim(),
+      weight: weight.text.isEmpty ? '' : (weight.text.trim() + selectedTruckType),
       pickup: pickup.text,
       dropoff: dropoff.text,
       dateTime: selectedDateTime.millisecondsSinceEpoch,

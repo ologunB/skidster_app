@@ -66,6 +66,7 @@ class _SignupLayoutState extends State<SignupLayout> {
                       fontSize: 17.sp,
                       height: 50.h,
                       fontWeight: FontWeight.w600, onTap: () {
+                    FirebaseAuth.instance.signOut();
                     navigateTo(context, SelectUserType());
                   }),
                   Row(

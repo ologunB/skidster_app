@@ -17,6 +17,7 @@ import 'package:mms_app/app/size_config/extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'edit_load_screen.dart';
+import 'package:mms_app/screens/widgets/utils.dart';
 
 class LoadsDetailsScreen extends StatefulWidget {
   const LoadsDetailsScreen({Key key, this.isTruck = false, this.loadsModel})
@@ -129,7 +130,7 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                   Row(
                     children: [
                       regularText(
-                        loadsModel.title,
+                        loadsModel.title.toTitleCase(),
                         fontSize: 17.sp,
                         fontWeight: FontWeight.w700,
                         color: AppColors.grey,
@@ -196,7 +197,7 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  item2('Item', ': ${loadsModel.title}'),
+                  item2('Item', ': ${loadsModel.title.toTitleCase()}'),
                   if (loadsModel.weight.isNotEmpty)
                     item2('Weight', ': ${loadsModel.weight}'),
                   item2('Skids', ': ${loadsModel.skids}'),

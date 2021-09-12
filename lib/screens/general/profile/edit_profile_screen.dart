@@ -34,9 +34,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     name = TextEditingController(text: AppCache.getUser.name.toTitleCase());
     email = TextEditingController(text: AppCache.getUser.email);
     phone = TextEditingController(text: AppCache.getUser.phone);
-    address =
-        TextEditingController(text: Utils.last2(AppCache.getUser.companyAddress));
-    imageUrl = AppCache.getUser.image ?? 'null';
+    if(AppCache.userType == UserType.TRUCKER){
+      address =
+          TextEditingController(text: Utils.last2(AppCache.getUser.companyAddress));
+
+    }
+     imageUrl = AppCache.getUser.image;
     super.initState();
   }
 
@@ -235,9 +238,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       }
 
       Map<String, dynamic> mData = AppCache.getUser.toJson();
-      mData.update("name", (a) => name.text);
-      mData.update("company_address", (a) => address.text);
-      mData.update("phone", (a) => phone.text);
+      mData.update("name", (a) => name.text.trim());
+      mData.update("company_address", (a) => address.text.trim());
+      mData.update("phone", (a) => phone.text.trim());
       mData.update("email", (a) => email.text);
       mData.update("updated_at", (a) => DateTime.now().millisecondsSinceEpoch);
       mData.update("image", (a) => url, ifAbsent: () => url);

@@ -121,13 +121,11 @@ class NotificationManager {
             (int id, String title, String body, String payload) async {
       print('received: ' + title.toString());
     });
-    const MacOSInitializationSettings initializationSettingsMacOS =
-        MacOSInitializationSettings();
+
     final InitializationSettings initializationSettings =
         InitializationSettings(
             android: initializationSettingsAndroid,
-            iOS: initializationSettingsIOS,
-            macOS: initializationSettingsMacOS);
+            iOS: initializationSettingsIOS);
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: selectNotification);
 

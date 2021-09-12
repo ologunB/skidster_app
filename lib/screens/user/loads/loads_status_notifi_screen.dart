@@ -219,7 +219,8 @@ class _LoadsStatusNotifiScreenState extends State<LoadsStatusNotifiScreen> {
               progressIndicator(myLoad?.stage ?? 0),
               SizedBox(height: 8.h),
               if (myLoad?.truckerName != null)
-                Padding(
+                if (AppCache.userType != UserType.TRUCKER)
+                  Padding(
                     padding: EdgeInsets.symmetric(vertical: 15.h),
                     child: Row(
                       children: [

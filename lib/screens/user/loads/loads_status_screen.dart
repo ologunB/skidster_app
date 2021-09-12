@@ -219,34 +219,36 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
               progressIndicator(myLoad?.stage ?? 0),
               SizedBox(height: 8.h),
               if (myLoad?.truckerName != null)
-                Padding(
-                    padding: EdgeInsets.symmetric(vertical: 15.h),
-                    child: Row(
-                      children: [
-                        regularText(
-                          'Booked by:  ',
-                          fontSize: 17.sp,
-                          color: AppColors.primaryColor,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            navigateTo(
-                                context,
-                                FinderDetails(
-                                  truckModel: TruckModel(
-                                    uid: myLoad?.truckerUid,
-                                    id: myLoad.id,
-                                  ),
-                                ));
-                          },
-                          child: regularText(myLoad?.truckerName?.toTitleCase() ,
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.primaryColor,
-                              decoration: TextDecoration.underline),
-                        ),
-                      ],
-                    )),
+                if (AppCache.userType != UserType.TRUCKER)
+                  Padding(
+                      padding: EdgeInsets.symmetric(vertical: 15.h),
+                      child: Row(
+                        children: [
+                          regularText(
+                            'Booked by:  ',
+                            fontSize: 17.sp,
+                            color: AppColors.primaryColor,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              navigateTo(
+                                  context,
+                                  FinderDetails(
+                                    truckModel: TruckModel(
+                                      uid: myLoad?.truckerUid,
+                                      id: myLoad.id,
+                                    ),
+                                  ));
+                            },
+                            child: regularText(
+                                myLoad?.truckerName?.toTitleCase(),
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.primaryColor,
+                                decoration: TextDecoration.underline),
+                          ),
+                        ],
+                      )),
               Row(
                 children: [
                   regularText(
@@ -297,7 +299,8 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    item2('Item', ': ${widget.loadsModel.title?.toTitleCase() }'),
+                    item2(
+                        'Item', ': ${widget.loadsModel.title?.toTitleCase()}'),
                     if (widget.loadsModel.weight.isNotEmpty)
                       item2('Weight', ': ${widget.loadsModel.weight}'),
                     item2('Skids', ': ${widget.loadsModel.skids}'),
@@ -583,7 +586,6 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
         setState(() {
           isLoading = false;
         });
-
       }).then((value) {
         setState(() {
           isLoading = false;

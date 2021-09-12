@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/models/truck_response.dart';
 import 'package:mms_app/core/routes/router.dart';
@@ -82,6 +83,7 @@ class _SavedProfilesScreenState extends State<SavedProfilesScreen> {
                                 TruckModel model = myLoads[index];
                                 return InkWell(
                                   onTap: () {
+
                                     navigateTo(context,
                                         FinderDetails(truckModel: model));
                                   },

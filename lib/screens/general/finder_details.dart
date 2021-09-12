@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mms_app/app/colors.dart';
+import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/core/models/login_response.dart';
 import 'package:mms_app/core/models/truck_response.dart';
 import 'package:mms_app/core/routes/router.dart';
@@ -37,6 +38,7 @@ class _FinderDetailsState extends State<FinderDetails> {
 
   @override
   void initState() {
+    print(widget.truckModel.uid);
     streams1 = _firestore
         .collection('Loaders')
         .doc('Completed')
@@ -170,11 +172,12 @@ class _FinderDetailsState extends State<FinderDetails> {
                 if (truckModel.name == null) {
                   return;
                 }
+                //print( truckModel.uid);return;
                 navigateReplacement(
                     context,
                     ChatDetailsView(
                       contact: UserData(
-                        uid: truckModel.uid,
+                        uid: widget.truckModel.uid,
                         name: truckModel.name,
                         image: truckModel.image,
                         phone: truckModel.companyPhone,
@@ -212,14 +215,15 @@ class _FinderDetailsState extends State<FinderDetails> {
             fontWeight: FontWeight.w700,
             color: AppColors.white,
           ),
-          SizedBox(height: 12.h),
-          regularText(
-            truckModel?.address ?? '',
-            fontSize: 17.sp,
-            textAlign: TextAlign.center,
-            color: AppColors.white,
+          Padding(
+            padding: EdgeInsets.all(12.h),
+            child: regularText(
+              truckModel?.address ?? '',
+              fontSize: 17.sp,
+              textAlign: TextAlign.center,
+              color: AppColors.white,
+            ),
           ),
-          SizedBox(height: 12.h),
           if (!widget.isTruck)
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -241,7 +245,7 @@ class _FinderDetailsState extends State<FinderDetails> {
                         favorite = !favorite;
                         setState(() {});
                       } else {
-                        postRef.set(truckModel.toJson());
+                        postRef.set(widget.truckModel.toJson());
                         favorite = !favorite;
                         setState(() {});
                       }
@@ -309,7 +313,8 @@ class _FinderDetailsState extends State<FinderDetails> {
   }
 
   Widget item(String a, String b) {
-    return Padding(
+    return Container(
+      width: SizeConfig.screenWidth,
       padding: EdgeInsets.symmetric(vertical: 8.h),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

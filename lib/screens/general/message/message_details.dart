@@ -38,6 +38,7 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
 
   @override
   void initState() {
+    Logger().d(widget.contact.uid);
     final String conId =
         Utils.conversationId(AppCache.getUser.uid, widget.contact.uid);
 
@@ -188,7 +189,7 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
                     children: [
                       InkWell(
                         onTap: () {
-                          launch('tel:${widget.contact.companyPhone}');
+                          launch('tel:${widget.contact.phone}');
                         },
                         child: Image.asset(
                           'images/call.png',
@@ -278,7 +279,7 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
   }
 
   Future<bool> sendOneMessage() async {
-    final String text = textController.text;
+    final String text = textController.text.trim();
     UserData toUser = widget.contact;
 
     final int timeStamp = DateTime.now().millisecondsSinceEpoch;
