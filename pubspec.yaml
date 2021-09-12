@@ -40,6 +40,8 @@ dependencies:
   google_maps_webservice: ^0.0.18
   keyboard_attachable:
   google_sign_in:
+  firebase_messaging: ^10.0.0
+  flutter_local_notifications: ^8.2.0
 
 dev_dependencies:
   flutter_test:

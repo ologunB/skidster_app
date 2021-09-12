@@ -239,7 +239,7 @@ class _LoadsStatusNotifiScreenState extends State<LoadsStatusNotifiScreen> {
                                   ),
                                 ));
                           },
-                          child: regularText(myLoad?.truckerName,
+                          child: regularText(myLoad?.truckerName?.toTitleCase() ,
                               fontSize: 18.sp,
                               fontWeight: FontWeight.w600,
                               color: AppColors.primaryColor,
@@ -296,9 +296,9 @@ class _LoadsStatusNotifiScreenState extends State<LoadsStatusNotifiScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    item2('Item', ': ${myLoad.title}'),
+                    item2('Item', ': ${myLoad.title?.toTitleCase() }'),
                     if (myLoad.weight.isNotEmpty)
-                      item2('Weight', ': ${myLoad.weight} kg'),
+                      item2('Weight', ': ${myLoad.weight}'),
                     item2('Skids', ': ${myLoad.skids}'),
                     item2('Price', ': CA\$${myLoad.price}'),
                     item2('Pickup Address', ': ${myLoad.pickup}'),

@@ -1,42 +1,50 @@
 {
   "project_info": {
-    "project_number": "677827270176",
-    "project_id": "skidster-fc3b3",
-    "storage_bucket": "skidster-fc3b3.appspot.com"
+    "project_number": "182836971015",
+    "firebase_url": "https://skidster-truckload-default-rtdb.firebaseio.com",
+    "project_id": "skidster-truckload",
+    "storage_bucket": "skidster-truckload.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:677827270176:android:3065d114195e41a3784e45",
+        "mobilesdk_app_id": "1:182836971015:android:d6818d8eb5b9e8f104cca2",
         "android_client_info": {
-          "package_name": "com.skidster.app"
+          "package_name": "com.skidster.apps"
         }
       },
       "oauth_client": [
         {
-          "client_id": "677827270176-a4drdalstkdqqo970hs5ieln5o9cen0u.apps.googleusercontent.com",
+          "client_id": "182836971015-jiee2o1nisuhh7eae4qljmpbjn0f2g5g.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.skidster.app",
+            "package_name": "com.skidster.apps",
             "certificate_hash": "c6e94cdc70d739c33571dad023b3455635423255"
           }
         },
         {
-          "client_id": "677827270176-5mkv1c1kiesctucu7lrc78tfm62vqm38.apps.googleusercontent.com",
+          "client_id": "182836971015-jllni8gj2i11jn4m2o01psnsivuejt9p.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCylFpVc7WtmU2sDBilSdU-AY4dM92Hw0M"
+          "current_key": "AIzaSyCycxv-ZUfF0QX90pDu1qQXNSqZprMsOXU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "677827270176-5mkv1c1kiesctucu7lrc78tfm62vqm38.apps.googleusercontent.com",
+              "client_id": "182836971015-jllni8gj2i11jn4m2o01psnsivuejt9p.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "182836971015-sfphrsp9cmgq7fg88akcutjec6tar3ko.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.skidster.apps"
+              }
             }
           ]
         }

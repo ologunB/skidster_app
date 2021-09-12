@@ -1,7 +1,10 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 import 'package:mms_app/app/colors.dart';
@@ -15,6 +18,7 @@ import 'package:mms_app/screens/general/message/messages_screen.dart';
 import 'package:mms_app/screens/general/profile/profile_screen.dart';
 import 'package:mms_app/screens/trucker/auth/set_profile_screen.dart';
 import 'package:mms_app/screens/user/loads/loads_screen.dart';
+import 'package:mms_app/screens/widgets/notification_manager.dart';
 
 import 'home/trucker_home_screen.dart';
 
@@ -64,24 +68,52 @@ class _TruckerMainLayoutState extends State<TruckerMainLayout> {
       }
     });
 
-    _firestore.collection('Users').doc(AppCache.getUser.uid).snapshots().listen((event) {
+    _firestore
+        .collection('Users')
+        .doc(AppCache.getUser.uid)
+        .snapshots()
+        .listen((event) {
       Logger().d(event.data());
       UserData userData = UserData.fromJson(event.data());
       AppCache.setUser(event.data());
       if (userData.driverLicense == null) {
         hasLicense = false;
-      }else{
+      } else {
         hasLicense = true;
       }
       if (userData.carrierDocs == null) {
         hasCarrierDoc = false;
-      }else{
+      } else {
         hasCarrierDoc = true;
       }
       setState(() {});
     });
-
+    things();
+    getToken();
     super.initState();
+  }
+
+  Future<void> getToken() async {
+    final String messagingToken = await NotificationManager.messagingToken();
+    FirebaseDatabase.instance
+        .reference()
+        .child('fcm-tokens')
+        .child(AppCache.getUser.uid)
+        .set(<String, String>{'token': messagingToken});
+  }
+
+  Future<void> things() async {
+    await Firebase.initializeApp();
+    await FirebaseDatabase.instance.setPersistenceEnabled(true);
+    await FirebaseDatabase.instance.setPersistenceCacheSizeBytes(100000000);
+    await NotificationManager.initialize();
+    FlutterError.onError = (FlutterErrorDetails details) {
+      FlutterError.dumpErrorToConsole(details, forceReport: true);
+    };
+    await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown
+    ]);
   }
 
   @override

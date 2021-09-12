@@ -37,7 +37,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: SafeArea(
         child: ListView(
           padding: EdgeInsets.symmetric(horizontal: 20.h),
-          shrinkWrap: true,
           children: [
             SizedBox(height: 30.h),
             Row(

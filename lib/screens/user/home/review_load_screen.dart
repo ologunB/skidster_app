@@ -188,7 +188,7 @@ class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
                       color: AppColors.grey,
                     ),
                     regularText(
-                      widget.loadsModel.title,
+                      widget.loadsModel.title.toTitleCase(),
                       fontSize: 17.sp,
                       color: AppColors.primaryColor,
                     ),

@@ -85,7 +85,7 @@ class Utils {
 
 extension customStringExtension on String {
   toTitleCase() {
-    final words = this.toString().split(' ');
+    final words = this.toString().toLowerCase().split(' ');
     var newWord = '';
     for (var word in words) {
       if (word.isNotEmpty)

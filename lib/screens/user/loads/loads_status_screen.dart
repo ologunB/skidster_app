@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -238,7 +239,7 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
                                   ),
                                 ));
                           },
-                          child: regularText(myLoad?.truckerName,
+                          child: regularText(myLoad?.truckerName?.toTitleCase() ,
                               fontSize: 18.sp,
                               fontWeight: FontWeight.w600,
                               color: AppColors.primaryColor,
@@ -296,9 +297,9 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    item2('Item', ': ${widget.loadsModel.title}'),
+                    item2('Item', ': ${widget.loadsModel.title?.toTitleCase() }'),
                     if (widget.loadsModel.weight.isNotEmpty)
-                      item2('Weight', ': ${widget.loadsModel.weight} kg'),
+                      item2('Weight', ': ${widget.loadsModel.weight}'),
                     item2('Skids', ': ${widget.loadsModel.skids}'),
                     item2('Price', ': CA\$${widget.loadsModel.price}'),
                     item2('Pickup Address', ': ${widget.loadsModel.pickup}'),
@@ -453,6 +454,12 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
     3: 'Load has delivered',
   };
 
+  Map<int, String> userStagesText2(String a) => {
+        1: 'The load($a) has been booked',
+        2: 'Load($a) is enroute to destination',
+        3: 'Load($a) has delivered',
+      };
+
   bool isLoading = false;
 
   bookLoad(context, stage) async {
@@ -466,19 +473,22 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
     });
     FirebaseFirestore _firestore = FirebaseFirestore.instance;
     String id = widget.loadsModel.id;
-    String uid = widget.loadsModel.loaderUid;
+    String loaderUid = widget.loadsModel.loaderUid;
     String myUid = AppCache.getUser.uid;
     String rand = Utils.randomString(no: 5) +
         DateTime.now().millisecondsSinceEpoch.toString();
-    DocumentReference postRef =
-        _firestore.collection('Loaders').doc('Added').collection(uid).doc(id);
+    DocumentReference postRef = _firestore
+        .collection('Loaders')
+        .doc('Added')
+        .collection(loaderUid)
+        .doc(id);
     DocumentReference trucksLoad =
         _firestore.collection('Loaders').doc('Added').collection(myUid).doc(id);
 
     DocumentReference completePostRef = _firestore
         .collection('Loaders')
         .doc('Completed')
-        .collection(uid)
+        .collection(loaderUid)
         .doc(id);
     DocumentReference completeTrucksLoad = _firestore
         .collection('Loaders')
@@ -490,7 +500,7 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
     DocumentReference notifiDoc = _firestore
         .collection('Notifications')
         .doc('Added')
-        .collection(uid)
+        .collection(loaderUid)
         .doc(rand);
 
     Map<String, dynamic> mData = widget.loadsModel.toJson();
@@ -513,10 +523,14 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
     notifiData.putIfAbsent('id', () => rand);
     notifiData.putIfAbsent('load_id', () => widget.loadsModel.id);
     notifiData.putIfAbsent('is_read', () => false);
-    notifiData.putIfAbsent('person', () => AppCache.getUser.name);
-    notifiData.putIfAbsent('text', () => userStagesText[stage + 1]);
+    notifiData.putIfAbsent('to', () => loaderUid);
+    notifiData.putIfAbsent('fromName', () => AppCache.getUser.name);
+    notifiData.putIfAbsent('from', () => AppCache.getUser.uid);
+    notifiData.putIfAbsent(
+        'text', () => userStagesText2(widget.loadsModel.title)[stage + 1]);
     notifiData.putIfAbsent(
         "updated_at", () => DateTime.now().millisecondsSinceEpoch);
+
     WriteBatch writeBatch = _firestore.batch();
     if (stage == 0) {
       // update user to processing
@@ -556,6 +570,12 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
     }
     writeBatch.set(notifiDoc, notifiData);
 
+    print(loaderUid);
+    print(rand);
+    FirebaseDatabase.instance
+        .reference()
+        .child('notifications/$loaderUid/$rand')
+        .set(notifiData);
     Navigator.pop(context);
     try {
       writeBatch.commit().timeout(Duration(seconds: 10), onTimeout: () {
@@ -563,6 +583,7 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
         setState(() {
           isLoading = false;
         });
+
       }).then((value) {
         setState(() {
           isLoading = false;

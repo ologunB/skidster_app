@@ -181,7 +181,7 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       regularText(
-                                        model.name + ' | ' + model.companyName,
+                                        model.name.toTitleCase() + ' | ' + model.companyName.toTitleCase(),
                                         fontSize: 17.sp,
                                         fontWeight: FontWeight.w700,
                                         color: AppColors.primaryColor,

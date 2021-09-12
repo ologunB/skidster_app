@@ -14,7 +14,6 @@ import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/notification_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
-import 'package:mms_app/screens/widgets/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'edit_load_screen.dart';
@@ -146,8 +145,6 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                     ],
                   ),
                   SizedBox(height: 10.h),
-
-
                   Row(
                     children: [
                       Container(

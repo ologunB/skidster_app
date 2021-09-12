@@ -3,7 +3,6 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/models/load_response.dart';

@@ -8,6 +8,7 @@ import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/models/login_response.dart';
 import 'package:mms_app/core/models/message_model.dart';
 import 'package:mms_app/core/storage/local_storage.dart';
+import 'package:mms_app/screens/widgets/notification_manager.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
@@ -58,6 +59,10 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
           _scrollController.position.minScrollExtent - 200,
           curve: Curves.easeOut,
           duration: const Duration(milliseconds: 500));
+
+      Future<dynamic>.delayed(const Duration(seconds: 1), () async {
+        NotificationManager.cancelNotification(widget.contact.uid.hashCode);
+      });
       setState(() {});
 
       if (!newModel.isRead && newModel.to == AppCache.getUser.uid) {
@@ -100,6 +105,9 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
       allMessages.sort((NewMessageModel b, NewMessageModel a) =>
           a.createdAt.compareTo(b.createdAt));
 
+      Future<dynamic>.delayed(const Duration(seconds: 1), () async {
+        NotificationManager.cancelNotification(widget.contact.uid.hashCode);
+      });
       setState(() {});
     });
 
@@ -115,8 +123,6 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
         });
       }
     });
-
-    _scrollController.addListener(() {});
     super.initState();
   }
 

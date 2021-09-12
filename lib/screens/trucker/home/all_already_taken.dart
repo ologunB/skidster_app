@@ -27,8 +27,6 @@ class _AllAlreadyTakenState extends State<AllAlreadyTaken> {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String uid = AppCache.getUser.uid;
 
-  int progressLength = 2;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

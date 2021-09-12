@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mms_app/app/colors.dart';
@@ -13,6 +11,7 @@ import 'package:mms_app/screens/widgets/custom_loader.dart';
 import 'package:mms_app/screens/widgets/error_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
+import 'package:mms_app/screens/widgets/utils.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({Key key}) : super(key: key);
@@ -182,7 +181,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                         Row(
                                           children: [
                                             regularText(
-                                              myLoads[index].person,
+                                              myLoads[index].person?.toTitleCase(),
                                               fontSize: 17.sp,
                                               fontWeight: FontWeight.w600,
                                               color: AppColors.primaryColor,

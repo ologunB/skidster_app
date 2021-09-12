@@ -5,6 +5,7 @@ import 'package:mms_app/screens/user/home/post_load_widget.dart';
 import 'package:mms_app/screens/widgets/notification_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
+import 'package:mms_app/screens/widgets/utils.dart';
 
 import 'find_trucker.dart';
 
@@ -34,7 +35,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                 Row(
                   children: [
                     regularText(
-                      'Welcome ${AppCache.getUser.name}',
+                      'Welcome ${AppCache.getUser.name   .toTitleCase()}',
                       fontSize: 22.sp,
                       fontWeight: FontWeight.w700,
                       color: AppColors.primaryColor,

@@ -48,7 +48,7 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                 Row(
                   children: [
                     regularText(
-                      'Welcome ${AppCache.getUser.name}',
+                      'Welcome ${AppCache.getUser.name.toTitleCase()}',
                       fontSize: 22.sp,
                       fontWeight: FontWeight.w700,
                       color: AppColors.primaryColor,
@@ -318,7 +318,7 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                                                             .start,
                                                     children: [
                                                       regularText(
-                                                        model.title,
+                                                        model.title.toTitleCase(),
                                                         fontSize: 13.sp,
                                                         color: AppColors.grey,
                                                       ),
@@ -533,7 +533,7 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 regularText(
-                                                  model.title,
+                                                  model.title.toTitleCase(),
                                                   fontSize: 15.sp,
                                                   color: AppColors.primaryColor,
                                                 ),
@@ -662,7 +662,7 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 regularText(
-                                                  model.title,
+                                                  model.title.toTitleCase(),
                                                   fontSize: 15.sp,
                                                   color: AppColors.primaryColor,
                                                 ),

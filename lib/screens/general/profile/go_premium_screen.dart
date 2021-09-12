@@ -1,8 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:mms_app/app/colors.dart';
+import 'package:mms_app/core/models/paid_plans_model.dart';
+import 'package:mms_app/core/storage/local_storage.dart';
+import 'package:mms_app/screens/widgets/app_empty_widget.dart';
 
 import 'package:mms_app/screens/widgets/buttons.dart';
+import 'package:mms_app/screens/widgets/custom_loader.dart';
+import 'package:mms_app/screens/widgets/error_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
 
@@ -15,6 +21,8 @@ class GoPremiumScreen extends StatefulWidget {
 
 class _GoPremiumScreenState extends State<GoPremiumScreen> {
   int selectedIndex;
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String uid = AppCache.getUser.uid;
 
   @override
   Widget build(BuildContext context) {
@@ -59,53 +67,88 @@ class _GoPremiumScreenState extends State<GoPremiumScreen> {
                 thickness: 1.h,
                 color: AppColors.grey.withOpacity(.2),
               ),
-              ListView.separated(
-                itemCount: 3,
-                shrinkWrap: true,
-                padding: EdgeInsets.zero,
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: () {
-                      selectedIndex = index;
-                      setState(() {});
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 10.h, horizontal: 20.h),
-                      color: selectedIndex == index
-                          ? AppColors.primaryColor
-                          : Colors.white,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          regularText(
-                            '\$19',
-                            fontSize: 32.sp,
-                            fontWeight: FontWeight.w600,
-                            color: selectedIndex == index
-                                ? Colors.white
-                                : AppColors.primaryColor,
-                          ),
-                          regularText(
-                            ' / 1 Month',
-                            fontSize: 15.sp,
-                            color: selectedIndex == index
-                                ? Colors.white
-                                : AppColors.primaryColor,
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-                separatorBuilder: (context, index) {
-                  return Divider(
-                    height: 0,
-                    thickness: 1.h,
-                    color: AppColors.grey.withOpacity(.2),
-                  );
-                },
-              ),
+              StreamBuilder<QuerySnapshot>(
+                  stream: _firestore
+                      .collection('Plans')
+                      .orderBy('updated_at', descending: true)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CustomLoader();
+                    } else if (snapshot.hasError) {
+                      ErrorOccurredWidget(error: snapshot.error);
+                    } else if (snapshot.hasData) {
+                      List<PaidPlansModel> myTrucks = [];
+
+                      snapshot.data.docs.forEach((element) {
+                        PaidPlansModel model =
+                            PaidPlansModel.fromJson(element.data());
+                        //  Logger().d(model.toJson());
+                        myTrucks.add(model);
+                      });
+                      return myTrucks.isEmpty
+                          ? AppEmptyWidget(text: 'No Plans for now')
+                          : ListView.separated(
+                              itemCount: 3,
+                              shrinkWrap: true,
+                              padding: EdgeInsets.zero,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                return InkWell(
+                                  onTap: () {
+                                    selectedIndex = index;
+                                    setState(() {});
+
+                                    return;
+                                    Map<String, dynamic> mData = Map();
+                                    mData.putIfAbsent("plan", () => myTrucks[index].title);
+
+                                    FirebaseFirestore.instance
+                                        .collection("Users")
+                                        .doc(uid)
+                                        .update(mData);
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10.h, horizontal: 20.h),
+                                    color: selectedIndex == index
+                                        ? AppColors.primaryColor
+                                        : Colors.white,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        regularText(
+                                          'CA\$${myTrucks[index].price}',
+                                          fontSize: 32.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color: selectedIndex == index
+                                              ? Colors.white
+                                              : AppColors.primaryColor,
+                                        ),
+                                        regularText(
+                                          ' / ${days(myTrucks[index].duration)} Month',
+                                          fontSize: 15.sp,
+                                          color: selectedIndex == index
+                                              ? Colors.white
+                                              : AppColors.primaryColor,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                              separatorBuilder: (context, index) {
+                                return Divider(
+                                  height: 0,
+                                  thickness: 1.h,
+                                  color: AppColors.grey.withOpacity(.2),
+                                );
+                              },
+                            );
+                    }
+                    return Container();
+                  }),
               Divider(
                 height: 0,
                 thickness: 1.h,
@@ -137,5 +180,9 @@ class _GoPremiumScreenState extends State<GoPremiumScreen> {
         ),
       ),
     );
+  }
+
+  String days(int a) {
+    return (a % 30).toString();
   }
 }

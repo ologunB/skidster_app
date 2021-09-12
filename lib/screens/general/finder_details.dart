@@ -9,6 +9,7 @@ import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/core/storage/local_storage.dart';
 import 'package:mms_app/screens/general/message/message_details.dart';
 import 'package:mms_app/screens/general/notifications_screen.dart';
+import 'package:mms_app/screens/widgets/utils.dart';
 
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
@@ -202,10 +203,10 @@ class _FinderDetailsState extends State<FinderDetails> {
           SizedBox(height: 12.h),
           regularText(
             widget.isTruck
-                ? (truckModel?.name ?? '')
-                : (truckModel?.name ?? '') +
+                ? (truckModel?.name?.toTitleCase() ?? '')
+                : (truckModel?.name?.toTitleCase() ?? '') +
                     ' | ' +
-                    (truckModel?.companyName ?? ''),
+                    (truckModel?.companyName?.toTitleCase() ?? ''),
             fontSize: 17.sp,
             textAlign: TextAlign.center,
             fontWeight: FontWeight.w700,

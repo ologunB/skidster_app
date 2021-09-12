@@ -6,10 +6,17 @@ class NotifiModel {
   String loadId;
   bool isRead;
 
-  NotifiModel({this.title, this.updatedAt, this.person, this.id, this.loadId});
+  NotifiModel({
+    this.title,
+    this.updatedAt,
+    this.person,
+    this.id,
+    this.loadId,
+    this.isRead,
+  });
 
   NotifiModel.fromJson(dynamic json) {
-    person = json['person'];
+    person = json['fromName'];
     title = json['text'];
     id = json['id'];
     loadId = json['load_id'];
@@ -23,6 +30,7 @@ class NotifiModel {
     data['id'] = this.id;
     data['load_id'] = this.loadId;
     data['is_read'] = this.isRead;
+    data['fromName'] = this.person;
     data['updated_at'] = this.updatedAt;
     return data;
   }

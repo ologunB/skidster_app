@@ -31,7 +31,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   void initState() {
-    name = TextEditingController(text: AppCache.getUser.name);
+    name = TextEditingController(text: AppCache.getUser.name.toTitleCase());
     email = TextEditingController(text: AppCache.getUser.email);
     phone = TextEditingController(text: AppCache.getUser.phone);
     address =

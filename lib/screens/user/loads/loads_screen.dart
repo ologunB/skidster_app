@@ -12,6 +12,7 @@ import 'package:mms_app/screens/widgets/error_widget.dart';
 import 'package:mms_app/screens/widgets/notification_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
+import 'package:mms_app/screens/widgets/utils.dart';
 
 import 'loads_info_screen.dart';
 
@@ -193,7 +194,7 @@ class _LoadsScreenState extends State<LoadsScreen> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   regularText(
-                                                    model.title,
+                                                    model.title.toTitleCase(),
                                                     fontSize: 13.sp,
                                                     color: AppColors.grey,
                                                   ),
@@ -464,7 +465,7 @@ class _LoadsScreenState extends State<LoadsScreen> {
                                               Row(
                                                 children: [
                                                   regularText(
-                                                    model.title,
+                                                    model.title.toTitleCase(),
                                                     fontSize: 13.sp,
                                                     color: AppColors.grey,
                                                   ),

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:mms_app/app/colors.dart';
-import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/core/models/home_chat_model.dart';
 import 'package:mms_app/core/models/login_response.dart';
 import 'package:mms_app/core/routes/router.dart';
@@ -14,6 +13,7 @@ import 'package:mms_app/screens/widgets/app_empty_widget.dart';
 import 'package:mms_app/screens/widgets/notification_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
+import 'package:mms_app/screens/widgets/utils.dart';
 
 import 'message_details.dart';
 
@@ -158,7 +158,14 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                         Row(
                                           children: [
                                             regularText(
-                                              allChats[index].toName,
+                                              allChats[index].fromUid ==
+                                                      AppCache.getUser.uid
+                                                  ? allChats[index]
+                                                      .toName
+                                                      .toTitleCase()
+                                                  : allChats[index]
+                                                      .toName
+                                                      .toTitleCase(),
                                               fontSize: 17.sp,
                                               fontWeight: FontWeight.w600,
                                               color: AppColors.primaryColor,

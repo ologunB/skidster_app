@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mms_app/app/colors.dart';
-import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/core/models/load_response.dart';
 import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/core/storage/local_storage.dart';
@@ -13,6 +12,7 @@ import 'package:mms_app/screens/widgets/custom_loader.dart';
 import 'package:mms_app/screens/widgets/error_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
+import 'package:mms_app/screens/widgets/utils.dart';
 
 class SavedLoadsScreen extends StatefulWidget {
   @override
@@ -163,7 +163,7 @@ class _SavedLoadsScreenState extends State<SavedLoadsScreen> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 regularText(
-                                                  model.title,
+                                                  model.title.toTitleCase(),
                                                   fontSize: 13.sp,
                                                   color: AppColors.grey,
                                                 ),
