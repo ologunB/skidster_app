@@ -332,8 +332,8 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
   void signup(context) async {
     if (fromGoogle) {
       Map<String, dynamic> mData = Map();
-      mData.putIfAbsent("name", () => name.text);
-      mData.putIfAbsent("phone", () => phone.text);
+      mData.putIfAbsent("name", () => name.text?.trim());
+      mData.putIfAbsent("phone", () => phone.text?.trim());
       mData.putIfAbsent("email", () => _email);
       mData.putIfAbsent("type", () => "customer");
       mData.putIfAbsent("uid", () => _uid);
@@ -368,9 +368,9 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
         if (user != null) {
           user.sendEmailVerification().then((verify) {
             Map<String, dynamic> mData = Map();
-            mData.putIfAbsent("name", () => name.text);
-            mData.putIfAbsent("phone", () => phone.text);
-            mData.putIfAbsent("email", () => email.text);
+            mData.putIfAbsent("name", () => name.text?.trim());
+            mData.putIfAbsent("phone", () => phone.text?.trim());
+            mData.putIfAbsent("email", () => email.text?.trim());
             mData.putIfAbsent("type", () => "customer");
             mData.putIfAbsent("uid", () => user.uid);
             mData.putIfAbsent("plan", () => "free");

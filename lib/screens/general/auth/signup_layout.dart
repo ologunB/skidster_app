@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -5,9 +6,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/app/size_config/config.dart';
+import 'package:mms_app/core/models/login_response.dart';
 import 'package:mms_app/core/routes/router.dart';
+import 'package:mms_app/core/storage/local_storage.dart';
+import 'package:mms_app/core/utils/show_alert_dialog.dart';
 import 'package:mms_app/core/utils/show_exception_alert_dialog.dart';
 import 'package:mms_app/screens/general/auth/select_signup_type.dart';
+import 'package:mms_app/screens/trucker/trucker_main_layout.dart';
+import 'package:mms_app/screens/user/user_main_layout.dart';
 
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
@@ -163,7 +169,7 @@ class _SignupLayoutState extends State<SignupLayout> {
 
   bool isLoading = false;
 
-  Future signInWithGoogle(context) async {
+  Future signInWithGoogle(buildContext) async {
     setState(() {
       isLoading = true;
     });
@@ -189,10 +195,41 @@ class _SignupLayoutState extends State<SignupLayout> {
               await _firebaseAuth.signInWithCredential(credential);
 
           if (value.user != null) {
-            setState(() {
-              isLoading = false;
+
+            FirebaseFirestore.instance
+                .collection('Users')
+                .doc(value.user.uid)
+                .get()
+                .then((document) {
+              if (!document.exists) {
+                setState(() {
+                  isLoading = false;
+                });
+
+                navigateTo(buildContext, SelectUserType());
+
+                return;
+              }
+              AppCache.setUser(document.data());
+              UserData userData = UserData.fromJson(document.data());
+              if (userData.type == 'customer') {
+                routeToReplace(buildContext, UserMainLayout());
+              } else {
+                routeToReplace(buildContext, TruckerMainLayout());
+              }
+            }).catchError((e) {
+              setState(() {
+                isLoading = false;
+              });
+
+              showExceptionAlertDialog(
+                  context: buildContext, exception: e, title: "Error");
+              setState(() {
+                isLoading = false;
+              });
+              return;
             });
-            navigateTo(context, SelectUserType());
+  
           } else {
             setState(() {
               isLoading = false;
@@ -201,20 +238,20 @@ class _SignupLayoutState extends State<SignupLayout> {
         } on FirebaseAuthException catch (e) {
           if (e.code == 'account-exists-with-different-credential') {
             showExceptionAlertDialog(
-              context: context,
+              context: buildContext,
               exception: 'Account exist with different credential',
               title: "Error",
             );
           } else if (e.code == 'invalid-credential') {
             showExceptionAlertDialog(
-              context: context,
+              context: buildContext,
               exception: 'Invalid credential',
               title: "Error",
             );
           }
         } catch (e) {
           showExceptionAlertDialog(
-            context: context,
+            context: buildContext,
             exception: e,
             title: "Error",
           );
@@ -222,7 +259,7 @@ class _SignupLayoutState extends State<SignupLayout> {
       }
     } catch (e) {
       showExceptionAlertDialog(
-        context: context,
+        context: buildContext,
         exception: e,
         title: "Error",
       );

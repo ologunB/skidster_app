@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/models/load_response.dart';
@@ -307,6 +308,12 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
                     item2('Price', ': CA\$${widget.loadsModel.price}'),
                     item2('Pickup Address', ': ${widget.loadsModel.pickup}'),
                     item2('DropOff Address', ': ${widget.loadsModel.dropoff}'),
+                    item2('Created at',
+                        ': ${DateFormat('EEEE MMM, dd').format(DateTime.fromMillisecondsSinceEpoch(widget.loadsModel.dateTime))}'),
+                    item2('Updated at',
+                        ': ${DateFormat('EEEE MMM, dd').format(DateTime.fromMillisecondsSinceEpoch(widget.loadsModel.updatedAt))}'),
+
+
                   ],
                 ),
               ),

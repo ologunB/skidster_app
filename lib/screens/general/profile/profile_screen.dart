@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/core/storage/local_storage.dart';
@@ -161,6 +162,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       fontWeight: FontWeight.w400,
                                       onTap: () {
                                         AppCache.clear();
+                                        GoogleSignIn().signOut();
                                         FirebaseAuth.instance.signOut();
                                         routeToReplace(context, LoginLayout());
                                       },

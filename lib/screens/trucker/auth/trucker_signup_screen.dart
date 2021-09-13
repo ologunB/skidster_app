@@ -108,10 +108,9 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
             item('Business Number(Optional)'),
             SizedBox(height: 8.h),
             CustomTextField(
-              hintText: '+12 890 ',
-              //   validator: Utils.isValidName,
+              hintText: '123...ABC ',
               obscureText: false,
-              textInputType: TextInputType.phone,
+              textInputType: TextInputType.text,
               controller: companyPhone,
               textInputAction: TextInputAction.next,
             ),
@@ -236,9 +235,23 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
             _firebaseAuth
                 .signInWithCredential(_credential)
                 .then((UserCredential result) {
-              _firebaseAuth.signOut();
-              signup(scaffoldKey.currentContext);
-              print(result.user.uid);
+              if (result.additionalUserInfo.isNewUser) {
+                _firebaseAuth.signOut();
+                signup(scaffoldKey.currentContext);
+                print(result.user.uid);
+              } else {
+                setState(() {
+                  isLoading = false;
+                });
+                _firebaseAuth.signOut();
+                showAlertDialog(
+                  context: scaffoldKey.currentContext,
+                  title: 'Error',
+                  content: "Phone number has been used for another account",
+                  defaultActionText: 'OKAY',
+                );
+                return;
+              }
             }).catchError((e) {
               setState(() {
                 isLoading = false;
@@ -283,6 +296,51 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
                       controller: code,
                       textAlign: TextAlign.center,
                       textInputType: TextInputType.number,
+                      onChanged: (a){
+                        if(a.length == 6){
+                          setState(() {
+                            isLoading = true;
+                          });
+                          Navigator.pop(context);
+                          String smsCode = code.text.trim();
+                          PhoneAuthCredential _credential =
+                          PhoneAuthProvider.credential(
+                              verificationId: verificationId,
+                              smsCode: smsCode);
+                          code.text = '';
+
+                          _firebaseAuth
+                              .signInWithCredential(_credential)
+                              .then((UserCredential result) {
+                            if (result.additionalUserInfo.isNewUser) {
+                              _firebaseAuth.signOut();
+                              signup(scaffoldKey.currentContext);
+                              print(result.user.uid);
+                            } else {
+                              setState(() {
+                                isLoading = false;
+                              });
+                              _firebaseAuth.signOut();
+                              showAlertDialog(
+                                context: scaffoldKey.currentContext,
+                                title: 'Error',
+                                content: "Phone number has been used for another account",
+                                defaultActionText: 'OKAY',
+                              );
+                              return;
+                            }
+                          }).catchError((e) {
+                            print(e);
+                            setState(() {
+                              isLoading = false;
+                            });
+                            showExceptionAlertDialog(
+                                context: scaffoldKey.currentContext,
+                                exception: e,
+                                title: "Error");
+                          });
+                        }
+                      },
                     ),
                     actions: <Widget>[
                       Container(
@@ -307,9 +365,23 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
                             _firebaseAuth
                                 .signInWithCredential(_credential)
                                 .then((UserCredential result) {
-                              _firebaseAuth.signOut();
-                              signup(scaffoldKey.currentContext);
-                              print(result.user.uid);
+                              if (result.additionalUserInfo.isNewUser) {
+                                _firebaseAuth.signOut();
+                                signup(scaffoldKey.currentContext);
+                                print(result.user.uid);
+                              } else {
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                _firebaseAuth.signOut();
+                                showAlertDialog(
+                                  context: scaffoldKey.currentContext,
+                                  title: 'Error',
+                                  content: "Phone number has been used for another account",
+                                  defaultActionText: 'OKAY',
+                                );
+                                return;
+                              }
                             }).catchError((e) {
                               print(e);
                               setState(() {
@@ -394,12 +466,12 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
         if (user != null) {
           user.sendEmailVerification().then((verify) {
             Map<String, dynamic> mData = Map();
-            mData.putIfAbsent("name", () => name.text);
-            mData.putIfAbsent("company_name", () => companyName.text);
-            mData.putIfAbsent("company_phone", () => companyPhone.text);
-            mData.putIfAbsent("company_address", () => address.text);
-            mData.putIfAbsent("phone", () => phone.text);
-            mData.putIfAbsent("email", () => email.text);
+            mData.putIfAbsent("name", () => name.text?.trim());
+            mData.putIfAbsent("company_name", () => companyName.text?.trim());
+            mData.putIfAbsent("company_phone", () => companyPhone.text?.trim());
+            mData.putIfAbsent("company_address", () => address.text?.trim());
+            mData.putIfAbsent("phone", () => phone.text?.trim());
+            mData.putIfAbsent("email", () => email.text?.trim());
             mData.putIfAbsent("type", () => "trucker");
             mData.putIfAbsent("uid", () => user.uid);
             mData.putIfAbsent("plan", () => "free");

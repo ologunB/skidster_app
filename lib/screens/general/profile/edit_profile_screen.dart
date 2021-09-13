@@ -34,12 +34,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     name = TextEditingController(text: AppCache.getUser.name.toTitleCase());
     email = TextEditingController(text: AppCache.getUser.email);
     phone = TextEditingController(text: AppCache.getUser.phone);
-    if(AppCache.userType == UserType.TRUCKER){
-      address =
-          TextEditingController(text: Utils.last2(AppCache.getUser.companyAddress));
-
+    if (AppCache.userType == UserType.TRUCKER) {
+      address = TextEditingController(
+          text: Utils.last2(AppCache.getUser.companyAddress));
     }
-     imageUrl = AppCache.getUser.image;
+    imageUrl = AppCache.getUser.image;
     super.initState();
   }
 
@@ -148,6 +147,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               CustomTextField(
                 hintText: 'Enter Phone',
                 controller: phone,
+                readOnly: true,
                 textInputType: TextInputType.text,
                 textInputAction: TextInputAction.done,
               ),
@@ -172,7 +172,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               selectPrediction: (a) {
                                 dropoffData = a;
                                 Logger().d(a.toJson());
-                                address.text = Utils.last2(dropoffData.description);
+                                address.text =
+                                    Utils.last2(dropoffData.description);
                                 setState(() {});
                               },
                             ));
@@ -197,8 +198,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ]));
   }
 
-
-
   Widget item(String a) {
     return regularText(a, fontSize: 13.sp, color: AppColors.primaryColor);
   }
@@ -221,6 +220,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   bool isLoading = false;
 
   void uploadItem(context) async {
+    if (name.text.trim().isEmpty) {
+      showSnackBar(context, 'Alert', 'Email cannot be empty');
+      return;
+    }
+
+    if (AppCache.userType == UserType.TRUCKER) {
+      if (address.text.trim().isEmpty) {
+        showSnackBar(context, 'Alert', 'Address cannot be empty');
+        return;
+      }
+    }
+
     String uid = AppCache.getUser.uid;
 
     setState(() {
@@ -239,7 +250,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
       Map<String, dynamic> mData = AppCache.getUser.toJson();
       mData.update("name", (a) => name.text.trim());
-      mData.update("company_address", (a) => address.text.trim());
+      mData.update("company_address", (a) => address?.text?.trim());
       mData.update("phone", (a) => phone.text.trim());
       mData.update("email", (a) => email.text);
       mData.update("updated_at", (a) => DateTime.now().millisecondsSinceEpoch);

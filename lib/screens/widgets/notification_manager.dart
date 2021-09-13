@@ -4,6 +4,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:logger/logger.dart';
+import 'package:mms_app/core/routes/router.dart';
+import 'package:mms_app/core/utils/navigator.dart';
+
+import '../../locator.dart';
 
 class NotificationManager {
   static Future<void> _firebaseMessagingBackgroundHandler(
@@ -136,6 +140,8 @@ class NotificationManager {
     if (payload != null) {
       final dynamic data = jsonDecode(payload);
       log.d('payload is: ' + data.toString());
+      log.d(data.runtimeType);
+
       handleData(data);
     } else {
       log.d('payload is: null');
@@ -143,6 +149,10 @@ class NotificationManager {
   }
 
   static Future<void> handleData(dynamic data, [bool isAppOpen = false]) async {
+    clickedName = data['fromName'];
+    clickedUid = data['id'];
+    locator<NavigationService>().navigateTo(MessageDetailsText);
+
 /*  if (data['isGroup'].toString() == 'false') {
       Navigator.push<void>(
           locator<NavigationService>().navigationKey.currentContext,
@@ -166,3 +176,5 @@ class NotificationManager {
     }*/
   }
 }
+
+String clickedName, clickedUid;

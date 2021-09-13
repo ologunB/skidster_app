@@ -240,7 +240,7 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
                       selectedTravelPreference = a;
                       setState(() {});
                     },
-                    items: ['Morning', 'Afternoon', 'Night']
+                    items: ['Canada', 'USA']
                         .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
@@ -334,11 +334,11 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
       showSnackBar(context, null, 'Select Truck Type');
       return;
     }
-    if (skidsCapacity == null) {
+    if (skidsCapacity.text.isEmpty) {
       showSnackBar(context, null, 'Enter Skids Capacity');
       return;
     }
-    if (selectedTruckType == null) {
+    if (drivingExperience.text.isEmpty) {
       showSnackBar(context, null, 'Enter Driving Experience!');
       return;
     }
@@ -370,8 +370,8 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
     mData.putIfAbsent("company_phone", () => AppCache.getUser.companyPhone);
     mData.putIfAbsent("address", () => AppCache.getUser.companyAddress);
     mData.putIfAbsent("uid", () => uid);
-    mData.putIfAbsent("skids", () => skidsCapacity.text);
-    mData.putIfAbsent("experience", () => drivingExperience.text);
+    mData.putIfAbsent("skids", () => skidsCapacity.text?.trim());
+    mData.putIfAbsent("experience", () => drivingExperience.text?.trim());
     mData.putIfAbsent("is_insured", () => insured);
     mData.putIfAbsent("trips_number", () => 3);
     mData.putIfAbsent("travel_pref", () => selectedTravelPreference);

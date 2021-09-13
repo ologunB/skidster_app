@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mms_app/screens/general/auth/login_layout.dart';
 import 'package:mms_app/screens/general/auth/login_screen.dart';
+import 'package:mms_app/screens/general/message/message_details.dart';
 import 'package:mms_app/screens/general/onboarding_view.dart';
 import 'package:mms_app/screens/general/auth/signup_layout.dart';
 import 'package:mms_app/screens/trucker/trucker_main_layout.dart';
@@ -10,10 +11,8 @@ import 'package:mms_app/screens/user/user_main_layout.dart';
 const String OnboardingScreen = '/onboarding-view';
 const String LoginView = '/login-view';
 const String LayoutScreen = '/layout-view';
-const String SignupLayoutScreen = '/signup-layout-view';
+const String MessageDetailsText = '/message-details-view';
 const String LoginLayoutScreen = '/login-layout-view';
-const String ChangePasswordScreen = '/change-password';
-const String ConfirmOTPScreen = '/confirm-otp';
 const String UserMainView = '/user-main-view';
 const String TruckerMainView = '/truck-main-view';
 
@@ -32,10 +31,10 @@ Route<dynamic> generateRoute(RouteSettings settings) {
         args: settings.arguments,
       );
 
-    case SignupLayoutScreen:
+    case MessageDetailsText:
       return _getPageRoute(
         routeName: settings.name,
-        view: SignupLayout(),
+        view: ChatDetailsView(),
         args: settings.arguments,
       );
 
@@ -84,13 +83,13 @@ void navigateTo(BuildContext context, Widget view, {bool dialog = false}) {
           builder: (BuildContext context) => view, fullscreenDialog: dialog));
 }
 
-void navigateReplacement(BuildContext context, Widget view, {bool dialog = false}) {
+void navigateReplacement(BuildContext context, Widget view,
+    {bool dialog = false}) {
   Navigator.pushReplacement(
       context,
       CupertinoPageRoute<dynamic>(
           builder: (BuildContext context) => view, fullscreenDialog: dialog));
 }
-
 
 void routeToReplace(BuildContext context, Widget view) {
   Navigator.pushAndRemoveUntil<void>(

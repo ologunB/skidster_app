@@ -125,7 +125,14 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                 context,
                                 ChatDetailsView(
                                   contact: UserData(
-                                    name: allChats[index].toName,
+                                    name: allChats[index].fromUid ==
+                                        AppCache.getUser.uid
+                                        ? allChats[index]
+                                        .toName
+                                        .toTitleCase()
+                                        : allChats[index]
+                                        .fromName
+                                        .toTitleCase(),
                                     uid: allChats[index].toUid ==
                                             AppCache.getUser.uid
                                         ? allChats[index].fromUid
@@ -164,7 +171,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                                       .toName
                                                       .toTitleCase()
                                                   : allChats[index]
-                                                      .toName
+                                                      .fromName
                                                       .toTitleCase(),
                                               fontSize: 17.sp,
                                               fontWeight: FontWeight.w600,

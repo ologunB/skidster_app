@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/models/load_response.dart';
@@ -304,6 +305,11 @@ class _LoadsStatusNotifiScreenState extends State<LoadsStatusNotifiScreen> {
                     item2('Price', ': CA\$${myLoad.price}'),
                     item2('Pickup Address', ': ${myLoad.pickup}'),
                     item2('DropOff Address', ': ${myLoad.dropoff}'),
+                    item2('Created at',
+                        ': ${DateFormat('EEEE MMM, dd').format(DateTime.fromMillisecondsSinceEpoch(myLoad.dateTime))}'),
+                    item2('Updated at',
+                        ': ${DateFormat('EEEE MMM, dd').format(DateTime.fromMillisecondsSinceEpoch(myLoad.updatedAt))}'),
+
                   ],
                 ),
               ),

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/models/load_response.dart';
@@ -12,6 +13,7 @@ import 'package:mms_app/screens/general/message/message_details.dart';
 import 'package:mms_app/screens/user/loads/loads_status_screen.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/notification_widget.dart';
+import 'package:mms_app/screens/widgets/snackbar.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -77,11 +79,38 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
             Row(
               children: [
                 regularText(
-                  'Post ID: #${loadsModel.id.toUpperCase()}',
+                  'Post ID: ',
                   fontSize: 17.sp,
                   fontWeight: FontWeight.w700,
                   color: AppColors.grey,
                 ),
+
+                SizedBox(width: 10.h),
+                PopupMenuButton(
+                    onSelected: (int a) {
+                      if (a == 0) {
+                        Clipboard.setData(
+                            ClipboardData(text: widget.loadsModel.id));
+                        showSnackBar(
+                          context,
+                          'Copied',
+                          'The Load ID has been copied',
+                          color: AppColors.primaryColor,
+                        );
+                      }
+                    },
+                    child: Icon(
+                      Icons.info_outline,
+                      size: 20.h,
+                      color: AppColors.grey,
+                    ),
+                    itemBuilder: (BuildContext context) =>
+                    <PopupMenuEntry<int>>[
+                      const PopupMenuItem<int>(
+                          value: 0, child: Text('Copy ID')),
+                    ]),
+
+
                 Spacer(),
                 if (widget.isTruck)
                   InkWell(

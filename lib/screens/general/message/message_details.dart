@@ -14,14 +14,15 @@ import 'package:mms_app/app/size_config/extensions.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:mms_app/screens/widgets/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../locator.dart';
 import 'input_widget.dart';
 import 'message_bubble.dart';
 import 'package:keyboard_attachable/keyboard_attachable.dart';
 
 class ChatDetailsView extends StatefulWidget {
-  const ChatDetailsView({Key key, this.contact}) : super(key: key);
+  ChatDetailsView({Key key, this.contact}) : super(key: key);
 
-  final UserData contact;
+  UserData contact;
 
   @override
   _ChatDetailsViewState createState() => _ChatDetailsViewState();
@@ -38,7 +39,13 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
 
   @override
   void initState() {
+    if (clickedName != null) {
+      widget.contact = UserData(uid: clickedUid, name: clickedName);
+      clickedName = null;
+    }
+
     Logger().d(widget.contact.uid);
+
     final String conId =
         Utils.conversationId(AppCache.getUser.uid, widget.contact.uid);
 
