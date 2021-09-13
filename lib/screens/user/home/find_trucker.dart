@@ -102,12 +102,18 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
                     return;
                   }
                   try {
+                    print(filters?.location?.latitude);
                     isLoading = true;
                     setState(() {});
                     AlgoliaQuery query = algolia.instance
                         .index('Trucks')
-                        .query(a).query(filters?.truckType == null ? 'T' : filters?.truckType)
-
+                        .query(a)
+                        .query(filters?.truckType == null
+                            ? 'T'
+                            : filters?.truckType)
+                        .setAroundLatLng(
+                            '${filters?.location?.latitude ?? 50},${filters?.location?.longitude ?? -79}')
+                        .setAroundRadius(filters?.radius ?? 10000000)
                         .filters(
                             'skids<${filters?.skidsCapacity == null ? 500 : filters?.skidsCapacity}');
 
@@ -123,8 +129,12 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
                     });
                     isLoading = true;
                     setState(() {});
+                  } on AlgoliaError catch (e) {
+                    Logger().d(e.error);
+                    isLoading = true;
+                    setState(() {});
                   } catch (e) {
-                    print(e);
+                    Logger().d(e);
                     isLoading = true;
                     setState(() {});
                   }

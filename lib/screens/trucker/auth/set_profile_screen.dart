@@ -250,6 +250,7 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
                       size: 24.h,
                     ),
                     onChanged: (a) {
+                      Utils.unfocusKeyboard(context);
                       selectedTravelPreference = a;
                       setState(() {});
                     },
@@ -285,6 +286,7 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
     return Expanded(
       child: InkWell(
         onTap: () {
+          Utils.unfocusKeyboard(context);
           insured = a;
           setState(() {});
         },

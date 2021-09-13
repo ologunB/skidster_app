@@ -12,7 +12,7 @@ class UserData {
   String type;
   String uid;
   String image;
-  Map<String, dynamic> location;
+  dynamic location;
 
   UserData(
       {this.plan,

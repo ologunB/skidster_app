@@ -6,6 +6,7 @@ import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/snackbar.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
+
 class FilterItem {
   bool showNearby;
   String truckType;
@@ -13,8 +14,13 @@ class FilterItem {
   int radius;
   Position location;
 
-  FilterItem(
-      {this.truckType, this.skidsCapacity, this.radius, this.showNearby, this.location});
+  FilterItem({
+    this.truckType,
+    this.skidsCapacity,
+    this.radius,
+    this.showNearby,
+    this.location,
+  });
 }
 
 class FilterScreen extends StatefulWidget {
@@ -32,13 +38,14 @@ class _FilterScreenState extends State<FilterScreen> {
   int sliderValue1;
 
   int sliderValue2;
+  Position location;
 
   String selectedTruckType;
 
   @override
   void initState() {
     showNearby = widget?.filterItem?.showNearby ?? false;
-    sliderValue1 = widget?.filterItem?.skidsCapacity ?? 90;
+    sliderValue1 = widget?.filterItem?.skidsCapacity ?? 50;
     sliderValue2 = widget?.filterItem?.radius ?? 3;
     selectedTruckType = widget?.filterItem?.truckType;
     super.initState();
@@ -92,10 +99,12 @@ class _FilterScreenState extends State<FilterScreen> {
               Navigator.pop(
                   context,
                   FilterItem(
-                      showNearby: showNearby,
-                      truckType: selectedTruckType,
-                      skidsCapacity: sliderValue1,
-                      radius: sliderValue2));
+                    showNearby: showNearby,
+                    truckType: selectedTruckType,
+                    skidsCapacity: sliderValue1,
+                    radius: sliderValue2,
+                    location: location,
+                  ));
             }),
           ),
         ),
@@ -134,58 +143,59 @@ class _FilterScreenState extends State<FilterScreen> {
                     inactiveTrackColor: Colors.grey.withOpacity(.5),
                     activeColor: AppColors.primaryColor,
                     value: showNearby,
-                    onChanged: (bool val) async{
+                    onChanged: (bool val) async {
                       showNearby = val;
-                      if(val){
-                        try{
-                         Position pos = await _determinePosition();
-                        }catch(e){
+                      if (val) {
+                        try {
+                          location = await _determinePosition();
+                        } catch (e) {
                           showSnackBar(context, 'Error', e);
                           print(e);
                         }
-
                       }
                       setState(() {});
                     }),
               ],
             ),
           ),
-     if(showNearby)  Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
-
-         SizedBox(height: 10.h),
-         Padding(
-           padding: EdgeInsets.symmetric(horizontal: 25.h),
-           child: regularText(
-             'Radius',
-             fontSize: 17.sp,
-             fontWeight: FontWeight.w700,
-             color: AppColors.primaryColor,
-           ),
-         ),
-         Padding(
-           padding: EdgeInsets.symmetric(horizontal: 10.h),
-           child: Slider(
-               value: sliderValue2.toDouble(),
-               onChanged: (a) {
-                 sliderValue2 = a.toInt();
-                 setState(() {});
-               },
-               min: 3,
-               label: '$sliderValue2',
-               max: 100,
-               activeColor: AppColors.primaryColor),
-         ),
-         Padding(
-           padding: EdgeInsets.symmetric(horizontal: 30.h),
-           child: regularText(
-             'Radius $sliderValue2 KM',
-             fontSize: 14.sp,
-             color: AppColors.primaryColor,
-           ),
-         ),
-       ],),
+          if (showNearby)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 10.h),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 25.h),
+                  child: regularText(
+                    'Radius',
+                    fontSize: 17.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primaryColor,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.h),
+                  child: Slider(
+                      value: sliderValue2.toDouble(),
+                      onChanged: (a) {
+                        sliderValue2 = a.toInt();
+                        setState(() {});
+                      },
+                      min: 3,
+                      label: '$sliderValue2',
+                      max: 1000,
+                      activeColor: AppColors.primaryColor),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 30.h),
+                  child: regularText(
+                    'Radius $sliderValue2 KM',
+                    fontSize: 14.sp,
+                    color: AppColors.primaryColor,
+                  ),
+                ),
+              ],
+            ),
           SizedBox(height: 10.h),
-
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 25.h),
             child: Divider(),
@@ -213,7 +223,7 @@ class _FilterScreenState extends State<FilterScreen> {
             height: 50.h,
             alignment: Alignment.center,
             child: DropdownButton<String>(
-              style:  GoogleFonts.inter(
+              style: GoogleFonts.inter(
                 fontWeight: FontWeight.w400,
                 color: Color(0xFF7c7c7c),
               ),
@@ -222,7 +232,7 @@ class _FilterScreenState extends State<FilterScreen> {
                 padding: EdgeInsets.symmetric(vertical: 8.h),
                 child: Text(
                   'Select truck type...',
-                  style:  GoogleFonts.inter(
+                  style: GoogleFonts.inter(
                       color: Color(0xff7c7c7c),
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w400),
@@ -236,9 +246,9 @@ class _FilterScreenState extends State<FilterScreen> {
                 size: 24.h,
               ),
               onChanged: (a) {
-                if(a == 'None'){
+                if (a == 'None') {
                   selectedTruckType = null;
-                }else{
+                } else {
                   selectedTruckType = a;
                 }
 
@@ -306,7 +316,6 @@ class _FilterScreenState extends State<FilterScreen> {
               color: AppColors.primaryColor,
             ),
           ),
-
         ]));
   }
 }

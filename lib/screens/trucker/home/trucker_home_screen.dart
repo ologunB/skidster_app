@@ -1,16 +1,21 @@
+import 'package:algolia/algolia.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/core/models/load_response.dart';
+import 'package:mms_app/core/models/truck_response.dart';
 import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/core/storage/local_storage.dart';
 import 'package:mms_app/screens/general/filter_screen.dart';
 import 'package:mms_app/screens/trucker/home/all_already_taken.dart';
 import 'package:mms_app/screens/user/loads/loads_info_screen.dart';
 import 'package:mms_app/screens/user/loads/loads_status_screen.dart';
+import 'package:mms_app/screens/widgets/algolia_application.dart';
 import 'package:mms_app/screens/widgets/app_empty_widget.dart';
 import 'package:mms_app/screens/widgets/app_separator.dart';
 import 'package:mms_app/screens/widgets/custom_loader.dart';
@@ -31,6 +36,14 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
   bool isPostLoad = true;
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String uid = AppCache.getUser.uid;
+
+  bool isLoading = false;
+  List<TruckModel> myTrucks = [];
+
+  TextEditingController searchController = TextEditingController();
+
+  Algolia algolia = Application.algolia;
+  FilterItem filters;
 
   @override
   Widget build(BuildContext context) {
@@ -122,6 +135,53 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                               fontSize: 17.sp,
                               letterSpacing: 0.4,
                             ),
+                            onChanged: (a) async {
+                              if (a.length < 2) {
+                                setState(() {});
+                                return;
+                              }
+                              try {
+                                print(filters?.location?.latitude);
+                                isLoading = true;
+                                setState(() {});
+                                AlgoliaQuery query = algolia.instance
+                                    .index('Loads')
+                                    .query(a)
+                                    .query(filters?.truckType == null
+                                        ? 'T'
+                                        : filters?.truckType)
+                                    .setAroundLatLng(
+                                        '${filters?.location?.latitude ?? 50},${filters?.location?.longitude ?? -79}')
+                                    .setAroundRadius(
+                                        filters?.radius ?? 10000000)
+                                    .filters(
+                                        'skids<${filters?.skidsCapacity == null ? 500 : filters?.skidsCapacity}');
+
+                                AlgoliaQuerySnapshot snap =
+                                    await query.getObjects();
+
+                                Logger().d(snap.hits);
+
+                                myTrucks.clear();
+                                snap.hits.forEach((element) {
+                                  TruckModel model =
+                                      TruckModel.fromJson(element.data);
+                                  // Logger().d(model.toJson());
+                                  myTrucks.add(model);
+                                });
+                                isLoading = true;
+                                setState(() {});
+                              } on AlgoliaError catch (e) {
+                                Logger().d(e.error);
+                                isLoading = true;
+                                setState(() {});
+                              } catch (e) {
+                                Logger().d(e);
+                                isLoading = true;
+                                setState(() {});
+                              }
+                              return;
+                            },
                             decoration: InputDecoration(
                               counterText: '',
                               contentPadding: EdgeInsets.all(15.h),
@@ -166,8 +226,16 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                         ),
                         SizedBox(width: 12.h),
                         InkWell(
-                          onTap: () {
-                            navigateTo(context, FilterScreen());
+                          onTap: () async {
+                            Utils.unfocusKeyboard(context);
+                            FilterItem a = await Navigator.push(
+                              context,
+                              CupertinoPageRoute<FilterItem>(
+                                builder: (BuildContext context) =>
+                                    FilterScreen(filterItem: filters),
+                              ),
+                            );
+                            if (a != null) filters = a;
                           },
                           highlightColor: AppColors.white,
                           child: Image.asset('images/filter.png',
@@ -318,7 +386,8 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                                                             .start,
                                                     children: [
                                                       regularText(
-                                                        model.title.toTitleCase(),
+                                                        model.title
+                                                            .toTitleCase(),
                                                         fontSize: 13.sp,
                                                         color: AppColors.grey,
                                                       ),
@@ -349,8 +418,8 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                                                                             BorderRadius.circular(10.h)),
                                                                   ),
                                                                   Expanded(
-                                                                      child:
-                                                                         SizedBox()?? MySeparator()),
+                                                                      child: SizedBox() ??
+                                                                          MySeparator()),
                                                                   Container(
                                                                     height: 9.h,
                                                                     width: 9.h,

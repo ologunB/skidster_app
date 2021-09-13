@@ -238,8 +238,6 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
       Logger().d(detail.result.geometry.location.lng);
       toLat = detail.result.geometry.location.lat;
       toLong = detail.result.geometry.location.lng;
-      isLoading = false;
-      setState(() {});
     } catch (e) {
       print(e);
       showSnackBar(context, 'Error', e);
