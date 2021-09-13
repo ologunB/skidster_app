@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/models/load_response.dart';
 import 'package:mms_app/core/storage/local_storage.dart';
@@ -243,9 +244,13 @@ class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
   bool isLoading = false;
 
   void addLoad(context) async {
+
+    Logger().d(widget.loadsModel.toJson());
+
     setState(() {
       isLoading = true;
     });
+
     FirebaseFirestore _firestore = FirebaseFirestore.instance;
     String id = widget?.loadsModel?.id ??
         Utils.randomString(no: 5) +

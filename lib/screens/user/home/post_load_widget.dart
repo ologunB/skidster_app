@@ -3,6 +3,7 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/models/load_response.dart';
@@ -15,6 +16,7 @@ import 'package:mms_app/screens/widgets/custom_textfield.dart';
 import 'package:mms_app/screens/widgets/snackbar.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
+import 'package:mms_app/screens/widgets/utils.dart';
 
 class PostLoadWidget extends StatefulWidget {
   const PostLoadWidget({Key key}) : super(key: key);
@@ -234,6 +236,7 @@ class _PostLoadWidgetState extends State<PostLoadWidget> {
           buttonColor: AppColors.primaryColor,
           fontSize: 17.sp,
           height: 50.h,
+          busy: isLoading,
           textColor: AppColors.white,
           fontWeight: FontWeight.w600,
           onTap: processPost,
@@ -250,7 +253,9 @@ class _PostLoadWidgetState extends State<PostLoadWidget> {
     );
   }
 
-  processPost() {
+  bool isLoading = false;
+
+  processPost() async {
     if (selectedDateTime == null) {
       showSnackBar(context, null, 'Select Date and Time');
       return;
@@ -273,17 +278,49 @@ class _PostLoadWidgetState extends State<PostLoadWidget> {
       return;
     }
 
+    if (int.tryParse(skids.text?.trim()) == null) {
+      showSnackBar(context, null, 'Skids must be a number');
+      return;
+    }
+    if (int.tryParse(weight.text?.trim()) == null) {
+      showSnackBar(context, null, 'Experience must be a number');
+      return;
+    }
+
+    isLoading = true;
+    setState(() {});
+    GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: Utils.googleMapKey);
+
+    double toLat, toLong;
+    PlacesDetailsResponse detail;
+    try {
+      detail = await _places.getDetailsByPlaceId(pickupData.placeId);
+      Logger().d(detail.result.geometry.location.lat);
+      Logger().d(detail.result.geometry.location.lng);
+      toLat = detail.result.geometry.location.lat;
+      toLong = detail.result.geometry.location.lng;
+      isLoading = false;
+      setState(() {});
+    } catch (e) {
+      print(e);
+      showSnackBar(context, 'Error', e);
+      isLoading = false;
+      setState(() {});
+      return;
+    }
+
     LoadsModel loadsModel = LoadsModel(
-      title: title.text.trim(),
-      skids: skids.text.trim(),
-      weight: weight.text.isEmpty ? '' : (weight.text.trim() + selectedTruckType),
-      pickup: pickup.text,
-      dropoff: dropoff.text,
-      dateTime: selectedDateTime.millisecondsSinceEpoch,
-      price: sliderValue.toInt(),
-      name: AppCache.getUser.name,
-      phone: AppCache.getUser.phone,
-    );
+        title: title.text.trim(),
+        skids: int.tryParse(skids.text?.trim()),
+        weight:
+            weight.text.isEmpty ? '' : (weight.text.trim() + selectedTruckType),
+        pickup: pickup.text,
+        dropoff: dropoff.text,
+        dateTime: selectedDateTime.millisecondsSinceEpoch,
+        price: sliderValue.toInt(),
+        name: AppCache.getUser.name,
+        phone: AppCache.getUser.phone,
+        location: {'lat': toLat, 'lng': toLong});
     navigateTo(context, ReviewLoadScreen(loadsModel: loadsModel));
   }
 }

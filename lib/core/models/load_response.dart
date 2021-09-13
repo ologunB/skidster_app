@@ -1,7 +1,7 @@
 class LoadsModel {
   String id;
   String title;
-  String skids;
+  int skids;
   String weight;
   String pickup;
   String dropoff;
@@ -17,26 +17,29 @@ class LoadsModel {
   String truckerUid;
   String truckerPhone;
   bool isBooked;
+  Map<String, dynamic> location;
 
-  LoadsModel(
-      {this.id,
-      this.dropoff,
-      this.name,
-      this.price,
-      this.phone,
-      this.title,
-      this.updatedAt,
-      this.weight,
-      this.skids,
-      this.loaderUid,
-      this.image,
-      this.pickup,
-      this.dateTime,
-      this.isBooked,
-      this.truckerName,
-      this.truckerPhone,
-      this.truckerUid,
-      this.stage = 0});
+  LoadsModel({
+    this.id,
+    this.dropoff,
+    this.name,
+    this.price,
+    this.phone,
+    this.title,
+    this.updatedAt,
+    this.weight,
+    this.skids,
+    this.loaderUid,
+    this.image,
+    this.pickup,
+    this.dateTime,
+    this.isBooked,
+    this.truckerName,
+    this.truckerPhone,
+    this.truckerUid,
+    this.location,
+    this.stage = 0,
+  });
 
   LoadsModel.fromJson(dynamic json) {
     id = json['id'];
@@ -57,6 +60,7 @@ class LoadsModel {
     truckerName = json['trucker_name'];
     truckerPhone = json['trucker_phone'];
     truckerUid = json['trucker_uid'];
+    location = json['_geoloc'];
   }
 
   Map<String, dynamic> toJson() {
@@ -79,6 +83,23 @@ class LoadsModel {
     data['trucker_name'] = this.truckerName;
     data['trucker_phone'] = this.truckerPhone;
     data['trucker_uid'] = this.truckerUid;
+    data['_geoloc'] = this.location;
     return data;
+  }
+}
+
+class SkidLocation {
+  double lat;
+  double lng;
+
+  SkidLocation.fromJson(dynamic json) {
+    lat = json['lat'];
+    lng = json['lng'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['lat'] = this.lat;
+    data['lng'] = this.lng;
   }
 }

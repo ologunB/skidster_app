@@ -1,8 +1,8 @@
 class TruckModel {
   String id;
-  String experience;
+  int experience;
   int isInsured;
-  String skids;
+  int skids;
   String travelPref;
   String truckType;
   String address;

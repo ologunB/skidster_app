@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mms_app/screens/general/auth/login_layout.dart';
 import 'package:mms_app/screens/general/auth/login_screen.dart';
 import 'package:mms_app/screens/general/message/message_details.dart';
+import 'package:mms_app/screens/general/notifications_screen.dart';
 import 'package:mms_app/screens/general/onboarding_view.dart';
 import 'package:mms_app/screens/general/auth/signup_layout.dart';
 import 'package:mms_app/screens/trucker/trucker_main_layout.dart';
@@ -12,6 +13,7 @@ const String OnboardingScreen = '/onboarding-view';
 const String LoginView = '/login-view';
 const String LayoutScreen = '/layout-view';
 const String MessageDetailsText = '/message-details-view';
+const String NotificationText = '/notification-view';
 const String LoginLayoutScreen = '/login-layout-view';
 const String UserMainView = '/user-main-view';
 const String TruckerMainView = '/truck-main-view';
@@ -28,6 +30,13 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return _getPageRoute(
         routeName: settings.name,
         view: LoginLayout(),
+        args: settings.arguments,
+      );
+
+    case NotificationText:
+      return _getPageRoute(
+        routeName: settings.name,
+        view: NotificationsScreen(),
         args: settings.arguments,
       );
 

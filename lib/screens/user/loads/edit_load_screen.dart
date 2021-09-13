@@ -45,7 +45,7 @@ class _EditLoadScreenState extends State<EditLoadScreen> {
   void initState() {
     loadsModel = widget.loadsModel;
     title = TextEditingController(text: loadsModel.title);
-    skids = TextEditingController(text: loadsModel.skids);
+    skids = TextEditingController(text: loadsModel.skids.toString());
     dropoff = TextEditingController(text: loadsModel.dropoff);
     pickup = TextEditingController(text: loadsModel.pickup);
     selectedDateTime = DateTime.fromMillisecondsSinceEpoch(loadsModel.dateTime);
@@ -329,11 +329,15 @@ class _EditLoadScreenState extends State<EditLoadScreen> {
       showSnackBar(context, null, 'Enter dropoff');
       return;
     }
+    if (int.tryParse(skids.text?.trim()) == null) {
+      showSnackBar(context, null, 'Skids must be a number');
+      return;
+    }
 
     LoadsModel loadsModel = LoadsModel(
       id: widget.loadsModel.id,
       title: title.text,
-      skids: skids.text,
+      skids: int.tryParse(skids.text?.trim()),
       weight: weight.text.isEmpty ? '' : (weight.text + selectedTruckType),
       pickup: pickup.text,
       dropoff: dropoff.text,

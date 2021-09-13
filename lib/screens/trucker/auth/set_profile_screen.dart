@@ -150,8 +150,21 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
                       selectedTruckType = a;
                       setState(() {});
                     },
-                    items: ['Trailer', 'Flatbed', 'Heavy duty']
-                        .map<DropdownMenuItem<String>>((String value) {
+                    items: [
+                      'Flatbed trailer',
+                      'Reefer trailer',
+                      'Furniture Truck',
+                      'Tipper Truck',
+                      'Tankers',
+                      'Trailer Truck',
+                      'Box Truck',
+                      'Logging Truck',
+                      'Livestock Truck',
+                      'Cement Truck',
+                      'Carrier Trailer',
+                      'Boat Haulage Truck',
+                      'Dump Truck'
+                    ].map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Padding(
@@ -339,7 +352,7 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
       return;
     }
     if (drivingExperience.text.isEmpty) {
-      showSnackBar(context, null, 'Enter Driving Experience!');
+      showSnackBar(context, null, 'Enter Driving Experience');
       return;
     }
     if (insured == null) {
@@ -350,6 +363,15 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
       showSnackBar(context, null, 'Select Travel Preference');
       return;
     }
+    if (int.tryParse(skidsCapacity.text?.trim()) == null) {
+      showSnackBar(context, null, 'Capacity must be a number');
+      return;
+    }
+    if (int.tryParse(drivingExperience.text?.trim()) == null) {
+      showSnackBar(context, null, 'Experience must be a number');
+      return;
+    }
+
     setState(() {
       isLoading = true;
     });
@@ -362,6 +384,9 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
 
     DocumentReference allTrucks = _firestore.collection('All-Truckers').doc(id);
 
+    int _skids = int.tryParse(skidsCapacity.text?.trim());
+    int _exper = int.tryParse(drivingExperience.text?.trim());
+
     Map<String, dynamic> mData = Map();
     mData.putIfAbsent("id", () => id);
     mData.putIfAbsent("truck_type", () => selectedTruckType);
@@ -370,11 +395,12 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
     mData.putIfAbsent("company_phone", () => AppCache.getUser.companyPhone);
     mData.putIfAbsent("address", () => AppCache.getUser.companyAddress);
     mData.putIfAbsent("uid", () => uid);
-    mData.putIfAbsent("skids", () => skidsCapacity.text?.trim());
-    mData.putIfAbsent("experience", () => drivingExperience.text?.trim());
+    mData.putIfAbsent("skids", () => _skids);
+    mData.putIfAbsent("experience", () => _exper);
     mData.putIfAbsent("is_insured", () => insured);
     mData.putIfAbsent("trips_number", () => 3);
     mData.putIfAbsent("travel_pref", () => selectedTravelPreference);
+    mData.putIfAbsent('_geoloc', () => AppCache.getUser.location);
     mData.putIfAbsent(
         "updated_at", () => DateTime.now().millisecondsSinceEpoch);
     WriteBatch writeBatch = _firestore.batch();

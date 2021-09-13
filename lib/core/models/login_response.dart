@@ -12,6 +12,7 @@ class UserData {
   String type;
   String uid;
   String image;
+  Map<String, dynamic> location;
 
   UserData(
       {this.plan,
@@ -24,7 +25,7 @@ class UserData {
       this.type,
       this.companyPhone,
       this.companyName,this.uid,
-      this.companyAddress, this.image});
+      this.companyAddress, this.image, this.location,});
 
   UserData.fromJson(dynamic json) {
     plan = json['plan'];
@@ -40,6 +41,7 @@ class UserData {
     uid = json['uid'];
     type = json['type'];
     image = json['image'];
+    location = json['_geoloc'];
   }
 
   Map<String, dynamic> toJson() {
@@ -57,6 +59,7 @@ class UserData {
     data['phone'] = this.phone;
     data['uid'] = this.uid;
     data['image'] = this.image;
+    data['_geoloc'] = this.location;
     return data;
   }
 }

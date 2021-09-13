@@ -8,6 +8,8 @@ class Utils {
     await SystemChannels.textInput.invokeMethod<dynamic>('TextInput.hide');
   }
 
+  static String googleMapKey = 'AIzaSyCJjJyC3Of4b4joSoyhtRYGxIvD_Tu7EAg';
+  
   static String isValidPassword(String value) {
     value = value.trim();
     if (value.isEmpty) {

@@ -126,13 +126,11 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                 ChatDetailsView(
                                   contact: UserData(
                                     name: allChats[index].fromUid ==
-                                        AppCache.getUser.uid
-                                        ? allChats[index]
-                                        .toName
-                                        .toTitleCase()
+                                            AppCache.getUser.uid
+                                        ? allChats[index].toName.toTitleCase()
                                         : allChats[index]
-                                        .fromName
-                                        .toTitleCase(),
+                                            .fromName
+                                            .toTitleCase(),
                                     uid: allChats[index].toUid ==
                                             AppCache.getUser.uid
                                         ? allChats[index].fromUid
@@ -142,9 +140,12 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                 ));
                           },
                           child: Container(
-                              color: !allChats[index].isRead
-                                  ? Colors.greenAccent.withOpacity(.3)
-                                  : null,
+                              color: allChats[index].fromUid ==
+                                      AppCache.getUser.uid
+                                  ? null
+                                  : (!allChats[index].isRead
+                                      ? Colors.greenAccent.withOpacity(.3)
+                                      : null),
                               padding: EdgeInsets.symmetric(
                                   vertical: 10.h, horizontal: 20.h),
                               child: Row(

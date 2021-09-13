@@ -4,6 +4,7 @@ import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/screens/widgets/snackbar.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
+import 'package:mms_app/screens/widgets/utils.dart';
 import 'autocomplete_widget.dart';
 
 class GetAddressView extends StatefulWidget {
@@ -36,7 +37,7 @@ class _GetAddressViewState extends State<GetAddressView> {
           showSnackBar(context, 'Error', response.errorMessage,
               duration: 3);
         },
-        apiKey: 'AIzaSyCJjJyC3Of4b4joSoyhtRYGxIvD_Tu7EAg',
+        apiKey: Utils.googleMapKey,
         components: <Component>[Component(Component.country, 'CA')],
       ),
     );

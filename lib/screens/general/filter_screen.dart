@@ -1,21 +1,73 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
+import 'package:mms_app/screens/widgets/snackbar.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
+class FilterItem {
+  bool showNearby;
+  String truckType;
+  int skidsCapacity;
+  int radius;
+  Position location;
+
+  FilterItem(
+      {this.truckType, this.skidsCapacity, this.radius, this.showNearby, this.location});
+}
 
 class FilterScreen extends StatefulWidget {
-  const FilterScreen({Key key}) : super(key: key);
+  const FilterScreen({Key key, this.filterItem}) : super(key: key);
+
+  final FilterItem filterItem;
 
   @override
   _FilterScreenState createState() => _FilterScreenState();
 }
 
 class _FilterScreenState extends State<FilterScreen> {
-  bool showNearby = false;
-  double sliderValue1 = 30;
-  double sliderValue2 = 30;
+  bool showNearby;
+
+  int sliderValue1;
+
+  int sliderValue2;
+
   String selectedTruckType;
+
+  @override
+  void initState() {
+    showNearby = widget?.filterItem?.showNearby ?? false;
+    sliderValue1 = widget?.filterItem?.skidsCapacity ?? 90;
+    sliderValue2 = widget?.filterItem?.radius ?? 3;
+    selectedTruckType = widget?.filterItem?.truckType;
+    super.initState();
+  }
+
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    return await Geolocator.getCurrentPosition();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +88,15 @@ class _FilterScreenState extends State<FilterScreen> {
                 fontSize: 17.sp,
                 height: 50.h,
                 textColor: AppColors.white,
-                fontWeight: FontWeight.w600,
-                onTap: () {}),
+                fontWeight: FontWeight.w600, onTap: () {
+              Navigator.pop(
+                  context,
+                  FilterItem(
+                      showNearby: showNearby,
+                      truckType: selectedTruckType,
+                      skidsCapacity: sliderValue1,
+                      radius: sliderValue2));
+            }),
           ),
         ),
         body: ListView(children: [
@@ -55,8 +114,8 @@ class _FilterScreenState extends State<FilterScreen> {
             padding: EdgeInsets.symmetric(horizontal: 25.h),
             child: regularText(
               'Nearby',
-              fontSize: 17.sp,
-              fontWeight: FontWeight.w600,
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w700,
               color: AppColors.primaryColor,
             ),
           ),
@@ -75,13 +134,58 @@ class _FilterScreenState extends State<FilterScreen> {
                     inactiveTrackColor: Colors.grey.withOpacity(.5),
                     activeColor: AppColors.primaryColor,
                     value: showNearby,
-                    onChanged: (bool val) {
+                    onChanged: (bool val) async{
                       showNearby = val;
+                      if(val){
+                        try{
+                         Position pos = await _determinePosition();
+                        }catch(e){
+                          showSnackBar(context, 'Error', e);
+                          print(e);
+                        }
+
+                      }
                       setState(() {});
                     }),
               ],
             ),
           ),
+     if(showNearby)  Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
+
+         SizedBox(height: 10.h),
+         Padding(
+           padding: EdgeInsets.symmetric(horizontal: 25.h),
+           child: regularText(
+             'Radius',
+             fontSize: 17.sp,
+             fontWeight: FontWeight.w700,
+             color: AppColors.primaryColor,
+           ),
+         ),
+         Padding(
+           padding: EdgeInsets.symmetric(horizontal: 10.h),
+           child: Slider(
+               value: sliderValue2.toDouble(),
+               onChanged: (a) {
+                 sliderValue2 = a.toInt();
+                 setState(() {});
+               },
+               min: 3,
+               label: '$sliderValue2',
+               max: 100,
+               activeColor: AppColors.primaryColor),
+         ),
+         Padding(
+           padding: EdgeInsets.symmetric(horizontal: 30.h),
+           child: regularText(
+             'Radius $sliderValue2 KM',
+             fontSize: 14.sp,
+             color: AppColors.primaryColor,
+           ),
+         ),
+       ],),
+          SizedBox(height: 10.h),
+
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 25.h),
             child: Divider(),
@@ -109,8 +213,7 @@ class _FilterScreenState extends State<FilterScreen> {
             height: 50.h,
             alignment: Alignment.center,
             child: DropdownButton<String>(
-              style: TextStyle(
-                fontFamily: "Gilroy",
+              style:  GoogleFonts.inter(
                 fontWeight: FontWeight.w400,
                 color: Color(0xFF7c7c7c),
               ),
@@ -119,7 +222,7 @@ class _FilterScreenState extends State<FilterScreen> {
                 padding: EdgeInsets.symmetric(vertical: 8.h),
                 child: Text(
                   'Select truck type...',
-                  style: TextStyle(
+                  style:  GoogleFonts.inter(
                       color: Color(0xff7c7c7c),
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w400),
@@ -133,11 +236,30 @@ class _FilterScreenState extends State<FilterScreen> {
                 size: 24.h,
               ),
               onChanged: (a) {
-                selectedTruckType = a;
+                if(a == 'None'){
+                  selectedTruckType = null;
+                }else{
+                  selectedTruckType = a;
+                }
+
                 setState(() {});
               },
-              items: ['Any', 'Trailer', 'Flatbed', 'Heavy duty']
-                  .map<DropdownMenuItem<String>>((String value) {
+              items: [
+                'None',
+                'Flatbed trailer',
+                'Reefer trailer',
+                'Furniture Truck',
+                'Tipper Truck',
+                'Tankers',
+                'Trailer Truck',
+                'Box Truck',
+                'Logging Truck',
+                'Livestock Truck',
+                'Cement Truck',
+                'Carrier Trailer',
+                'Boat Haulage Truck',
+                'Dump Truck',
+              ].map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Padding(
@@ -166,12 +288,12 @@ class _FilterScreenState extends State<FilterScreen> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.h),
             child: Slider(
-                value: sliderValue1,
+                value: sliderValue1.toDouble(),
                 onChanged: (a) {
-                  sliderValue1 = a;
+                  sliderValue1 = a.toInt();
                   setState(() {});
                 },
-                min: 0,
+                min: 5,
                 label: '$sliderValue1',
                 max: 100,
                 activeColor: AppColors.primaryColor),
@@ -179,42 +301,12 @@ class _FilterScreenState extends State<FilterScreen> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 30.h),
             child: regularText(
-              '0 kg - 500',
+              '1 - $sliderValue1 Skids',
               fontSize: 14.sp,
               color: AppColors.primaryColor,
             ),
           ),
-          SizedBox(height: 30.h),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 25.h),
-            child: regularText(
-              'Truck Type',
-              fontSize: 17.sp,
-              fontWeight: FontWeight.w700,
-              color: AppColors.primaryColor,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.h),
-            child: Slider(
-                value: sliderValue2,
-                onChanged: (a) {
-                  sliderValue2 = a;
-                  setState(() {});
-                },
-                min: 1,
-                label: '$sliderValue2',
-                max: 100,
-                activeColor: AppColors.primaryColor),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 30.h),
-            child: regularText(
-              'Radius ${sliderValue2.toInt()} KM',
-              fontSize: 14.sp,
-              color: AppColors.primaryColor,
-            ),
-          ),
+
         ]));
   }
 }

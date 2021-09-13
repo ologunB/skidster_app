@@ -54,7 +54,9 @@ class NotificationManager {
       if (notification != null && android != null) {
         flutterLocalNotificationsPlugin.show(message.data['id'].hashCode,
             notification.title, notification.body, generalNotificationDetails,
-            payload: jsonEncode(message.data));
+            payload: message.notification.title.contains('Message')
+                ? jsonEncode(message.data)
+                : null);
       }
     }
   }
@@ -141,10 +143,10 @@ class NotificationManager {
       final dynamic data = jsonDecode(payload);
       log.d('payload is: ' + data.toString());
       log.d(data.runtimeType);
-
       handleData(data);
     } else {
       log.d('payload is: null');
+      locator<NavigationService>().navigateTo(NotificationText);
     }
   }
 

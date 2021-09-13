@@ -218,7 +218,7 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
                           width: 44.h,
                         )),
                     SizedBox(width: 12.h),
-                    regularText(widget.contact.name,
+                    regularText(widget.contact.name.toTitleCase(),
                         fontSize: 18.sp, fontWeight: FontWeight.w600),
                   ],
                 )),

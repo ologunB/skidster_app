@@ -1,4 +1,6 @@
+import 'package:algolia/algolia.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
@@ -12,6 +14,7 @@ import 'package:mms_app/core/storage/local_storage.dart';
 import 'package:mms_app/screens/general/filter_screen.dart';
 import 'package:mms_app/screens/general/finder_details.dart';
 import 'package:mms_app/screens/general/message/message_details.dart';
+import 'package:mms_app/screens/widgets/algolia_application.dart';
 import 'package:mms_app/screens/widgets/app_empty_widget.dart';
 import 'package:mms_app/screens/widgets/custom_loader.dart';
 import 'package:mms_app/screens/widgets/error_widget.dart';
@@ -34,6 +37,9 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
   List<TruckModel> myTrucks = [];
 
   TextEditingController searchController = TextEditingController();
+
+  Algolia algolia = Application.algolia;
+  FilterItem filters;
 
   @override
   Widget build(BuildContext context) {
@@ -91,32 +97,53 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
                 ),
                 textAlign: TextAlign.start,
                 onChanged: (a) async {
-                  isLoading = true;
-                  setState(() {});
-                  await FirebaseFirestore.instance
-                      .collection("All-Truckers")
-                      .where("name", isGreaterThanOrEqualTo: a)
-                      //  .where("address", isGreaterThanOrEqualTo: a)
-                      .get()
-                      .then((value) {
-                    Logger().d(value.size);
-                    myTrucks.clear();
-                    value.docs.forEach((element) {
-                      TruckModel model = TruckModel.fromJson(element.data());
-                      //  Logger().d(model.toJson());
+                  if (a.length < 2) {
+                    setState(() {});
+                    return;
+                  }
+                  try {
+                    isLoading = true;
+                    setState(() {});
+                    AlgoliaQuery query = algolia.instance
+                        .index('Trucks')
+                        .query(a).query(filters?.truckType == null ? 'T' : filters?.truckType)
 
+                        .filters(
+                            'skids<${filters?.skidsCapacity == null ? 500 : filters?.skidsCapacity}');
+
+                    AlgoliaQuerySnapshot snap = await query.getObjects();
+
+                    Logger().d(snap.hits);
+
+                    myTrucks.clear();
+                    snap.hits.forEach((element) {
+                      TruckModel model = TruckModel.fromJson(element.data);
+                      // Logger().d(model.toJson());
                       myTrucks.add(model);
                     });
-                    isLoading = false;
+                    isLoading = true;
                     setState(() {});
-                  });
+                  } catch (e) {
+                    print(e);
+                    isLoading = true;
+                    setState(() {});
+                  }
+                  return;
                 },
               ),
             ),
             SizedBox(width: 12.h),
             InkWell(
-              onTap: () {
-                navigateTo(context, FilterScreen());
+              onTap: () async {
+                Utils.unfocusKeyboard(context);
+                FilterItem a = await Navigator.push(
+                  context,
+                  CupertinoPageRoute<FilterItem>(
+                    builder: (BuildContext context) =>
+                        FilterScreen(filterItem: filters),
+                  ),
+                );
+                if (a != null) filters = a;
               },
               highlightColor: AppColors.white,
               child:
@@ -131,7 +158,7 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
                 .orderBy('updated_at')
                 .snapshots(),
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
+              if ((snapshot.connectionState == ConnectionState.waiting)) {
                 return CustomLoader();
               } else if (snapshot.hasError) {
                 ErrorOccurredWidget(error: snapshot.error);
@@ -181,7 +208,9 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       regularText(
-                                        model.name.toTitleCase() + ' | ' + model.companyName.toTitleCase(),
+                                        model.name.toTitleCase() +
+                                            ' | ' +
+                                            model.companyName.toTitleCase(),
                                         fontSize: 17.sp,
                                         fontWeight: FontWeight.w700,
                                         color: AppColors.primaryColor,

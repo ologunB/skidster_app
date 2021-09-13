@@ -220,11 +220,34 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
   Prediction addressData;
 
   bool _isDialogShowing = false;
+  double toLat, toLong;
 
   Future<void> verifyNumber(context) async {
     setState(() {
       isLoading = true;
     });
+
+    isLoading = true;
+    setState(() {});
+    GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: Utils.googleMapKey);
+
+    PlacesDetailsResponse detail;
+    try {
+      detail = await _places.getDetailsByPlaceId(addressData.placeId);
+      Logger().d(detail.result.geometry.location.lat);
+      Logger().d(detail.result.geometry.location.lng);
+      toLat = detail.result.geometry.location.lat;
+      toLong = detail.result.geometry.location.lng;
+      isLoading = false;
+      setState(() {});
+    } catch (e) {
+      print(e);
+      showSnackBar(context, 'Error', e);
+      isLoading = false;
+      setState(() {});
+      return;
+    }
+
     try {
       await _firebaseAuth.verifyPhoneNumber(
           phoneNumber: phone.text,
@@ -296,17 +319,17 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
                       controller: code,
                       textAlign: TextAlign.center,
                       textInputType: TextInputType.number,
-                      onChanged: (a){
-                        if(a.length == 6){
+                      onChanged: (a) {
+                        if (a.length == 6) {
                           setState(() {
                             isLoading = true;
                           });
                           Navigator.pop(context);
                           String smsCode = code.text.trim();
                           PhoneAuthCredential _credential =
-                          PhoneAuthProvider.credential(
-                              verificationId: verificationId,
-                              smsCode: smsCode);
+                              PhoneAuthProvider.credential(
+                                  verificationId: verificationId,
+                                  smsCode: smsCode);
                           code.text = '';
 
                           _firebaseAuth
@@ -324,7 +347,8 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
                               showAlertDialog(
                                 context: scaffoldKey.currentContext,
                                 title: 'Error',
-                                content: "Phone number has been used for another account",
+                                content:
+                                    "Phone number has been used for another account",
                                 defaultActionText: 'OKAY',
                               );
                               return;
@@ -377,7 +401,8 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
                                 showAlertDialog(
                                   context: scaffoldKey.currentContext,
                                   title: 'Error',
-                                  content: "Phone number has been used for another account",
+                                  content:
+                                      "Phone number has been used for another account",
                                   defaultActionText: 'OKAY',
                                 );
                                 return;
@@ -435,6 +460,7 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
       mData.putIfAbsent("company_address", () => address.text);
       mData.putIfAbsent("type", () => "trucker");
       mData.putIfAbsent("uid", () => _uid);
+      mData.putIfAbsent('_geoloc', () => {'lat': toLat, 'lng': toLong});
       mData.putIfAbsent("plan", () => "free");
       mData.putIfAbsent(
           "updated_at", () => DateTime.now().millisecondsSinceEpoch);
@@ -474,6 +500,7 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
             mData.putIfAbsent("email", () => email.text?.trim());
             mData.putIfAbsent("type", () => "trucker");
             mData.putIfAbsent("uid", () => user.uid);
+            mData.putIfAbsent('_geoloc', () => {'lat': toLat, 'lng': toLong});
             mData.putIfAbsent("plan", () => "free");
             mData.putIfAbsent(
                 "updated_at", () => DateTime.now().millisecondsSinceEpoch);
