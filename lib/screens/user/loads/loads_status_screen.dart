@@ -220,36 +220,68 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
               progressIndicator(myLoad?.stage ?? 0),
               SizedBox(height: 8.h),
               if (myLoad?.truckerName != null)
-                if (AppCache.userType != UserType.TRUCKER)
-                  Padding(
-                      padding: EdgeInsets.symmetric(vertical: 15.h),
-                      child: Row(
-                        children: [
-                          regularText(
-                            'Booked by:  ',
-                            fontSize: 17.sp,
-                            color: AppColors.primaryColor,
-                          ),
-                          InkWell(
-                            onTap: () {
-                              navigateTo(
-                                  context,
-                                  FinderDetails(
-                                    truckModel: TruckModel(
-                                      uid: myLoad?.truckerUid,
-                                      id: myLoad.id,
-                                    ),
-                                  ));
-                            },
-                            child: regularText(
-                                myLoad?.truckerName?.toTitleCase(),
-                                fontSize: 18.sp,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.primaryColor,
-                                decoration: TextDecoration.underline),
-                          ),
-                        ],
-                      )),
+                AppCache.userType != UserType.TRUCKER
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(vertical: 15.h),
+                        child: Row(
+                          children: [
+                            regularText(
+                              'Booked by:  ',
+                              fontSize: 17.sp,
+                              color: AppColors.primaryColor,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                navigateTo(
+                                    context,
+                                    FinderDetails(
+                                      truckModel: TruckModel(
+                                        uid: myLoad?.truckerUid,
+                                        id: myLoad.id,
+                                      ),
+                                    ));
+                              },
+                              child: regularText(
+                                  myLoad?.truckerName?.toTitleCase(),
+                                  fontSize: 18.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.primaryColor,
+                                  decoration: TextDecoration.underline),
+                            ),
+                          ],
+                        ))
+                    : Padding(
+                        padding: EdgeInsets.symmetric(vertical: 15.h),
+                        child: Row(
+                          children: [
+                            regularText(
+                              'Posted by:  ',
+                              fontSize: 17.sp,
+                              color: AppColors.primaryColor,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                navigateTo(
+                                    context,
+                                    FinderDetails(
+                                      truckModel: TruckModel(
+                                        uid: myLoad?.loaderUid,
+                                        id: myLoad.id,
+                                        name: myLoad.name,
+                                        address: myLoad.pickup,
+                                        companyPhone: myLoad.phone,
+                                      ),
+                                      isTruck: true,
+                                    ));
+                              },
+                              child: regularText(myLoad?.name?.toTitleCase(),
+                                  fontSize: 18.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.primaryColor,
+                                  decoration: TextDecoration.underline),
+                            ),
+                          ],
+                        )),
               Row(
                 children: [
                   regularText(
@@ -312,8 +344,6 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
                         ': ${DateFormat('EEEE MMM, dd').format(DateTime.fromMillisecondsSinceEpoch(widget.loadsModel.dateTime))}'),
                     item2('Updated at',
                         ': ${DateFormat('EEEE MMM, dd').format(DateTime.fromMillisecondsSinceEpoch(widget.loadsModel.updatedAt))}'),
-
-
                   ],
                 ),
               ),

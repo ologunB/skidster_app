@@ -394,7 +394,7 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
     mData.putIfAbsent("truck_type", () => selectedTruckType);
     mData.putIfAbsent("name", () => AppCache.getUser.name);
     mData.putIfAbsent("company_name", () => AppCache.getUser.companyName);
-    mData.putIfAbsent("company_phone", () => AppCache.getUser.companyPhone);
+    mData.putIfAbsent("company_phone", () => AppCache.getUser.phone);
     mData.putIfAbsent("address", () => AppCache.getUser.companyAddress);
     mData.putIfAbsent("uid", () => uid);
     mData.putIfAbsent("skids", () => _skids);

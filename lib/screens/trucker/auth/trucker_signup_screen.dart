@@ -227,8 +227,6 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
       isLoading = true;
     });
 
-    isLoading = true;
-    setState(() {});
     GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: Utils.googleMapKey);
 
     PlacesDetailsResponse detail;

@@ -293,7 +293,7 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                                     ),
                                   ));
                             },
-                            child: regularText(loadsModel?.name,
+                            child: regularText('${loadsModel?.name?.toTitleCase()}',
                                 fontSize: 18.sp,
                                 fontWeight: FontWeight.w600,
                                 color: AppColors.primaryColor,

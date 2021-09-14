@@ -282,9 +282,11 @@ class _PostLoadWidgetState extends State<PostLoadWidget> {
       showSnackBar(context, null, 'Skids must be a number');
       return;
     }
-    if (int.tryParse(weight.text?.trim()) == null) {
-      showSnackBar(context, null, 'Experience must be a number');
-      return;
+    if (weight.text.isNotEmpty) {
+      if (int.tryParse(weight.text?.trim()) == null) {
+        showSnackBar(context, null, 'Weight must be a number');
+        return;
+      }
     }
 
     isLoading = true;

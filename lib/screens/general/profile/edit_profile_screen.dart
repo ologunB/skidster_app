@@ -240,6 +240,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     Reference reference =
         FirebaseStorage.instance.ref().child("images/${Utils.randomString()}");
 
+    GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: Utils.googleMapKey);
+    double toLat, toLong;
+
+    PlacesDetailsResponse detail;
+    try {
+      detail = await _places.getDetailsByPlaceId(dropoffData.placeId);
+      Logger().d(detail.result.geometry.location.lat);
+      Logger().d(detail.result.geometry.location.lng);
+      toLat = detail.result.geometry.location.lat;
+      toLong = detail.result.geometry.location.lng;
+    } catch (e) {
+      print(e);
+      showSnackBar(context, 'Error', e);
+      isLoading = false;
+      setState(() {});
+      return;
+    }
+
+
     try {
       String url;
       if (imageFile != null) {
@@ -255,6 +274,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       mData.update("email", (a) => email.text);
       mData.update("updated_at", (a) => DateTime.now().millisecondsSinceEpoch);
       mData.update("image", (a) => url, ifAbsent: () => url);
+      mData.update('_geoloc', (a) => {'lat': toLat, 'lng': toLong});
 
       //   mData.putIfAbsent("company_name", () => companyName.text);
       //  mData.putIfAbsent("company_phone", () => companyPhone.text);
