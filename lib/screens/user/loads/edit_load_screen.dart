@@ -59,6 +59,9 @@ class _EditLoadScreenState extends State<EditLoadScreen> {
 
       weight = TextEditingController(text: aStr);
       selectedTruckType = widget.loadsModel.weight.replaceAll(aStr, '');
+      if(selectedTruckType.isEmpty){
+        selectedTruckType = 'KG';
+      }
     }
     super.initState();
   }

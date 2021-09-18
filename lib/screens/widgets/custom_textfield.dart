@@ -46,7 +46,6 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SizeConfig.init(context);
     return TextFormField(
       cursorColor: AppColors.black.withOpacity(0.4),
       cursorWidth: 1.w,

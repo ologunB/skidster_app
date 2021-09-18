@@ -12,6 +12,7 @@ import 'package:mms_app/core/models/load_response.dart';
 import 'package:mms_app/core/models/truck_response.dart';
 import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/core/storage/local_storage.dart';
+import 'package:mms_app/core/utils/show_alert_dialog.dart';
 import 'package:mms_app/screens/general/finder_details.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/snackbar.dart';
@@ -395,6 +396,7 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
 
   Widget progressIndicator(int val) {
     print(val);
+    val = 1;
     return Container(
       padding: EdgeInsets.all(16.h),
       decoration: BoxDecoration(boxShadow: [
@@ -610,6 +612,26 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
     }
     writeBatch.set(notifiDoc, notifiData);
 
+    await _firestore
+        .collection('Loaders')
+        .doc('Added')
+        .collection(myUid)
+        .doc(id)
+        .get()
+        .then((value) {
+      if (!value.exists) {
+        showAlertDialog(
+            context: context,
+            title: 'Error',
+            content: 'Load has been booked already',
+            defaultActionText: 'OKAY');
+
+        setState(() {
+          isLoading = false;
+        });
+        return;
+      }
+    });
     print(loaderUid);
     print(rand);
     FirebaseDatabase.instance

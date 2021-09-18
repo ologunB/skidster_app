@@ -12,6 +12,7 @@ class UserData {
   String type;
   String uid;
   String image;
+  String status;
   dynamic location;
 
   UserData(
@@ -24,7 +25,7 @@ class UserData {
       this.phone,
       this.type,
       this.companyPhone,
-      this.companyName,this.uid,
+      this.companyName,this.uid,this.status,
       this.companyAddress, this.image, this.location,});
 
   UserData.fromJson(dynamic json) {
@@ -41,6 +42,7 @@ class UserData {
     uid = json['uid'];
     type = json['type'];
     image = json['image'];
+    status = json['status'];
     location = json['_geoloc'];
   }
 
@@ -58,6 +60,7 @@ class UserData {
     data['type'] = this.type;
     data['phone'] = this.phone;
     data['uid'] = this.uid;
+    data['status'] = this.status;
     data['image'] = this.image;
     data['_geoloc'] = this.location;
     return data;

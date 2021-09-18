@@ -211,7 +211,7 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
 
   TextEditingController name = TextEditingController();
   TextEditingController companyName = TextEditingController();
-  TextEditingController phone = TextEditingController();
+  TextEditingController phone = TextEditingController(text: '+1');
   TextEditingController address = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController companyPhone = TextEditingController();
@@ -450,7 +450,7 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
       mData.putIfAbsent("name", () => name.text);
       mData.putIfAbsent("phone", () => phone.text);
       mData.putIfAbsent("email", () => _email);
-
+      mData.putIfAbsent("status", () => 'active');
       mData.putIfAbsent("company_name", () => companyName.text);
       mData.putIfAbsent("company_phone", () => companyPhone.text);
       mData.putIfAbsent("company_address", () => address.text);
@@ -498,6 +498,7 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
             mData.putIfAbsent("uid", () => user.uid);
             mData.putIfAbsent('_geoloc', () => {'lat': toLat, 'lng': toLong});
             mData.putIfAbsent("plan", () => "free");
+            mData.putIfAbsent("status", () => 'active');
             mData.putIfAbsent(
                 "updated_at", () => DateTime.now().millisecondsSinceEpoch);
 

@@ -258,7 +258,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       return;
     }
 
-
     try {
       String url;
       if (imageFile != null) {
@@ -274,7 +273,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       mData.update("email", (a) => email.text);
       mData.update("updated_at", (a) => DateTime.now().millisecondsSinceEpoch);
       mData.update("image", (a) => url, ifAbsent: () => url);
-      mData.update('_geoloc', (a) => {'lat': toLat, 'lng': toLong});
+      mData.update(
+          '_geoloc',
+          (a) => toLat == null
+              ? AppCache.getUser.location
+              : {'lat': toLat, 'lng': toLong});
 
       //   mData.putIfAbsent("company_name", () => companyName.text);
       //  mData.putIfAbsent("company_phone", () => companyPhone.text);

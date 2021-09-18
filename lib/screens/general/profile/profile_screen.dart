@@ -198,7 +198,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           'https://play.google.com/store/apps/details?id=com.autoserveng.autoserve&hl=en');
                       return;
                     }
-                    navigateTo(context, gotos(data()[index])[index]);
+                    navigateTo(context, gotos()[index]);
                   },
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 13.h),
@@ -255,7 +255,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         'Logout',
       ];
 
-  List<Widget> gotos(String a) => [
+  List<Widget> gotos() => [
         EditProfileScreen(),
         if (AppCache.userType == UserType.TRUCKER) MyTrucksScreen(),
         TermsServiceScreen(),

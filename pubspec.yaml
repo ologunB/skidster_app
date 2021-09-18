@@ -39,7 +39,7 @@ dependencies:
   keyboard_attachable:
   google_sign_in:
   firebase_messaging: ^10.0.0
-  flutter_local_notifications: ^5.0.0+4
+  flutter_local_notifications: ^7.0.0
   algolia: ^1.0.1
   geolocator: ^7.0.2
   geocoding: ^2.0.1

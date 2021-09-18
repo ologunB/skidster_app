@@ -163,7 +163,7 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   TextEditingController name = TextEditingController();
-  TextEditingController phone = TextEditingController();
+  TextEditingController phone = TextEditingController(text: '+1');
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController code = TextEditingController();
@@ -338,6 +338,7 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
       mData.putIfAbsent("type", () => "customer");
       mData.putIfAbsent("uid", () => _uid);
       mData.putIfAbsent("plan", () => "free");
+      mData.putIfAbsent("status", () => 'active');
       mData.putIfAbsent(
           "updated_at", () => DateTime.now().millisecondsSinceEpoch);
 
@@ -374,6 +375,7 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
             mData.putIfAbsent("type", () => "customer");
             mData.putIfAbsent("uid", () => user.uid);
             mData.putIfAbsent("plan", () => "free");
+            mData.putIfAbsent("status", () => 'active');
             mData.putIfAbsent(
                 "updated_at", () => DateTime.now().millisecondsSinceEpoch);
 

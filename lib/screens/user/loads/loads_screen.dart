@@ -295,6 +295,33 @@ class _LoadsScreenState extends State<LoadsScreen> {
                                                                   .white,
                                                             ),
                                                           ),
+
+                                                        if (model.stage ==
+                                                            20)
+                                                          Container(
+                                                            margin:
+                                                            EdgeInsets.only(
+                                                                right: 6.h),
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                horizontal:
+                                                                10.h,
+                                                                vertical:
+                                                                6.h),
+                                                            decoration: BoxDecoration(
+                                                                color: Colors
+                                                                    .red,
+                                                                borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                    6.h)),
+                                                            child: regularText(
+                                                              'BLOCKED',
+                                                              fontSize: 11.sp,
+                                                              color: AppColors
+                                                                  .white,
+                                                            ),
+                                                          ),
                                                       ],
                                                     ),
                                                   )

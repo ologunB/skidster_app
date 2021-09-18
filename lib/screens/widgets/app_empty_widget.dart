@@ -23,6 +23,7 @@ class AppEmptyWidget extends StatelessWidget {
             'images/empty.png',
             height: 100.h,
           ),
+          SizedBox(height: 10.h),
           regularText(
             text,
             fontSize: 16.sp,

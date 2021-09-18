@@ -150,10 +150,10 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                                     .query(filters?.truckType == null
                                         ? 'T'
                                         : filters?.truckType)
-                                    .setAroundLatLng(
+                             /*       .setAroundLatLng(
                                         '${filters?.location?.latitude ?? 50},${filters?.location?.longitude ?? -79}')
                                     .setAroundRadius(
-                                        filters?.radius ?? 10000000)
+                                        filters?.radius ?? 10000000)*/
                                     .filters(
                                         'skids<${filters?.skidsCapacity == null ? 500 : filters?.skidsCapacity}');
 
