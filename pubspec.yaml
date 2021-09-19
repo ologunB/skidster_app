@@ -3,7 +3,7 @@ description: A new Flutter project.
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.1+1
+version: 1.0.2+2
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -39,10 +39,10 @@ dependencies:
   keyboard_attachable:
   google_sign_in:
   firebase_messaging: ^10.0.0
-  flutter_local_notifications: ^7.0.0
+  flutter_local_notifications: ^5.0.0+4
   algolia: ^1.0.1
   geolocator: ^7.0.2
-  geocoding: ^2.0.1
+  sign_in_with_apple: ^3.0.0
 
 dev_dependencies:
   flutter_test:

@@ -84,7 +84,6 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                   fontWeight: FontWeight.w700,
                   color: AppColors.grey,
                 ),
-
                 SizedBox(width: 10.h),
                 PopupMenuButton(
                     onSelected: (int a) {
@@ -105,12 +104,10 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                       color: AppColors.grey,
                     ),
                     itemBuilder: (BuildContext context) =>
-                    <PopupMenuEntry<int>>[
-                      const PopupMenuItem<int>(
-                          value: 0, child: Text('Copy ID')),
-                    ]),
-
-
+                        <PopupMenuEntry<int>>[
+                          const PopupMenuItem<int>(
+                              value: 0, child: Text('Copy ID')),
+                        ]),
                 Spacer(),
                 if (widget.isTruck)
                   InkWell(
@@ -259,14 +256,57 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                     children: [
                       Row(
                         children: [
-                          Icon(
-                            Icons.share,
-                            color: AppColors.primaryColor,
-                            size: 24.h,
-                          ),
+                          PopupMenuButton(
+                              onSelected: (int a) {
+                                if (a == 0) {
+                                  FirebaseFirestore _firestore =
+                                      FirebaseFirestore.instance;
+                                  String id = Utils.randomString(no: 5) +
+                                      DateTime.now()
+                                          .millisecondsSinceEpoch
+                                          .toString();
+
+                                  String uid = AppCache.getUser.uid;
+
+                                  Map<String, dynamic> mData = Map();
+                                  mData.putIfAbsent("id", () => id);
+                                  mData.putIfAbsent(
+                                      "load_id", () => widget.loadsModel.id);
+                                  mData.putIfAbsent("uid", () => 'uid');
+                                  mData.putIfAbsent("status", () => 'pending');
+                                  mData.putIfAbsent("desc", () => ' Reported');
+                                  mData.putIfAbsent(
+                                      "from", () => AppCache.getUser.name);
+                                  mData.putIfAbsent(
+                                      "updated_at",
+                                      () => DateTime.now()
+                                          .millisecondsSinceEpoch);
+                                  _firestore
+                                      .collection('All-Supports')
+                                      .doc(id)
+                                      .set(mData);
+
+                                  showSnackBar(
+                                    context,
+                                    'Success',
+                                    'The Load has been reported',
+                                    color: AppColors.primaryColor,
+                                  );
+                                }
+                              },
+                              child: Icon(
+                                Icons.info_outline,
+                                size: 24.h,
+                                color: AppColors.grey,
+                              ),
+                              itemBuilder: (BuildContext context) =>
+                                  <PopupMenuEntry<int>>[
+                                    const PopupMenuItem<int>(
+                                        value: 0, child: Text('Report Load')),
+                                  ]),
                           SizedBox(width: 8.h),
                           regularText(
-                            'Share',
+                            'Report',
                             fontSize: 17.sp,
                             color: AppColors.primaryColor,
                           ),
@@ -293,7 +333,8 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                                     ),
                                   ));
                             },
-                            child: regularText('${loadsModel?.name?.toTitleCase()}',
+                            child: regularText(
+                                '${loadsModel?.name?.toTitleCase()}',
                                 fontSize: 18.sp,
                                 fontWeight: FontWeight.w600,
                                 color: AppColors.primaryColor,

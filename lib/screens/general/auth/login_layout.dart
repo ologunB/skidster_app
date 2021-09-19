@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mms_app/app/colors.dart';
-import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/core/models/login_response.dart';
 import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/core/storage/local_storage.dart';
@@ -20,7 +19,7 @@ import 'package:mms_app/screens/user/user_main_layout.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
-
+import 'dart:io';
 class LoginLayout extends StatefulWidget {
   const LoginLayout({Key key}) : super(key: key);
 
@@ -95,43 +94,92 @@ class _LoginLayoutState extends State<LoginLayout> {
                       ),
                     ],
                   ),
-                  InkWell(
-                    onTap: () {
-                      signInWithGoogle(context);
-                    },
-                    child: Container(
-                      height: 50.h,
-                      alignment: Alignment.center,
-                      width: SizeConfig.screenWidth,
-                      decoration: BoxDecoration(
-                          color: Color(0xffF82A2A),
-                          borderRadius: BorderRadius.circular(8.h),
-                          border: Border.all(color: Color(0xffF82A2A))),
-                      child: isLoading
-                          ? SizedBox(
-                              child: CircularProgressIndicator(
-                                strokeWidth: 3,
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.white),
-                              ),
-                              height: 20.h,
-                              width: 20.h,
-                            )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset('images/google.png',
-                                    height: 20.h, width: 20.h),
-                                SizedBox(width: 10.h),
-                                regularText(
-                                  'Continue with Google',
-                                  fontSize: 17.sp,
-                                  color: AppColors.white,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ],
-                            ),
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            signInWithGoogle(context);
+                          },
+                          child: Container(
+                            height: 50.h,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                color: Color(0xffF82A2A),
+                                borderRadius: BorderRadius.circular(8.h),
+                                border: Border.all(color: Color(0xffF82A2A))),
+                            child: googleIsLoading
+                                ? SizedBox(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 3,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Colors.white),
+                                    ),
+                                    height: 20.h,
+                                    width: 20.h,
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset('images/google.png',
+                                          height: 20.h, width: 20.h),
+                                      SizedBox(width: 10.h),
+                                      regularText(
+                                       (Platform.isIOS)  ? 'Google': 'Continue with Google',
+                                        fontSize: 17.sp,
+                                        color: AppColors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ],
+                                  ),
+                          ),
+                        ),
+                      ),
+                 if(Platform.isIOS)  SizedBox(width: 18.h),
+    if(Platform.isIOS)        Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            signInWithApple(context);
+                          },
+                          child: Container(
+                            height: 50.h,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                color: Colors.black,
+                                borderRadius: BorderRadius.circular(8.h),
+                                border: Border.all(color: Colors.black)),
+                            child: appleIsLoading
+                                ? SizedBox(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 3,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Colors.white),
+                                    ),
+                                    height: 20.h,
+                                    width: 20.h,
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        'images/apple.png',
+                                        height: 20.h,
+                                        width: 20.h,
+                                        color: Colors.white,
+                                      ),
+                                      SizedBox(width: 10.h),
+                                      regularText(
+                                        'Apple',
+                                        fontSize: 17.sp,
+                                        color: AppColors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ],
+                                  ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 24.h),
                   Row(
@@ -172,11 +220,11 @@ class _LoginLayoutState extends State<LoginLayout> {
     );
   }
 
-  bool isLoading = false;
+  bool googleIsLoading = false;
 
   Future signInWithGoogle(BuildContext buildContext) async {
     setState(() {
-      isLoading = true;
+      googleIsLoading = true;
     });
     try {
       FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -207,7 +255,7 @@ class _LoginLayoutState extends State<LoginLayout> {
                 .then((document) {
               if (!document.exists) {
                 setState(() {
-                  isLoading = false;
+                  googleIsLoading = false;
                 });
 
                 navigateTo(buildContext, SelectUserType());
@@ -229,22 +277,25 @@ class _LoginLayoutState extends State<LoginLayout> {
               }
             }).catchError((e) {
               setState(() {
-                isLoading = false;
+                googleIsLoading = false;
               });
 
               showExceptionAlertDialog(
                   context: buildContext, exception: e, title: "Error");
               setState(() {
-                isLoading = false;
+                googleIsLoading = false;
               });
               return;
             });
           } else {
             setState(() {
-              isLoading = false;
+              googleIsLoading = false;
             });
           }
         } on FirebaseAuthException catch (e) {
+          setState(() {
+            googleIsLoading = false;
+          });
           if (e.code == 'account-exists-with-different-credential') {
             showExceptionAlertDialog(
               context: buildContext,
@@ -259,6 +310,9 @@ class _LoginLayoutState extends State<LoginLayout> {
             );
           }
         } catch (e) {
+          setState(() {
+            googleIsLoading = false;
+          });
           showExceptionAlertDialog(
             context: buildContext,
             exception: e,
@@ -267,11 +321,20 @@ class _LoginLayoutState extends State<LoginLayout> {
         }
       }
     } catch (e) {
+      setState(() {
+        googleIsLoading = false;
+      });
       showExceptionAlertDialog(
         context: buildContext,
         exception: e,
         title: "Error",
       );
     }
+  }
+
+  bool appleIsLoading = false;
+
+  Future signInWithApple(BuildContext buildContext) {
+
   }
 }

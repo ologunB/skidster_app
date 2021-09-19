@@ -75,7 +75,22 @@ class _UploadCareerDocumentScreenState
                     decoration: TextDecoration.underline),
               ),
             ],
-          )
+          ),
+          SizedBox(height: 10.h),
+          if (file != null)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10.h),
+                  child: Image.file(
+                    file,
+                    height: 100.h,
+                    fit: BoxFit.fitHeight,
+                  ),
+                )
+              ],
+            )
         ],
       ),
     );

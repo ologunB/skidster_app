@@ -33,6 +33,10 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>To get user's location</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>To get user's location</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>App wants to access gallery</string>
 	<key>UIBackgroundModes</key>
@@ -59,9 +63,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>To get user&apos;s location</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>To get user&apos;s location</string>
 </dict>
 </plist>

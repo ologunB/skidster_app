@@ -3,23 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>677827270176-jrs95jhu7ptoqrudhrt7jiib9f3d8dj4.apps.googleusercontent.com</string>
+	<string>182836971015-sfphrsp9cmgq7fg88akcutjec6tar3ko.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.677827270176-jrs95jhu7ptoqrudhrt7jiib9f3d8dj4</string>
+	<string>com.googleusercontent.apps.182836971015-sfphrsp9cmgq7fg88akcutjec6tar3ko</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>677827270176-a4drdalstkdqqo970hs5ieln5o9cen0u.apps.googleusercontent.com</string>
+	<string>182836971015-jiee2o1nisuhh7eae4qljmpbjn0f2g5g.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyAoCNctqJ0JaMsliVgsG5s1kbhe7rGuOMI</string>
+	<string>AIzaSyAoIEncF7x-I-Eky0t3oBBZLmoaU7ZJZBQ</string>
 	<key>GCM_SENDER_ID</key>
-	<string>677827270176</string>
+	<string>182836971015</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.skidster.app</string>
+	<string>com.skidster.apps</string>
 	<key>PROJECT_ID</key>
-	<string>skidster-fc3b3</string>
+	<string>skidster-truckload</string>
 	<key>STORAGE_BUCKET</key>
-	<string>skidster-fc3b3.appspot.com</string>
+	<string>skidster-truckload.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,6 +31,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:677827270176:ios:2d2aa32fdb1f3a2c784e45</string>
+	<string>1:182836971015:ios:f7385f4304cd381e04cca2</string>
+	<key>DATABASE_URL</key>
+	<string>https://skidster-truckload-default-rtdb.firebaseio.com</string>
 </dict>
 </plist>

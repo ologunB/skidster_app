@@ -444,7 +444,7 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
     }
   }
 
-  void signup(context) async {
+  void signup(buildContext) async {
     if (fromGoogle) {
       Map<String, dynamic> mData = Map();
       mData.putIfAbsent("name", () => name.text);
@@ -518,13 +518,13 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
               );
               _firebaseAuth.signOut();
 
-              routeToReplace(context, LoginLayout());
+              routeToReplace(buildContext, LoginLayout());
             }).catchError((e) {
               setState(() {
                 isLoading = false;
               });
               showExceptionAlertDialog(
-                  context: context, exception: e, title: "Error");
+                  context: buildContext, exception: e, title: "Error");
               return;
             });
           });
@@ -539,7 +539,7 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
           isLoading = false;
         });
         showExceptionAlertDialog(
-            context: context, exception: e, title: "Error");
+            context: buildContext, exception: e, title: "Error");
         return;
       });
     }

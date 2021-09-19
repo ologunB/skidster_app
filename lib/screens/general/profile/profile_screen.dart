@@ -19,7 +19,7 @@ import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'dart:io';
 import 'edit_profile_screen.dart';
 import 'go_premium_screen.dart';
 
@@ -68,7 +68,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 8.h),
+            /*     SizedBox(height: 8.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -82,7 +82,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       fontWeight: FontWeight.w700),
                 ),
               ],
-            ),
+            ),*/
             SizedBox(height: 8.h),
             if (AppCache.userType == UserType.TRUCKER)
               if (!hasLicense || !hasCarrierDoc)
@@ -133,7 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onTap: () {
                     int lag = AppCache.userType == UserType.TRUCKER ? 1 : 2;
                     if (index == 8 - lag) {
-                      Share.share('text', subject: 'Share App');
+                      Share.share('Download Skidster - Truckload and Loadboard app from Playstore. Download from Android here https://bit.ly/skidster or iOS here', subject: 'Invite Others');
                       return;
                     }
                     if (index == 9 - lag) {
@@ -194,8 +194,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       return;
                     }
                     if (index == 7 - lag) {
-                      launch(
-                          'https://play.google.com/store/apps/details?id=com.autoserveng.autoserve&hl=en');
+                      String url = Platform.isAndroid
+                          ? 'https://play.google.com/store/apps/details?id=com.skidster.apps'
+                          : '';
+                      try {
+                        launch(url);
+                      } catch (e) {
+                        print(e);
+                      }
                       return;
                     }
                     navigateTo(context, gotos()[index]);

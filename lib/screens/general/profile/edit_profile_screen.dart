@@ -31,6 +31,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   void initState() {
+    Logger().d(AppCache.getUser.toJson());
     name = TextEditingController(text: AppCache.getUser.name.toTitleCase());
     email = TextEditingController(text: AppCache.getUser.email);
     phone = TextEditingController(text: AppCache.getUser.phone);
@@ -224,6 +225,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       showSnackBar(context, 'Alert', 'Email cannot be empty');
       return;
     }
+    if (phone.text.trim().isEmpty) {
+      showSnackBar(context, 'Alert', 'Phone cannot be empty');
+      return;
+    }
 
     if (AppCache.userType == UserType.TRUCKER) {
       if (address.text.trim().isEmpty) {
@@ -240,22 +245,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     Reference reference =
         FirebaseStorage.instance.ref().child("images/${Utils.randomString()}");
 
-    GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: Utils.googleMapKey);
     double toLat, toLong;
 
-    PlacesDetailsResponse detail;
-    try {
-      detail = await _places.getDetailsByPlaceId(dropoffData.placeId);
-      Logger().d(detail.result.geometry.location.lat);
-      Logger().d(detail.result.geometry.location.lng);
-      toLat = detail.result.geometry.location.lat;
-      toLong = detail.result.geometry.location.lng;
-    } catch (e) {
-      print(e);
-      showSnackBar(context, 'Error', e);
-      isLoading = false;
-      setState(() {});
-      return;
+    if (dropoffData != null) {
+      PlacesDetailsResponse detail;
+      GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: Utils.googleMapKey);
+      try {
+        detail = await _places.getDetailsByPlaceId(dropoffData.placeId);
+        Logger().d(detail.result.geometry.location.lat);
+        Logger().d(detail.result.geometry.location.lng);
+        toLat = detail.result.geometry.location.lat;
+        toLong = detail.result.geometry.location.lng;
+      } catch (e) {
+        print(e);
+        showSnackBar(context, 'Error', e);
+        isLoading = false;
+        setState(() {});
+        return;
+      }
     }
 
     try {
@@ -273,11 +280,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       mData.update("email", (a) => email.text);
       mData.update("updated_at", (a) => DateTime.now().millisecondsSinceEpoch);
       mData.update("image", (a) => url, ifAbsent: () => url);
-      mData.update(
-          '_geoloc',
-          (a) => toLat == null
-              ? AppCache.getUser.location
-              : {'lat': toLat, 'lng': toLong});
+      if (toLat != null) {
+        mData.update('_geoloc', (a) => {'lat': toLat, 'lng': toLong});
+      }
 
       //   mData.putIfAbsent("company_name", () => companyName.text);
       //  mData.putIfAbsent("company_phone", () => companyPhone.text);
