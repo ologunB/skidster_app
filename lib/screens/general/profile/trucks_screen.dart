@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/models/truck_response.dart';
@@ -28,6 +29,8 @@ class _MyTrucksScreenState extends State<MyTrucksScreen> {
     super.initState();
   }
 
+  List<TruckModel> myTrucks = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,18 +40,25 @@ class _MyTrucksScreenState extends State<MyTrucksScreen> {
           backgroundColor: Colors.white,
           iconTheme: IconThemeData(color: AppColors.primaryColor),
         ),
-        floatingActionButton: Padding(
-          padding: EdgeInsets.only(bottom: 30.h),
-          child: FloatingActionButton(
-              backgroundColor: AppColors.primaryColor,
-              child: Icon(
-                Icons.add,
-                color: Colors.white,
+        floatingActionButton: myTrucks.length >= 5
+            ? null
+            : Padding(
+                padding: EdgeInsets.only(bottom: 30.h),
+                child: FloatingActionButton(
+                    backgroundColor: AppColors.primaryColor,
+                    child: Icon(
+                      Icons.add,
+                      color: Colors.white,
+                    ),
+                    onPressed: () async {
+                      await Navigator.push<void>(
+                          context,
+                          CupertinoPageRoute<dynamic>(
+                              builder: (BuildContext context) =>
+                                  SetupProfileScreen(isAdd: true)));
+                      setState(() {});
+                    }),
               ),
-              onPressed: () {
-                navigateTo(context, SetupProfileScreen(isAdd: true));
-              }),
-        ),
         body: ListView(
             padding: EdgeInsets.symmetric(horizontal: 20.h),
             shrinkWrap: true,
@@ -73,12 +83,10 @@ class _MyTrucksScreenState extends State<MyTrucksScreen> {
                     } else if (snapshot.hasError) {
                       ErrorOccurredWidget(error: snapshot.error);
                     } else if (snapshot.hasData) {
-                      List<TruckModel> myTrucks = [];
-
+                      myTrucks = [];
                       snapshot.data.docs.forEach((element) {
                         TruckModel model = TruckModel.fromJson(element.data());
                         //  Logger().d(model.toJson());
-
                         myTrucks.add(model);
                       });
                       return myTrucks.isEmpty

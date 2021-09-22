@@ -278,8 +278,8 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
                                               contact: UserData(
                                                 uid: model.uid,
                                                 name: model.name,
-                                                image: '',
-                                                phone: model.companyPhone,
+                                                image: model.image,
+                                                phone: model.phone,
                                               ),
                                             ));
                                       },
@@ -292,7 +292,7 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
                                     SizedBox(width: 6.h),
                                     InkWell(
                                       onTap: () {
-                                        launch('tel:${model.companyPhone}');
+                                        launch('tel:${model.phone}');
                                       },
                                       child: Container(
                                           height: 33.h,

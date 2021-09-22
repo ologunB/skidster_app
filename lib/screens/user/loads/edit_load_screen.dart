@@ -348,6 +348,7 @@ class _EditLoadScreenState extends State<EditLoadScreen> {
       price: sliderValue.toInt(),
       name: AppCache.getUser.name,
       phone: AppCache.getUser.phone,
+      image: AppCache.getUser.image,
     );
     navigateTo(
         context, ReviewLoadScreen(loadsModel: loadsModel, isUpdate: true));

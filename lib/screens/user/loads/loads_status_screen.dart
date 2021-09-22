@@ -81,10 +81,13 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
     super.dispose();
   }
 
+  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     myLoad = myLoad == null ? widget.loadsModel : myLoad;
     return Scaffold(
+        key: scaffoldKey,
         backgroundColor: Colors.white,
         appBar: AppBar(elevation: 0, backgroundColor: Colors.white),
         bottomNavigationBar: Container(
@@ -123,7 +126,8 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
                                     textColor: AppColors.white,
                                     fontWeight: FontWeight.w400,
                                     onTap: () {
-                                      bookLoad(context, myLoad.stage);
+                                      bookLoad(scaffoldKey.currentContext,
+                                          myLoad.stage);
                                     },
                                   ),
                                 ),
@@ -236,9 +240,15 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
                                 navigateTo(
                                     context,
                                     FinderDetails(
+
                                       truckModel: TruckModel(
                                         uid: myLoad?.truckerUid,
                                         id: myLoad.id,
+                                        image:  myLoad.image,
+                                        name: myLoad.name,
+                                        address: myLoad.pickup,
+                                        phone: myLoad.phone,
+
                                       ),
                                     ));
                               },
@@ -270,7 +280,8 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
                                         id: myLoad.id,
                                         name: myLoad.name,
                                         address: myLoad.pickup,
-                                        companyPhone: myLoad.phone,
+                                        phone: myLoad.phone,
+                                        image:  myLoad.image,
                                       ),
                                       isTruck: true,
                                     ));
@@ -396,7 +407,6 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
 
   Widget progressIndicator(int val) {
     print(val);
-    val = 1;
     return Container(
       padding: EdgeInsets.all(16.h),
       decoration: BoxDecoration(boxShadow: [

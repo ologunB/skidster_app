@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mms_app/app/colors.dart';
@@ -38,7 +39,7 @@ class _FinderDetailsState extends State<FinderDetails> {
 
   @override
   void initState() {
-    print(widget.truckModel.uid);
+    print(widget.truckModel.toJson());
     streams1 = _firestore
         .collection('Loaders')
         .doc('Completed')
@@ -156,10 +157,11 @@ class _FinderDetailsState extends State<FinderDetails> {
                   fontSize: 17.sp,
                   height: 50.h,
                   fontWeight: FontWeight.w600, onTap: () {
-                if (truckModel.companyPhone == null) {
+                print(widget.truckModel.phone);
+                if (truckModel.phone == null) {
                   return;
                 }
-                launch('tel${truckModel?.companyPhone}');
+                launch('tel:${truckModel?.phone}');
               }),
               SizedBox(height: 8.h),
               buttonWithBorder('Message',
@@ -180,7 +182,7 @@ class _FinderDetailsState extends State<FinderDetails> {
                         uid: widget.truckModel.uid,
                         name: truckModel.name,
                         image: truckModel.image,
-                        phone: truckModel.companyPhone,
+                        phone: truckModel.phone,
                       ),
                     ));
               }),
@@ -195,10 +197,25 @@ class _FinderDetailsState extends State<FinderDetails> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(100.h),
-                child: Image.asset(
-                  'images/placeholder.png',
+                child:CachedNetworkImage(
+                  imageUrl: widget?.truckModel?.image ?? 'n',
                   width: 100.h,
                   height: 100.h,
+                  fit: BoxFit.fill,
+                  placeholder:
+                      (BuildContext context, String url) =>
+                      Image.asset(
+                        'images/placeholder.png',
+                        width: 100.h,
+                        height: 100.h,
+                      ),
+                  errorWidget: (BuildContext context,
+                      String url, dynamic error) =>
+                      Image.asset(
+                        'images/placeholder.png',
+                        width: 100.h,
+                        height: 100.h,
+                      ),
                 ),
               ),
             ],
@@ -257,12 +274,12 @@ class _FinderDetailsState extends State<FinderDetails> {
                     size: 24.h,
                   ),
                 ),
-                SizedBox(width: 12.h),
+            /*    SizedBox(width: 12.h),
                 Icon(
                   Icons.share,
                   color: Colors.white,
                   size: 24.h,
-                ),
+                ),*/
               ],
             ),
           SizedBox(height: 12.h),
@@ -279,9 +296,10 @@ class _FinderDetailsState extends State<FinderDetails> {
               child: !widget.isTruck
                   ? Column(
                       children: [
-                        if (truckModel?.truckType != null)
+                        Row(),
+                        if (truckModel?.truckType != null || widget?.truckModel?.truckType != null)
                           item(
-                              'Truck Type', ': ${truckModel?.truckType ?? ''}'),
+                              'Truck Type', ': ${truckModel?.truckType ??widget?.truckModel?.truckType?? ''}'),
                         if (truckModel?.skids != null)
                           item(
                               'Skids Capacity', ': ${truckModel?.skids ?? ''}'),
@@ -297,6 +315,7 @@ class _FinderDetailsState extends State<FinderDetails> {
                     )
                   : Column(
                       children: [
+                        Row(),
                         if (postedJobs != null)
                           item('Posted Jobs',
                               ': ${postedJobs + (completedJobs ?? 0)}'),

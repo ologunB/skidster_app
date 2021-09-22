@@ -18,7 +18,7 @@ import 'package:mms_app/screens/user/user_main_layout.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
-
+import 'dart:io';
 class SignupLayout extends StatefulWidget {
   const SignupLayout({Key key}) : super(key: key);
 
@@ -27,6 +27,26 @@ class SignupLayout extends StatefulWidget {
 }
 
 class _SignupLayoutState extends State<SignupLayout> {
+  bool showGoogleButton = Platform.isAndroid;
+
+  @override
+  void initState() {
+    FirebaseFirestore.instance
+        .collection('Utils')
+        .doc('Free-Load')
+        .snapshots()
+        .listen((event) {
+      if (Platform.isAndroid) {
+        showGoogleButton = true;
+        setState(() {});
+        return;
+      }
+      showGoogleButton = event.data()['show_google'];
+      setState(() {});
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,7 +80,7 @@ class _SignupLayoutState extends State<SignupLayout> {
                   ),
                   SizedBox(height: 12.h),
                   regularText(
-                    'Sign up by email or continue with google',
+                    'Sign up by email ${showGoogleButton ? 'or continue with google' : ''}',
                     fontSize: 17.sp,
                     color: AppColors.primaryColor,
                   ),
@@ -75,59 +95,61 @@ class _SignupLayoutState extends State<SignupLayout> {
                     FirebaseAuth.instance.signOut();
                     navigateTo(context, SelectUserType());
                   }),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(9.h),
-                        child: regularText(
-                          'OR',
-                          fontSize: 14.sp,
-                          textAlign: TextAlign.center,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textGrey.withOpacity(.8),
+                  if (showGoogleButton)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(9.h),
+                          child: regularText(
+                            'OR',
+                            fontSize: 14.sp,
+                            textAlign: TextAlign.center,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textGrey.withOpacity(.8),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  InkWell(
-                    onTap: () {
-                      signInWithGoogle(context);
-                    },
-                    child: Container(
-                      height: 50.h,
-                      alignment: Alignment.center,
-                      width: SizeConfig.screenWidth,
-                      decoration: BoxDecoration(
-                          color: Color(0xffF82A2A),
-                          borderRadius: BorderRadius.circular(8.h),
-                          border: Border.all(color: Color(0xffF82A2A))),
-                      child: isLoading
-                          ? SizedBox(
-                              child: CircularProgressIndicator(
-                                strokeWidth: 3,
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.white),
-                              ),
-                              height: 20.h,
-                              width: 20.h,
-                            )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset('images/google.png',
-                                    height: 20.h, width: 20.h),
-                                SizedBox(width: 10.h),
-                                regularText(
-                                  'Continue with Google',
-                                  fontSize: 17.sp,
-                                  color: AppColors.white,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ],
-                            ),
+                      ],
                     ),
-                  ),
+                  if (showGoogleButton)
+                    InkWell(
+                      onTap: () {
+                        signInWithGoogle(context);
+                      },
+                      child: Container(
+                        height: 50.h,
+                        alignment: Alignment.center,
+                        width: SizeConfig.screenWidth,
+                        decoration: BoxDecoration(
+                            color: Color(0xffF82A2A),
+                            borderRadius: BorderRadius.circular(8.h),
+                            border: Border.all(color: Color(0xffF82A2A))),
+                        child: isLoading
+                            ? SizedBox(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 3,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                ),
+                                height: 20.h,
+                                width: 20.h,
+                              )
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset('images/google.png',
+                                      height: 20.h, width: 20.h),
+                                  SizedBox(width: 10.h),
+                                  regularText(
+                                    'Continue with Google',
+                                    fontSize: 17.sp,
+                                    color: AppColors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ],
+                              ),
+                      ),
+                    ),
                   SizedBox(height: 24.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -182,20 +204,19 @@ class _SignupLayoutState extends State<SignupLayout> {
           await googleSignIn.signIn();
 
       if (googleSignInAccount != null) {
-        final GoogleSignInAuthentication googleSignInAuthentication =
-            await googleSignInAccount.authentication;
-
-        final AuthCredential credential = GoogleAuthProvider.credential(
-          accessToken: googleSignInAuthentication.accessToken,
-          idToken: googleSignInAuthentication.idToken,
-        );
-
         try {
+          final GoogleSignInAuthentication googleSignInAuthentication =
+              await googleSignInAccount.authentication;
+
+          final AuthCredential credential = GoogleAuthProvider.credential(
+            accessToken: googleSignInAuthentication.accessToken,
+            idToken: googleSignInAuthentication.idToken,
+          );
+
           final UserCredential value =
               await _firebaseAuth.signInWithCredential(credential);
 
           if (value.user != null) {
-
             FirebaseFirestore.instance
                 .collection('Users')
                 .doc(value.user.uid)
@@ -229,7 +250,6 @@ class _SignupLayoutState extends State<SignupLayout> {
               });
               return;
             });
-  
           } else {
             setState(() {
               isLoading = false;
@@ -256,8 +276,19 @@ class _SignupLayoutState extends State<SignupLayout> {
             title: "Error",
           );
         }
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        showExceptionAlertDialog(
+          context: buildContext,
+          exception: 'Choose an account',
+          title: "Error",
+        );
       }
     } catch (e) {
+      isLoading = false;
+      setState(() {});
       showExceptionAlertDialog(
         context: buildContext,
         exception: e,

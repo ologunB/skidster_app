@@ -8,11 +8,11 @@ class LoadsModel {
   int price;
   String name;
   String phone;
+  String image;
   int updatedAt;
   int dateTime;
   int stage;
   String loaderUid;
-  String image;
   String truckerName;
   String truckerUid;
   String truckerPhone;
@@ -85,21 +85,5 @@ class LoadsModel {
     data['trucker_uid'] = this.truckerUid;
     data['_geoloc'] = this.location;
     return data;
-  }
-}
-
-class SkidLocation {
-  double lat;
-  double lng;
-
-  SkidLocation.fromJson(dynamic json) {
-    lat = json['lat'];
-    lng = json['lng'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['lat'] = this.lat;
-    data['lng'] = this.lng;
   }
 }

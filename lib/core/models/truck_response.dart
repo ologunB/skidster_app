@@ -8,7 +8,7 @@ class TruckModel {
   String address;
   String name;
   String companyName;
-  String companyPhone;
+  String phone;
   int updatedAt;
   String uid;
   String image;
@@ -18,7 +18,7 @@ class TruckModel {
     this.address,
     this.companyName,this.name,
     this.isInsured,
-    this.companyPhone,
+    this.phone,
     this.experience,
     this.updatedAt,
     this.travelPref,
@@ -33,7 +33,7 @@ class TruckModel {
     name = json['name'];
     companyName = json['company_name'];
     isInsured = json['is_insured'];
-    companyPhone = json['company_phone'];
+    phone = json['phone'];
     experience = json['experience'];
     updatedAt = json['updated_at'];
     skids = json['skids'];
@@ -50,7 +50,7 @@ class TruckModel {
     data['name'] = this.name;
     data['company_name'] = this.companyName;
     data['is_insured'] = this.isInsured;
-    data['company_phone'] = this.companyPhone;
+    data['phone'] = this.phone;
     data['experience'] = this.experience;
     data['updated_at'] = this.updatedAt;
     data['image'] = this.image;

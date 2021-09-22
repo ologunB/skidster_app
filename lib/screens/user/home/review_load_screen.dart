@@ -6,6 +6,7 @@ import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/models/load_response.dart';
 import 'package:mms_app/core/storage/local_storage.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
+import 'package:mms_app/screens/widgets/notification_widget.dart';
 import 'package:mms_app/screens/widgets/snackbar.dart';
 
 import 'package:mms_app/screens/widgets/text_widgets.dart';
@@ -64,11 +65,7 @@ class _ReviewLoadScreenState extends State<ReviewLoadScreen> {
                   color: AppColors.primaryColor,
                 ),
                 Spacer(),
-                Icon(
-                  Icons.notifications,
-                  size: 30.h,
-                  color: AppColors.primaryColor,
-                )
+                AppNotificationsWidget()
               ],
             ),
           ),

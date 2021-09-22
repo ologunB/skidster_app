@@ -577,8 +577,9 @@ class _LoadsScreenState extends State<LoadsScreen> {
                                               Row(
                                                 children: [
                                                   if (model.weight.isNotEmpty)
-                                                    item1('${model.weight}kg'),
-                                                  item1('\$${model.price}'),
+                                                    item1('${model.weight}'),
+                                                  item1(
+                                                      '\$50-\$${model.price}'),
                                                   item1('${model.skids} Skids'),
                                                 ],
                                               )

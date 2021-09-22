@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -125,18 +126,21 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                 context,
                                 ChatDetailsView(
                                   contact: UserData(
-                                    name: allChats[index].fromUid ==
-                                            AppCache.getUser.uid
-                                        ? allChats[index].toName.toTitleCase()
-                                        : allChats[index]
-                                            .fromName
-                                            .toTitleCase(),
-                                    uid: allChats[index].toUid ==
-                                            AppCache.getUser.uid
-                                        ? allChats[index].fromUid
-                                        : allChats[index].toUid,
-                                    image: allChats[index].toImg,
-                                  ),
+                                      name: allChats[index].fromUid ==
+                                              AppCache.getUser.uid
+                                          ? allChats[index].toName.toTitleCase()
+                                          : allChats[index]
+                                              .fromName
+                                              .toTitleCase(),
+                                      uid: allChats[index].toUid ==
+                                              AppCache.getUser.uid
+                                          ? allChats[index].fromUid
+                                          : allChats[index].toUid,
+                                      image: allChats[index].toUid ==
+                                              AppCache.getUser.uid
+                                          ? allChats[index].fromImg
+                                          : allChats[index].toImg,
+                                      phone: '092222'),
                                 ));
                           },
                           child: Container(
@@ -151,12 +155,32 @@ class _MessagesScreenState extends State<MessagesScreen> {
                               child: Row(
                                 children: [
                                   ClipRRect(
-                                      borderRadius: BorderRadius.circular(8.h),
-                                      child: Image.asset(
+                                    borderRadius: BorderRadius.circular(8.h),
+                                    child: CachedNetworkImage(
+                                      imageUrl: (allChats[index].toUid ==
+                                                  AppCache.getUser.uid
+                                              ? allChats[index].fromImg
+                                              : allChats[index].toImg) ??
+                                          'n',
+                                      height: 60.h,
+                                      width: 60.h,
+                                      fit: BoxFit.fill,
+                                      placeholder:
+                                          (BuildContext context, String url) =>
+                                              Image.asset(
                                         'images/placeholder.png',
                                         height: 60.h,
                                         width: 60.h,
-                                      )),
+                                      ),
+                                      errorWidget: (BuildContext context,
+                                              String url, dynamic error) =>
+                                          Image.asset(
+                                        'images/placeholder.png',
+                                        height: 60.h,
+                                        width: 60.h,
+                                      ),
+                                    ),
+                                  ),
                                   SizedBox(width: 6.h),
                                   Expanded(
                                     child: Column(

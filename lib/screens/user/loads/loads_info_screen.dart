@@ -325,12 +325,12 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                                     isTruck:
                                         AppCache.userType == UserType.TRUCKER,
                                     truckModel: TruckModel(
-                                      uid: loadsModel?.loaderUid,
-                                      id: loadsModel.id,
-                                      name: loadsModel.name,
-                                      address: loadsModel.pickup,
-                                      companyPhone: loadsModel.phone,
-                                    ),
+                                        uid: loadsModel?.loaderUid,
+                                        id: loadsModel.id,
+                                        name: loadsModel.name,
+                                        address: loadsModel.pickup,
+                                        phone: loadsModel.phone,
+                                        image: loadsModel.image),
                                   ));
                             },
                             child: regularText(
@@ -394,10 +394,10 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                             context,
                             ChatDetailsView(
                                 contact: UserData(
-                              name: loadsModel.name,
-                              uid: loadsModel.loaderUid,
-                              image: loadsModel.image,
-                            )));
+                                    name: loadsModel.name,
+                                    uid: loadsModel.loaderUid,
+                                    image: loadsModel.image,
+                                    phone: loadsModel.phone)));
                       }),
                     ],
                   )

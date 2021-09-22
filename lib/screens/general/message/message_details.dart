@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -211,12 +212,27 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
                 title: Row(
                   children: [
                     ClipRRect(
-                        borderRadius: BorderRadius.circular(12.h),
-                        child: Image.asset(
+                      borderRadius: BorderRadius.circular(12.h),
+                      child: CachedNetworkImage(
+                        imageUrl: widget?.contact?.image ?? 'n',
+                        height: 44.h,
+                        width: 44.h,
+                        fit: BoxFit.fill,
+                        placeholder: (BuildContext context, String url) =>
+                            Image.asset(
                           'images/placeholder.png',
                           height: 44.h,
                           width: 44.h,
-                        )),
+                        ),
+                        errorWidget:
+                            (BuildContext context, String url, dynamic error) =>
+                                Image.asset(
+                          'images/placeholder.png',
+                          height: 44.h,
+                          width: 44.h,
+                        ),
+                      ),
+                    ),
                     SizedBox(width: 12.h),
                     regularText(widget.contact.name.toTitleCase(),
                         fontSize: 18.sp, fontWeight: FontWeight.w600),

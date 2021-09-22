@@ -321,6 +321,7 @@ class _PostLoadWidgetState extends State<PostLoadWidget> {
         dateTime: selectedDateTime.millisecondsSinceEpoch,
         price: sliderValue.toInt(),
         name: AppCache.getUser.name,
+        image: AppCache.getUser.image,
         phone: AppCache.getUser.phone,
         location: {'lat': toLat, 'lng': toLong});
     navigateTo(context, ReviewLoadScreen(loadsModel: loadsModel));

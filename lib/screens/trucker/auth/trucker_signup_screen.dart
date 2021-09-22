@@ -447,13 +447,13 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
   void signup(buildContext) async {
     if (fromGoogle) {
       Map<String, dynamic> mData = Map();
-      mData.putIfAbsent("name", () => name.text);
-      mData.putIfAbsent("phone", () => phone.text);
+      mData.putIfAbsent("name", () => name.text?.trim());
+      mData.putIfAbsent("phone", () => phone.text?.trim());
       mData.putIfAbsent("email", () => _email);
       mData.putIfAbsent("status", () => 'active');
-      mData.putIfAbsent("company_name", () => companyName.text);
-      mData.putIfAbsent("company_phone", () => companyPhone.text);
-      mData.putIfAbsent("company_address", () => address.text);
+      mData.putIfAbsent("company_name", () => companyName.text?.trim());
+      mData.putIfAbsent("company_phone", () => companyPhone.text?.trim());
+      mData.putIfAbsent("company_address", () => address.text?.trim());
       mData.putIfAbsent("type", () => "trucker");
       mData.putIfAbsent("uid", () => _uid);
       mData.putIfAbsent('_geoloc', () => {'lat': toLat, 'lng': toLong});

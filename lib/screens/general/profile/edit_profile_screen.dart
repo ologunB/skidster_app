@@ -266,7 +266,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
 
     try {
-      String url;
+      String url =  AppCache.getUser.image;
       if (imageFile != null) {
         UploadTask uploadTask = reference.putFile(imageFile);
         TaskSnapshot downloadUrl = (await uploadTask.whenComplete(() => null));
@@ -278,7 +278,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       mData.update("company_address", (a) => address?.text?.trim());
       mData.update("phone", (a) => phone.text.trim());
       mData.update("email", (a) => email.text);
-      mData.update("updated_at", (a) => DateTime.now().millisecondsSinceEpoch);
+      //   mData.update("updated_at", (a) => DateTime.now().millisecondsSinceEpoch);
       mData.update("image", (a) => url, ifAbsent: () => url);
       if (toLat != null) {
         mData.update('_geoloc', (a) => {'lat': toLat, 'lng': toLong});
@@ -301,6 +301,61 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
         showSnackBar(context, 'Success', 'Profile has been updated');
         AppCache.setUser(mData);
+
+
+        Map<String, dynamic> tData = AppCache.getUser.toJson();
+        tData.putIfAbsent("name", () => name.text.trim());
+        tData.putIfAbsent("address", () => address?.text?.trim());
+        tData.putIfAbsent("phone", () => phone.text.trim());
+        tData.putIfAbsent("image", () => AppCache.getUser.image);
+        if (AppCache.userType == UserType.TRUCKER) {
+          FirebaseFirestore.instance
+              .collection('Truckers')
+              .doc('Added')
+              .collection(uid)
+              .get()
+              .then((value) {
+
+            value.docs.forEach((element) {
+              print(element.id);
+              FirebaseFirestore.instance
+                  .collection('Truckers')
+                  .doc('Added')
+                  .collection(uid)
+                  .doc(element.id)
+                  .update(tData);
+              FirebaseFirestore.instance
+                  .collection('All-Truckers')
+                  .doc(element.id)
+                  .update(tData);
+            });
+          });
+        }else{
+
+          FirebaseFirestore.instance
+              .collection('Loaders')
+              .doc('Added')
+              .collection(uid)
+              .get()
+              .then((value) {
+
+            value.docs.forEach((element) {
+              print(element.id);
+              FirebaseFirestore.instance
+                  .collection('Loaders')
+                  .doc('Added')
+                  .collection(uid)
+                  .doc(element.id)
+                  .update(tData);
+              FirebaseFirestore.instance
+                  .collection('All-Loaders')
+                  .doc(element.id)
+                  .update(tData);
+            });
+          });
+
+
+        }
       }).catchError((e) {
         setState(() {
           isLoading = false;
