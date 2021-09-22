@@ -82,11 +82,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   fit: BoxFit.cover,
                                 )
                               : CachedNetworkImage(
-                                  imageUrl: imageUrl,
+                                  imageUrl: imageUrl ?? 'm',
                                   height: 100.h,
                                   width: 100.h,
                                   fit: BoxFit.cover,
                                   placeholder: (_, __) => Image.asset(
+                                    'images/placeholder.png',
+                                    height: 100.h,
+                                    width: 100.h,
+                                    fit: BoxFit.cover,
+                                  ),
+                                  errorWidget: (BuildContext context,
+                                          String url, dynamic error) =>
+                                      Image.asset(
                                     'images/placeholder.png',
                                     height: 100.h,
                                     width: 100.h,
@@ -266,7 +274,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
 
     try {
-      String url =  AppCache.getUser.image;
+      String url = AppCache.getUser.image;
       if (imageFile != null) {
         UploadTask uploadTask = reference.putFile(imageFile);
         TaskSnapshot downloadUrl = (await uploadTask.whenComplete(() => null));
@@ -302,7 +310,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         showSnackBar(context, 'Success', 'Profile has been updated');
         AppCache.setUser(mData);
 
-
         Map<String, dynamic> tData = AppCache.getUser.toJson();
         tData.putIfAbsent("name", () => name.text.trim());
         tData.putIfAbsent("address", () => address?.text?.trim());
@@ -315,7 +322,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               .collection(uid)
               .get()
               .then((value) {
-
             value.docs.forEach((element) {
               print(element.id);
               FirebaseFirestore.instance
@@ -330,15 +336,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   .update(tData);
             });
           });
-        }else{
-
+        } else {
           FirebaseFirestore.instance
               .collection('Loaders')
               .doc('Added')
               .collection(uid)
               .get()
               .then((value) {
-
             value.docs.forEach((element) {
               print(element.id);
               FirebaseFirestore.instance
@@ -353,8 +357,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   .update(tData);
             });
           });
-
-
         }
       }).catchError((e) {
         setState(() {
