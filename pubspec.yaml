@@ -45,6 +45,18 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_native_splash: ^1.2.1
+
+flutter_native_splash:
+  color: "#101D49"
+  image: images/logo-bg.png
+  android: true
+  ios: true
+  web: true
+  android_gravity: center
+  ios_content_mode: center
+  web_image_mode: center
+  fullscreen: true
 
 flutter:
   uses-material-design: true

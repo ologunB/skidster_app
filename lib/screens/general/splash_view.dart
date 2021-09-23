@@ -23,7 +23,7 @@ class _SplashViewState extends State<SplashView> {
           locator<NavigationService>().pushReplace(LoginLayoutScreen);
         }
       } else {
-        Future.delayed(Duration(seconds: 2), () {
+        Future.delayed(Duration(seconds: 1), () {
           if (AppCache.getUser.type == 'customer') {
             locator<NavigationService>().pushReplace(UserMainView);
           } else {

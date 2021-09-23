@@ -240,15 +240,13 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
                                 navigateTo(
                                     context,
                                     FinderDetails(
-
                                       truckModel: TruckModel(
                                         uid: myLoad?.truckerUid,
                                         id: myLoad.id,
-                                        image:  myLoad.image,
+                                        image: myLoad.image,
                                         name: myLoad.name,
                                         address: myLoad.pickup,
                                         phone: myLoad.phone,
-
                                       ),
                                     ));
                               },
@@ -281,7 +279,7 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
                                         name: myLoad.name,
                                         address: myLoad.pickup,
                                         phone: myLoad.phone,
-                                        image:  myLoad.image,
+                                        image: myLoad.image,
                                       ),
                                       isTruck: true,
                                     ));
@@ -555,6 +553,9 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
         .collection(loaderUid)
         .doc(rand);
 
+    DocumentReference completedCounter =
+        _firestore.collection('Utils').doc('Free-Loads');
+
     Map<String, dynamic> mData = widget.loadsModel.toJson();
     if (stage == 0) {
       mData.update("trucker_name", (a) => AppCache.getUser.name);
@@ -619,6 +620,10 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
       writeBatch.delete(postRef);
       // delete trucker progress
       writeBatch.delete(trucksLoad);
+
+      // update counter
+      writeBatch
+          .update(completedCounter, {'completed': FieldValue.increment(1)});
     }
     writeBatch.set(notifiDoc, notifiData);
 

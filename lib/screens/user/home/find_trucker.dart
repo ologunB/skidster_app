@@ -333,7 +333,7 @@ class _FindTruckerWidgetState extends State<FindTruckerWidget> {
       children: [
         Container(
           margin: EdgeInsets.only(right: 4.h),
-          padding: EdgeInsets.symmetric(horizontal: 10.h, vertical: 6.h),
+          padding: EdgeInsets.symmetric(horizontal: 10.h, vertical: 4.h),
           decoration: BoxDecoration(
               color: AppColors.grey.withOpacity(.2),
               borderRadius: BorderRadius.circular(6.h)),
