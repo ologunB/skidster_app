@@ -219,7 +219,6 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
   TextEditingController code = TextEditingController();
   Prediction addressData;
 
-  bool _isDialogShowing = false;
   double toLat, toLong;
 
   Future<void> verifyNumber(context) async {
@@ -299,7 +298,6 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
                 context: context,
                 barrierDismissible: true,
                 builder: (context) {
-                  _isDialogShowing = true;
                   return AlertDialog(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20.h)),

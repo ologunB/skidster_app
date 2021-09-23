@@ -21,7 +21,6 @@ import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io';
 import 'edit_profile_screen.dart';
-import 'go_premium_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key key}) : super(key: key);

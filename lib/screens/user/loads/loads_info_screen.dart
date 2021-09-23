@@ -266,8 +266,6 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                                           .millisecondsSinceEpoch
                                           .toString();
 
-                                  String uid = AppCache.getUser.uid;
-
                                   Map<String, dynamic> mData = Map();
                                   mData.putIfAbsent("id", () => id);
                                   mData.putIfAbsent(

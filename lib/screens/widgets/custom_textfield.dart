@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mms_app/app/colors.dart';
-import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
 
 class CustomTextField extends StatelessWidget {

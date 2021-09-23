@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/core/models/truck_response.dart';
-import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/core/storage/local_storage.dart';
 import 'package:mms_app/screens/trucker/auth/set_profile_screen.dart';
 import 'package:mms_app/screens/widgets/app_empty_widget.dart';

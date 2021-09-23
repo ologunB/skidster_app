@@ -98,15 +98,13 @@ class _GoPremiumScreenState extends State<GoPremiumScreen> {
                                   onTap: () {
                                     selectedIndex = index;
                                     setState(() {});
-
-                                    return;
-                                    Map<String, dynamic> mData = Map();
+                                    /*    Map<String, dynamic> mData = Map();
                                     mData.putIfAbsent("plan", () => myTrucks[index].title);
 
                                     FirebaseFirestore.instance
                                         .collection("Users")
                                         .doc(uid)
-                                        .update(mData);
+                                        .update(mData);*/
                                   },
                                   child: Container(
                                     padding: EdgeInsets.symmetric(

@@ -5,7 +5,6 @@ import 'package:mms_app/screens/general/auth/login_screen.dart';
 import 'package:mms_app/screens/general/message/message_details.dart';
 import 'package:mms_app/screens/general/notifications_screen.dart';
 import 'package:mms_app/screens/general/onboarding_view.dart';
-import 'package:mms_app/screens/general/auth/signup_layout.dart';
 import 'package:mms_app/screens/trucker/trucker_main_layout.dart';
 import 'package:mms_app/screens/user/user_main_layout.dart';
 
