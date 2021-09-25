@@ -187,16 +187,20 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
                               DateTime.now().millisecondsSinceEpoch.toString();
 
                           Map<String, dynamic> mData = Map();
-                          mData.putIfAbsent("id", () => widget.loadsModel.id);
+                          mData.putIfAbsent("id", () => id);
                           mData.putIfAbsent(
-                              "reporter", () => AppCache.getUser.uid);
+                              "load_id", () => widget.loadsModel.id);
+                          mData.putIfAbsent("uid", () => 'uid');
+                          mData.putIfAbsent("status", () => 'pending');
+                          mData.putIfAbsent(
+                              "desc", () => 'Load has been reported');
+                          mData.putIfAbsent(
+                              "from", () => AppCache.getUser.name);
                           mData.putIfAbsent("updated_at",
                               () => DateTime.now().millisecondsSinceEpoch);
 
                           _firestore
-                              .collection('Support')
-                              .doc('Reports')
-                              .collection('Unattended')
+                              .collection('All-Supports')
                               .doc(id)
                               .set(mData)
                               .then((value) {});
@@ -554,7 +558,7 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
         .doc(rand);
 
     DocumentReference completedCounter =
-        _firestore.collection('Utils').doc('Free-Loads');
+        _firestore.collection('Counters').doc('counter');
 
     Map<String, dynamic> mData = widget.loadsModel.toJson();
     if (stage == 0) {
@@ -622,12 +626,11 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
       writeBatch.delete(trucksLoad);
 
       // update counter
-      writeBatch
-          .update(completedCounter, {'completed': FieldValue.increment(1)});
+      writeBatch.update(completedCounter, {'completed': FieldValue.increment(1)});
     }
     writeBatch.set(notifiDoc, notifiData);
 
-    await _firestore
+/*    await _firestore
         .collection('Loaders')
         .doc('Added')
         .collection(myUid)
@@ -646,7 +649,7 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
         });
         return;
       }
-    });
+    });*/
     print(loaderUid);
     print(rand);
     FirebaseDatabase.instance

@@ -18,16 +18,15 @@ void main() async {
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.dumpErrorToConsole(details, forceReport: true);
   };
-  runApp(ChrchApp());
+  runApp(SkidsterApp());
 }
 
-class ChrchApp extends StatelessWidget {
+class SkidsterApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'IntaChurch',
-      //  theme: lightThemeData,
+      title: 'Skidster',
       theme: ThemeData(
         textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
         primaryColor: Colors.white,

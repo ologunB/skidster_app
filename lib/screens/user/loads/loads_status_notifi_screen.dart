@@ -181,17 +181,19 @@ class _LoadsStatusNotifiScreenState extends State<LoadsStatusNotifiScreen> {
                           String id = Utils.randomString(no: 5) +
                               DateTime.now().millisecondsSinceEpoch.toString();
 
+
                           Map<String, dynamic> mData = Map();
-                          mData.putIfAbsent("id", () => widget.id);
-                          mData.putIfAbsent(
-                              "reporter", () => AppCache.getUser.uid);
+                          mData.putIfAbsent("id", () => id);
+                          mData.putIfAbsent("load_id", () => widget.id);
+                          mData.putIfAbsent("uid", () => 'uid');
+                          mData.putIfAbsent("status", () => 'pending');
+                          mData.putIfAbsent("desc", () => 'Load has been reported');
+                          mData.putIfAbsent("from", () => AppCache.getUser.name);
                           mData.putIfAbsent("updated_at",
-                              () => DateTime.now().millisecondsSinceEpoch);
+                                  () => DateTime.now().millisecondsSinceEpoch);
 
                           _firestore
-                              .collection('Support')
-                              .doc('Reports')
-                              .collection('Unattended')
+                              .collection('All-Supports')
                               .doc(id)
                               .set(mData)
                               .then((value) {});
@@ -222,33 +224,34 @@ class _LoadsStatusNotifiScreenState extends State<LoadsStatusNotifiScreen> {
               if (myLoad?.truckerName != null)
                 if (AppCache.userType != UserType.TRUCKER)
                   Padding(
-                    padding: EdgeInsets.symmetric(vertical: 15.h),
-                    child: Row(
-                      children: [
-                        regularText(
-                          'Booked by:  ',
-                          fontSize: 17.sp,
-                          color: AppColors.primaryColor,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            navigateTo(
-                                context,
-                                FinderDetails(
-                                  truckModel: TruckModel(
-                                    uid: myLoad?.truckerUid,
-                                    id: myLoad.id,
-                                  ),
-                                ));
-                          },
-                          child: regularText(myLoad?.truckerName?.toTitleCase() ,
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.primaryColor,
-                              decoration: TextDecoration.underline),
-                        ),
-                      ],
-                    )),
+                      padding: EdgeInsets.symmetric(vertical: 15.h),
+                      child: Row(
+                        children: [
+                          regularText(
+                            'Booked by:  ',
+                            fontSize: 17.sp,
+                            color: AppColors.primaryColor,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              navigateTo(
+                                  context,
+                                  FinderDetails(
+                                    truckModel: TruckModel(
+                                      uid: myLoad?.truckerUid,
+                                      id: myLoad.id,
+                                    ),
+                                  ));
+                            },
+                            child: regularText(
+                                myLoad?.truckerName?.toTitleCase(),
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.primaryColor,
+                                decoration: TextDecoration.underline),
+                          ),
+                        ],
+                      )),
               Row(
                 children: [
                   regularText(
@@ -298,7 +301,7 @@ class _LoadsStatusNotifiScreenState extends State<LoadsStatusNotifiScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    item2('Item', ': ${myLoad.title?.toTitleCase() }'),
+                    item2('Item', ': ${myLoad.title?.toTitleCase()}'),
                     if (myLoad.weight.isNotEmpty)
                       item2('Weight', ': ${myLoad.weight}'),
                     item2('Skids', ': ${myLoad.skids}'),
@@ -309,7 +312,6 @@ class _LoadsStatusNotifiScreenState extends State<LoadsStatusNotifiScreen> {
                         ': ${DateFormat('EEEE MMM, dd').format(DateTime.fromMillisecondsSinceEpoch(myLoad.dateTime))}'),
                     item2('Updated at',
                         ': ${DateFormat('EEEE MMM, dd').format(DateTime.fromMillisecondsSinceEpoch(myLoad.updatedAt))}'),
-
                   ],
                 ),
               ),
