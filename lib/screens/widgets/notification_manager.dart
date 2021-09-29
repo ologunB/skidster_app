@@ -105,6 +105,18 @@ class NotificationManager {
     flutterLocalNotificationsPlugin.cancelAll();
   }
 
+  static Future<void> scheduleNotifi() async {
+    await flutterLocalNotificationsPlugin.showDailyAtTime(
+      2343,
+      'Skidster',
+      'Check out recently added loads',
+      Time(12, 00, 0),
+      const NotificationDetails(
+          android: AndroidNotificationDetails(
+              'channel_id', 'Trucker', 'Trucker description')),
+    );
+  }
+
   static Future<void> initialize() async {
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<

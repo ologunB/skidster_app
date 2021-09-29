@@ -15,6 +15,7 @@ import 'package:mms_app/screens/trucker/auth/upload_carierdocs_screen.dart';
 import 'package:mms_app/screens/trucker/auth/upload_driverlicense_screen.dart';
 import 'package:mms_app/screens/trucker/trucker_main_layout.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
+import 'package:mms_app/screens/widgets/notification_manager.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
 import 'package:share/share.dart';
@@ -159,8 +160,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       height: 40.h,
                                       textColor: AppColors.white,
                                       fontWeight: FontWeight.w400,
-                                      onTap: () {
+                                      onTap: () async{
                                         AppCache.clear();
+                                        await NotificationManager.cancelAll();
+
                                         GoogleSignIn().signOut();
                                         FirebaseAuth.instance.signOut();
                                         routeToReplace(context, LoginLayout());

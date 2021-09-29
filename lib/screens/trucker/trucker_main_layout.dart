@@ -22,6 +22,7 @@ import 'package:mms_app/screens/widgets/notification_manager.dart';
 
 import 'home/trucker_home_screen.dart';
 
+
 class TruckerMainLayout extends StatefulWidget {
   const TruckerMainLayout({Key key}) : super(key: key);
 
@@ -102,11 +103,16 @@ class _TruckerMainLayoutState extends State<TruckerMainLayout> {
         .set(<String, String>{'token': messagingToken});
   }
 
-  Future<void> things() async {
+
+
+    Future<void> things() async {
     await Firebase.initializeApp();
     await FirebaseDatabase.instance.setPersistenceEnabled(true);
     await FirebaseDatabase.instance.setPersistenceCacheSizeBytes(100000000);
     await NotificationManager.initialize();
+    await NotificationManager.scheduleNotifi();
+
+
     FlutterError.onError = (FlutterErrorDetails details) {
       FlutterError.dumpErrorToConsole(details, forceReport: true);
     };
