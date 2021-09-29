@@ -10,6 +10,7 @@ import 'package:mms_app/screens/trucker/trucker_main_layout.dart';
 import 'package:mms_app/screens/user/user_main_layout.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/custom_textfield.dart';
+import 'package:mms_app/screens/widgets/snackbar.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
 import 'package:mms_app/screens/widgets/utils.dart';
@@ -25,10 +26,12 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   bool autoValidate = false;
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
@@ -78,6 +81,61 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: Colors.black,
                   )),
             ),
+            SizedBox(height: 10.h),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                InkWell(
+                    onTap: () {
+                      showDialog(
+                          context: context,
+                          barrierDismissible: true,
+                          builder: (context) => AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.h)),
+                                title: regularText('Enter Email address',
+                                    fontSize: 14.sp,
+                                    textAlign: TextAlign.center,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.black),
+                                content: CustomTextField(
+                                  hintText: 'Enter Email',
+                                  controller: passEmail,
+                                  textAlign: TextAlign.center,
+                                  textInputType: TextInputType.emailAddress,
+                                ),
+                                actions: <Widget>[
+                                  Container(
+                                    margin: EdgeInsets.all(10.h),
+                                    child: InkWell(
+                                      onTap: () async {
+                                        if (passEmail.text.isEmpty) {
+                                          return;
+                                        }
+                                        Navigator.pop(context);
+                                        forgotPassword(
+                                            scaffoldKey.currentContext);
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 8.h, horizontal: 16.h),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            color: AppColors.grey),
+                                        child: regularText('RESET',
+                                            fontSize: 12,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ));
+                    },
+                    child: item('Forgot Password?')),
+              ],
+            ),
             SizedBox(height: 40.h),
             buttonWithBorder('Sign In',
                 buttonColor: AppColors.primaryColor,
@@ -112,6 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   TextEditingController email = TextEditingController();
+  TextEditingController passEmail = TextEditingController();
   TextEditingController password = TextEditingController();
 
   Future signIn() async {
@@ -176,5 +235,34 @@ class _LoginScreenState extends State<LoginScreen> {
       });
       return;
     });
+  }
+
+  Future forgotPassword(context) async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      await _firebaseAuth.sendPasswordResetEmail(email: passEmail.text);
+      setState(() {
+        isLoading = false;
+      });
+      passEmail.clear();
+      showAlertDialog(
+        context: context,
+        title: 'Alert',
+        content: "Reset Email has been sent!",
+        defaultActionText: 'OKAY',
+      );
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      showSnackBar(context, 'Error', e.message);
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      showSnackBar(context, 'Error', e.message);
+    }
   }
 }

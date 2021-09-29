@@ -457,7 +457,7 @@ class _LoadsStatusNotifiScreenState extends State<LoadsStatusNotifiScreen> {
   };
 
   Map<int, String> userStagesText = {
-    1: 'The load has been booked',
+    1: 'The load has been booked◌',
     2: 'Load is enroute to destination',
     3: 'Load has delivered',
   };

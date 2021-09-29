@@ -37,9 +37,17 @@ class _FinderDetailsState extends State<FinderDetails> {
   StreamSubscription streams1, streams2, streams3;
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  String phone;
   @override
   void initState() {
     print(widget.truckModel.toJson());
+    FirebaseFirestore.instance
+        .collection('Users')
+        .doc(widget.truckModel.uid)
+        .get()
+        .then((value) {
+      phone = value.data()['phone'];
+    });
     streams1 = _firestore
         .collection('Loaders')
         .doc('Completed')
@@ -158,10 +166,10 @@ class _FinderDetailsState extends State<FinderDetails> {
                   height: 50.h,
                   fontWeight: FontWeight.w600, onTap: () {
                 print(widget.truckModel.phone);
-                if (truckModel.phone == null) {
+                if (truckModel.phone == null || phone == null) {
                   return;
                 }
-                launch('tel:${truckModel?.phone}');
+                launch('tel:${phone ?? truckModel?.phone}');
               }),
               SizedBox(height: 8.h),
               buttonWithBorder('Message',

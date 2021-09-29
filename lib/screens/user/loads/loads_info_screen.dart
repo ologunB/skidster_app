@@ -85,6 +85,13 @@ class _LoadsDetailsScreenState extends State<LoadsDetailsScreen> {
                   color: AppColors.grey,
                 ),
                 SizedBox(width: 10.h),
+                regularText(
+                  widget.loadsModel.id.toUpperCase(),
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.black,
+                ),
+                SizedBox(width: 10.h),
                 PopupMenuButton(
                     onSelected: (int a) {
                       if (a == 0) {

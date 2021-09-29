@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -37,6 +38,8 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
   StreamSubscription<Event> msgStream, updateMsgStream;
   StreamSubscription<bool> keyboardStream;
 
+  String phone;
+
   @override
   void initState() {
     if (clickedName != null) {
@@ -45,6 +48,14 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
     }
 
     Logger().d(widget.contact.uid);
+
+    FirebaseFirestore.instance
+        .collection('Users')
+        .doc(widget.contact.uid)
+        .get()
+        .then((value) {
+      phone = value.data()['phone'];
+    });
 
     final String conId =
         Utils.conversationId(AppCache.getUser.uid, widget.contact.uid);
@@ -196,7 +207,7 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
                     children: [
                       InkWell(
                         onTap: () {
-                          launch('tel:${widget.contact.phone}');
+                          launch('tel:${phone??widget.contact.phone}');
                         },
                         child: Image.asset(
                           'images/call.png',
@@ -300,7 +311,7 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
         });
   }
 
-  Future<bool> sendOneMessage() async {
+  Future<void> sendOneMessage() async {
     final String text = textController.text.trim();
     UserData toUser = widget.contact;
 
@@ -348,6 +359,5 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
         .child(AppCache.getUser.uid)
         .child(conId)
         .set(userData);
-    return true;
   }
 }

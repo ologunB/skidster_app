@@ -329,7 +329,7 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
     }
   }
 
-  void signup(context) async {
+  void signup(bContext) async {
     if (fromGoogle) {
       Map<String, dynamic> mData = Map();
       mData.putIfAbsent("name", () => name.text?.trim());
@@ -347,8 +347,14 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
           .doc(_uid)
           .set(mData)
           .then((value) {
-        AppCache.setUser(mData);
-        routeToReplace(scaffoldKey.currentContext, UserMainLayout());
+        showAlertDialog(
+          context:context,
+          title: 'Alert',
+          content: "Sign in into your account",
+          defaultActionText: 'OKAY',
+        );
+
+        routeToReplace(scaffoldKey.currentContext, LoginLayout());
       }).catchError((e) {
         setState(() {
           isLoading = false;

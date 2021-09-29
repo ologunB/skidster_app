@@ -464,8 +464,14 @@ class _TruckerSignupScreenState extends State<TruckerSignupScreen> {
           .doc(_uid)
           .set(mData)
           .then((value) {
-        AppCache.setUser(mData);
-        routeToReplace(scaffoldKey.currentContext, TruckerMainLayout());
+        showAlertDialog(
+          context: context,
+          title: 'Alert',
+          content: "Sign in into your account",
+          defaultActionText: 'OKAY',
+        );
+
+        routeToReplace(scaffoldKey.currentContext, LoginLayout());
       }).catchError((e) {
         setState(() {
           isLoading = false;
