@@ -133,7 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onTap: () {
                     int lag = AppCache.userType == UserType.TRUCKER ? 1 : 2;
                     if (index == 8 - lag) {
-                      Share.share('Download Skidster - Truckload and Loadboard app from Playstore. Download from Android here https://bit.ly/skidster or iOS here', subject: 'Invite Others');
+                      Share.share('Download Skidster - Truckload and Loadboard app from Playstore. Download from Android here https://bit.ly/skidster or iOS here https://bit.ly/SkidsterIOS', subject: 'Invite Others');
                       return;
                     }
                     if (index == 9 - lag) {
@@ -198,7 +198,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     if (index == 7 - lag) {
                       String url = Platform.isAndroid
                           ? 'https://play.google.com/store/apps/details?id=com.skidster.apps'
-                          : '';
+                          : 'https://apps.apple.com/us/app/skidster/id1586538641';
                       try {
                         launch(url);
                       } catch (e) {

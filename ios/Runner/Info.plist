@@ -36,11 +36,11 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Skidster needs access to user's location to get truckers based on location</string>
+	<string>Skidster needs access to user&apos;s location to get truckers based on location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Skidster needs access to user's location to get truckers based on location</string>
+	<string>Skidster needs access to user&apos;s location to get truckers based on location</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Skidster needs access to gallery to take images to upload</string>
+	<string>Skidster needs access to gallery for security reasons i.e. to Identify the poster of the load. For example, In case a load is reported as fraudulent activity - we could ID the load to the person.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
