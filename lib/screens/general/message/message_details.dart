@@ -47,7 +47,7 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
       clickedName = null;
     }
 
-    Logger().d(widget.contact.uid);
+    //Logger().d(widget.contact.uid);
 
     FirebaseFirestore.instance
         .collection('Users')
@@ -73,7 +73,7 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
       allMessages.sort((NewMessageModel b, NewMessageModel a) =>
           a.createdAt.compareTo(b.createdAt));
 
-      Logger().d(event.snapshot.value);
+      //Logger().d(event.snapshot.value);
       _scrollController.animateTo(
           _scrollController.position.minScrollExtent - 200,
           curve: Curves.easeOut,
@@ -346,7 +346,9 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
         .child('users_chats')
         .child(toUser.uid)
         .child(conId)
-        .set(userData);
+        .set(userData).catchError((e){
+          Logger().d(e);
+    });
     FirebaseDatabase.instance
         .reference()
         .child('messages')

@@ -28,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,

@@ -104,7 +104,7 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
                     if (myLoad.stage == 3) return;
                     showDialog<AlertDialog>(
                       context: context,
-                      builder: (BuildContext context) => AlertDialog(
+                      builder: (BuildContext bcontext) => AlertDialog(
                         content: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -126,7 +126,7 @@ class _LoadsStatusScreenState extends State<LoadsStatusScreen> {
                                     textColor: AppColors.white,
                                     fontWeight: FontWeight.w400,
                                     onTap: () {
-                                      bookLoad(scaffoldKey.currentContext,
+                                      bookLoad(bcontext,
                                           myLoad.stage);
                                     },
                                   ),

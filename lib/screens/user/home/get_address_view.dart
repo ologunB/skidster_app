@@ -38,7 +38,7 @@ class _GetAddressViewState extends State<GetAddressView> {
               duration: 3);
         },
         apiKey: Utils.googleMapKey,
-        components: <Component>[Component(Component.country, 'CA')],
+        components: <Component>[Component(Component.country, 'US'), Component(Component.country, 'CA')],
       ),
     );
   }
