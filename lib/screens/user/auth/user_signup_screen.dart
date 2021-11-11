@@ -246,7 +246,6 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
                             _firebaseAuth
                                 .signInWithCredential(_credential)
                                 .then((UserCredential result) {
-                              _firebaseAuth.signOut();
                               signup(context);
                               print(result.user.uid);
                             }).catchError((e) {
@@ -286,8 +285,7 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
                               _firebaseAuth
                                   .signInWithCredential(_credential)
                                   .then((UserCredential result) {
-                                _firebaseAuth.signOut();
-                                signup(context);
+                                 signup(context);
                                 print(result.user.uid);
                               }).catchError((e) {
                                 print(e);

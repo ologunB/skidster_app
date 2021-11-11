@@ -1,10 +1,8 @@
-import 'package:algolia/algolia.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/core/models/load_response.dart';
@@ -15,7 +13,6 @@ import 'package:mms_app/screens/general/filter_screen.dart';
 import 'package:mms_app/screens/trucker/home/all_already_taken.dart';
 import 'package:mms_app/screens/user/loads/loads_info_screen.dart';
 import 'package:mms_app/screens/user/loads/loads_status_screen.dart';
-import 'package:mms_app/screens/widgets/algolia_application.dart';
 import 'package:mms_app/screens/widgets/app_empty_widget.dart';
 import 'package:mms_app/screens/widgets/app_separator.dart';
 import 'package:mms_app/screens/widgets/custom_loader.dart';
@@ -24,6 +21,7 @@ import 'package:mms_app/screens/widgets/notification_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
 import 'package:mms_app/screens/widgets/utils.dart';
+import 'dart:math' as math;
 
 class TruckerHomeScreen extends StatefulWidget {
   const TruckerHomeScreen({Key key}) : super(key: key);
@@ -37,13 +35,26 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String uid = AppCache.getUser.uid;
 
-  bool isLoading = false;
-  List<TruckModel> myTrucks = [];
+  bool isLoading = true;
+  List<LoadsModel> myTrucks = [];
+  List<LoadsModel> filteredList = [];
 
   TextEditingController searchController = TextEditingController();
 
-  Algolia algolia = Application.algolia;
   FilterItem filters;
+
+  @override
+  void initState() {
+    _firestore.collection('All-Loaders').get().then((value) {
+      value.docs.forEach((element) {
+        myTrucks.add(LoadsModel.fromJson(element.data()));
+      });
+      isLoading = false;
+      filteredList.addAll(myTrucks);
+      setState(() {});
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -135,52 +146,36 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                               fontSize: 17.sp,
                               letterSpacing: 0.4,
                             ),
-                            onChanged: (a) async {
-                              if (a.length < 2) {
-                                setState(() {});
-                                return;
+                            onChanged: (a) {
+                              a = a.trim();
+                              filteredList.clear();
+                              if (a.length > 1) {
+                                a = a.toUpperCase();
+                                for (LoadsModel item in myTrucks) {
+                                  if (item.name.toUpperCase().contains(a) ||
+                                      item.phone.toUpperCase().contains(a) ||
+                                      item.pickup.toUpperCase().contains(a) ||
+                                      item.dropoff.toUpperCase().contains(a) ||
+                                      item.weight.toUpperCase().contains(a)) {
+                                    if (filters != null) {
+                                      double l = 0;
+
+                                      if ((item.skids <
+                                              filters.skidsCapacity) &&
+                                          (filters.showNearby
+                                              ? l < filters.radius
+                                              : true)) {
+                                        filteredList.add(item);
+                                      }
+                                    } else {
+                                      filteredList.add(item);
+                                    }
+                                  }
+                                }
+                              } else {
+                                filteredList.addAll(myTrucks);
                               }
-                              try {
-                                print(filters?.location?.latitude);
-                                isLoading = true;
-                                setState(() {});
-                                AlgoliaQuery query = algolia.instance
-                                    .index('Loads')
-                                    .query(a)
-                                    .query(filters?.truckType == null
-                                        ? 'T'
-                                        : filters?.truckType)
-                             /*       .setAroundLatLng(
-                                        '${filters?.location?.latitude ?? 50},${filters?.location?.longitude ?? -79}')
-                                    .setAroundRadius(
-                                        filters?.radius ?? 10000000)*/
-                                    .filters(
-                                        'skids<${filters?.skidsCapacity == null ? 500 : filters?.skidsCapacity}');
-
-                                AlgoliaQuerySnapshot snap =
-                                    await query.getObjects();
-
-                                Logger().d(snap.hits);
-
-                                myTrucks.clear();
-                                snap.hits.forEach((element) {
-                                  TruckModel model =
-                                      TruckModel.fromJson(element.data);
-                                  // Logger().d(model.toJson());
-                                  myTrucks.add(model);
-                                });
-                                isLoading = true;
-                                setState(() {});
-                              } on AlgoliaError catch (e) {
-                                Logger().d(e.error);
-                                isLoading = true;
-                                setState(() {});
-                              } catch (e) {
-                                Logger().d(e);
-                                isLoading = true;
-                                setState(() {});
-                              }
-                              return;
+                              setState(() {});
                             },
                             decoration: InputDecoration(
                               counterText: '',
@@ -267,238 +262,202 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                       ],
                     ),
                     SizedBox(height: 15.h),
-                    StreamBuilder<QuerySnapshot>(
-                        stream: _firestore
-                            .collection('All-Loaders')
-                            .orderBy('updated_at', descending: true)
-                            .limit(50)
-                            .snapshots(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return CustomLoader();
-                          } else if (snapshot.hasError) {
-                            ErrorOccurredWidget(error: snapshot.error);
-                          } else if (snapshot.hasData) {
-                            List<LoadsModel> myLoads = [];
-                            snapshot.data.docs.forEach((element) {
-                              LoadsModel model =
-                                  LoadsModel.fromJson(element.data());
-                              //  Logger().d(model.toJson());
-
-                              myLoads.add(model);
-                            });
-                            return myLoads.isEmpty
-                                ? AppEmptyWidget(text: 'Loads tray is Empty')
-                                : SingleChildScrollView(
-                                    padding: EdgeInsets.all(8.h),
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      children: myLoads.map((model) {
-                                        return InkWell(
-                                          onTap: () {
-                                            navigateTo(
-                                                context,
-                                                LoadsDetailsScreen(
-                                                    loadsModel: model,
-                                                    isTruck: true));
-                                          },
-                                          child: Container(
-                                            margin:
-                                                EdgeInsets.only(right: 10.h),
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 14.h,
-                                                vertical: 10.h),
-                                            width: SizeConfig.screenWidth * .9,
-                                            decoration: BoxDecoration(
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                      color: AppColors.grey
-                                                          .withOpacity(.3),
-                                                      spreadRadius: 2,
-                                                      blurRadius: 10)
-                                                ],
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        10.h)),
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  margin: EdgeInsets.only(
-                                                      right: 12.h),
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 10.h,
-                                                      vertical: 6.h),
-                                                  decoration: BoxDecoration(
-                                                      color: AppColors.grey
-                                                          .withOpacity(.5),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              6.h)),
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      regularText(
-                                                        DateFormat('MMM')
-                                                            .format(DateTime
-                                                                .fromMillisecondsSinceEpoch(
-                                                                    model
-                                                                        .dateTime))
-                                                            .toUpperCase(),
-                                                        fontSize: 13.sp,
-                                                        color: AppColors
-                                                            .primaryColor,
-                                                      ),
-                                                      SizedBox(height: 6.h),
-                                                      regularText(
-                                                        DateFormat('dd').format(
-                                                            DateTime.fromMillisecondsSinceEpoch(
-                                                                model
-                                                                    .dateTime)),
-                                                        fontSize: 17.sp,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color: AppColors
-                                                            .primaryColor,
-                                                      ),
-                                                      SizedBox(height: 6.h),
-                                                      regularText(
-                                                        DateFormat('EEE')
-                                                            .format(DateTime
-                                                                .fromMillisecondsSinceEpoch(
-                                                                    model
-                                                                        .dateTime))
-                                                            .toUpperCase(),
-                                                        fontSize: 13.sp,
-                                                        color: AppColors
-                                                            .primaryColor,
-                                                      ),
-                                                    ],
+                    isLoading
+                        ? CustomLoader()
+                        : filteredList.isEmpty
+                            ? AppEmptyWidget(text: 'Loads tray is Empty')
+                            : SingleChildScrollView(
+                                padding: EdgeInsets.all(8.h),
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: filteredList.map((model) {
+                                    return InkWell(
+                                      onTap: () {
+                                        navigateTo(
+                                            context,
+                                            LoadsDetailsScreen(
+                                                loadsModel: model,
+                                                isTruck: true));
+                                      },
+                                      child: Container(
+                                        margin: EdgeInsets.only(right: 10.h),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 14.h, vertical: 10.h),
+                                        width: SizeConfig.screenWidth * .9,
+                                        decoration: BoxDecoration(
+                                            boxShadow: [
+                                              BoxShadow(
+                                                  color: AppColors.grey
+                                                      .withOpacity(.3),
+                                                  spreadRadius: 2,
+                                                  blurRadius: 10)
+                                            ],
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(10.h)),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              margin:
+                                                  EdgeInsets.only(right: 12.h),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10.h,
+                                                  vertical: 6.h),
+                                              decoration: BoxDecoration(
+                                                  color: AppColors.grey
+                                                      .withOpacity(.5),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          6.h)),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  regularText(
+                                                    DateFormat('MMM')
+                                                        .format(DateTime
+                                                            .fromMillisecondsSinceEpoch(
+                                                                model.dateTime))
+                                                        .toUpperCase(),
+                                                    fontSize: 13.sp,
+                                                    color:
+                                                        AppColors.primaryColor,
                                                   ),
-                                                ),
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      regularText(
-                                                        model.title
-                                                            .toTitleCase(),
-                                                        fontSize: 13.sp,
-                                                        color: AppColors.grey,
-                                                      ),
-                                                      SizedBox(height: 10.h),
-                                                      IntrinsicHeight(
-                                                        child: Row(
-                                                          children: [
-                                                            Padding(
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                      vertical:
-                                                                          4.h),
-                                                              child: Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                children: [
-                                                                  Container(
-                                                                    height: 9.h,
-                                                                    width: 9.h,
-                                                                    decoration: BoxDecoration(
-                                                                        border: Border.all(
-                                                                            width: 1
-                                                                                .h,
-                                                                            color: AppColors
-                                                                                .primaryColor),
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(10.h)),
-                                                                  ),
-                                                                  Expanded(
-                                                                      child: SizedBox() ??
-                                                                          MySeparator()),
-                                                                  Container(
-                                                                    height: 9.h,
-                                                                    width: 9.h,
-                                                                    decoration: BoxDecoration(
+                                                  SizedBox(height: 6.h),
+                                                  regularText(
+                                                    DateFormat('dd').format(DateTime
+                                                        .fromMillisecondsSinceEpoch(
+                                                            model.dateTime)),
+                                                    fontSize: 17.sp,
+                                                    fontWeight: FontWeight.w600,
+                                                    color:
+                                                        AppColors.primaryColor,
+                                                  ),
+                                                  SizedBox(height: 6.h),
+                                                  regularText(
+                                                    DateFormat('EEE')
+                                                        .format(DateTime
+                                                            .fromMillisecondsSinceEpoch(
+                                                                model.dateTime))
+                                                        .toUpperCase(),
+                                                    fontSize: 13.sp,
+                                                    color:
+                                                        AppColors.primaryColor,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  regularText(
+                                                    model.title.toTitleCase(),
+                                                    fontSize: 13.sp,
+                                                    color: AppColors.grey,
+                                                  ),
+                                                  SizedBox(height: 10.h),
+                                                  IntrinsicHeight(
+                                                    child: Row(
+                                                      children: [
+                                                        Padding(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  vertical:
+                                                                      4.h),
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              Container(
+                                                                height: 9.h,
+                                                                width: 9.h,
+                                                                decoration: BoxDecoration(
+                                                                    border: Border.all(
+                                                                        width:
+                                                                            1.h,
                                                                         color: AppColors
-                                                                            .primaryColor,
-                                                                        border: Border.all(
-                                                                            width: 1
-                                                                                .h,
-                                                                            color: AppColors
-                                                                                .primaryColor),
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(10.h)),
-                                                                  ),
-                                                                ],
+                                                                            .primaryColor),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            10.h)),
                                                               ),
-                                                            ),
-                                                            SizedBox(
-                                                                width: 10.h),
-                                                            Expanded(
-                                                              child: Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  Expanded(
-                                                                    child:
-                                                                        regularText(
-                                                                      model
-                                                                          .pickup,
-                                                                      fontSize:
-                                                                          15.sp,
-                                                                      color: AppColors
-                                                                          .primaryColor,
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                      height:
-                                                                          10.h),
-                                                                  regularText(
-                                                                    model
-                                                                        .dropoff,
-                                                                    fontSize:
-                                                                        15.sp,
+                                                              Expanded(
+                                                                  child: SizedBox() ??
+                                                                      MySeparator()),
+                                                              Container(
+                                                                height: 9.h,
+                                                                width: 9.h,
+                                                                decoration: BoxDecoration(
                                                                     color: AppColors
                                                                         .primaryColor,
-                                                                  ),
-                                                                ],
+                                                                    border: Border.all(
+                                                                        width:
+                                                                            1.h,
+                                                                        color: AppColors
+                                                                            .primaryColor),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            10.h)),
                                                               ),
-                                                            )
-                                                          ],
+                                                            ],
+                                                          ),
                                                         ),
-                                                      ),
-                                                      SizedBox(height: 10.h),
-                                                      Row(
-                                                        children: [
-                                                          if (model.weight
-                                                              .isNotEmpty)
-                                                            item1(
-                                                                '${model.weight}'),
-                                                          item1(
-                                                              '\$${model.price}'),
-                                                          item1(
-                                                              '${model.skids} Skids'),
-                                                        ],
-                                                      )
-                                                    ],
+                                                        SizedBox(width: 10.h),
+                                                        Expanded(
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Expanded(
+                                                                child:
+                                                                    regularText(
+                                                                  model.pickup,
+                                                                  fontSize:
+                                                                      15.sp,
+                                                                  color: AppColors
+                                                                      .primaryColor,
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                  height: 10.h),
+                                                              regularText(
+                                                                model.dropoff,
+                                                                fontSize: 15.sp,
+                                                                color: AppColors
+                                                                    .primaryColor,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
                                                   ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  );
-                          }
-                          return Container();
-                        }),
+                                                  SizedBox(height: 10.h),
+                                                  Row(
+                                                    children: [
+                                                      if (model
+                                                          .weight.isNotEmpty)
+                                                        item1(
+                                                            '${model.weight}'),
+                                                      item1('\$${model.price}'),
+                                                      item1(
+                                                          '${model.skids} Skids'),
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
                     SizedBox(height: 10.h),
                     Row(
                       children: [
@@ -737,15 +696,17 @@ class _TruckerHomeScreenState extends State<TruckerHomeScreen> {
                                                 ),
                                                 Row(
                                                   children: [
-                                                    regularText(
-                                                      '${Utils.last2(model.pickup)} > ${Utils.last2(model.dropoff)} ',
-                                                      fontSize: 15.sp,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: AppColors
-                                                          .primaryColor,
+                                                    Expanded(
+                                                      child: regularText(
+                                                        '${Utils.last2(model.pickup)} > ${Utils.last2(model.dropoff)} ',
+                                                        fontSize: 15.sp,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: AppColors
+                                                            .primaryColor,
+                                                      ),
                                                     ),
-                                                    Spacer(),
+                                                    SizedBox(width: 12.h),
                                                     regularText(
                                                       'Completed',
                                                       fontSize: 11.sp,

@@ -6,6 +6,7 @@ import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/core/storage/local_storage.dart';
 import 'package:mms_app/core/utils/show_alert_dialog.dart';
 import 'package:mms_app/core/utils/show_exception_alert_dialog.dart';
+import 'package:mms_app/screens/general/auth/select_signup_type.dart';
 import 'package:mms_app/screens/trucker/trucker_main_layout.dart';
 import 'package:mms_app/screens/user/user_main_layout.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
@@ -203,14 +204,30 @@ class _LoginScreenState extends State<LoginScreen> {
             .doc(user.uid)
             .get()
             .then((document) {
-          AppCache.setUser(document.data());
+              if(document.exists){
+                AppCache.setUser(document.data());
 
-          UserData userData = UserData.fromJson(document.data());
-          if (userData.type == 'customer') {
-            routeToReplace(context, UserMainLayout());
-          } else {
-            routeToReplace(context, TruckerMainLayout());
-          }
+                UserData userData = UserData.fromJson(document.data());
+                if (userData.type == 'customer') {
+                  routeToReplace(context, UserMainLayout());
+                } else {
+                  routeToReplace(context, TruckerMainLayout());
+                }
+              }else{
+                setState(() {
+                  isLoading = false;
+                });
+
+                navigateTo(context, SelectUserType());
+                showAlertDialog(
+                  context: context,
+                  title: 'Alert',
+                  content: "Account does not exist, create an account",
+                  defaultActionText: 'OKAY',
+                );
+                return;
+              }
+
         }).catchError((e) {
           setState(() {
             isLoading = false;

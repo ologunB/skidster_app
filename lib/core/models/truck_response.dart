@@ -12,6 +12,7 @@ class TruckModel {
   int updatedAt;
   String uid;
   String image;
+  dynamic position;
 
   TruckModel({
     this.id,
@@ -24,7 +25,7 @@ class TruckModel {
     this.travelPref,
     this.skids,
     this.uid,
-    this.truckType,this.image
+    this.truckType,this.image, this.position,
   });
 
   TruckModel.fromJson(dynamic json) {
@@ -41,10 +42,12 @@ class TruckModel {
     truckType = json['truck_type'];
     travelPref = json['travel_pref'];
     uid = json['uid'];
+    position = json['_geoloc'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
+    data['_geoloc'] = this.position;
     data['id'] = this.id;
     data['address'] = this.address;
     data['name'] = this.name;

@@ -16,9 +16,9 @@ class FilterItem {
 
   FilterItem({
     this.truckType,
-    this.skidsCapacity,
-    this.radius,
-    this.showNearby,
+    this.skidsCapacity = 500,
+    this.radius= 5,
+    this.showNearby = false,
     this.location,
   });
 }
@@ -46,7 +46,7 @@ class _FilterScreenState extends State<FilterScreen> {
   void initState() {
     showNearby = widget?.filterItem?.showNearby ?? false;
     sliderValue1 = widget?.filterItem?.skidsCapacity ?? 50;
-    sliderValue2 = widget?.filterItem?.radius ?? 3;
+    sliderValue2 = widget?.filterItem?.radius ?? 5;
     selectedTruckType = widget?.filterItem?.truckType;
     super.initState();
   }
@@ -305,7 +305,7 @@ class _FilterScreenState extends State<FilterScreen> {
                 },
                 min: 5,
                 label: '$sliderValue1',
-                max: 100,
+                max: 500,
                 activeColor: AppColors.primaryColor),
           ),
           Padding(

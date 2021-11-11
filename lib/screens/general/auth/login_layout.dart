@@ -35,6 +35,7 @@ class _LoginLayoutState extends State<LoginLayout> {
 
   @override
   void initState() {
+    GoogleSignIn().signOut();
     FirebaseFirestore.instance
         .collection('Utils')
         .doc('Free-Load')
@@ -250,12 +251,13 @@ class _LoginLayoutState extends State<LoginLayout> {
   bool googleIsLoading = false;
 
   Future signInWithGoogle(BuildContext buildContext) async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+
+    googleSignIn.signOut();
     setState(() {
       googleIsLoading = true;
     });
     try {
-      final GoogleSignIn googleSignIn = GoogleSignIn();
-
       final GoogleSignInAccount googleSignInAccount =
           await googleSignIn.signIn();
       print(googleSignInAccount);
