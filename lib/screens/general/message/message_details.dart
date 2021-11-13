@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:mms_app/app/colors.dart';
@@ -263,30 +264,54 @@ class _ChatDetailsViewState extends State<ChatDetailsView> {
                     ),
                   Expanded(
                       child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(20.h),
-                        topLeft: Radius.circular(20.h),
-                      ),
-                    ),
-                    child: ListView.builder(
-                        itemCount: allMessages.length,
-                        shrinkWrap: true,
-                        padding: EdgeInsets.zero,
-                        reverse: true,
-                        controller: _scrollController,
-                        itemBuilder: (BuildContext context, int index) {
-                          return MessageBubble(
-                            text: allMessages[index].text,
-                            isSender:
-                                allMessages[index].from == AppCache.getUser.uid,
-                            isRead: allMessages[index].isRead,
-                            timeSent: DateFormat('hh:mm a').format(
-                                DateTime.fromMillisecondsSinceEpoch(
-                                    allMessages[index].createdAt)),
-                          );
-                        }),
-                  )),
+                          margin: EdgeInsets.only(top: 6.h),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(20.h),
+                              topLeft: Radius.circular(20.h),
+                            ),
+                          ),
+                          child:  GroupedListView<NewMessageModel, String>(
+                            elements: allMessages,
+                            reverse: true,
+                            controller: _scrollController,
+                            groupBy: (element) =>
+                                (element.createdAt ~/ 86400000).toString(),
+                            groupSeparatorBuilder: (String groupByValue) => Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 40.h, vertical: 10.h),
+                                  decoration: BoxDecoration(
+                                      color: AppColors.black,
+                                      borderRadius: BorderRadius.circular(8)),
+                                  child: regularText(
+                                    DateFormat('MMMM dd, yyyy').format(
+                                        DateTime.fromMillisecondsSinceEpoch(
+                                            int.parse(groupByValue) * 86400000)),
+                                    fontSize: 14,
+                                    color: AppColors.white,
+                                  ),
+                                )
+                              ],
+                            ),
+                            itemBuilder: (context, dynamic element) =>
+                                MessageBubble(
+                                  text: element.text,
+                                  isSender: element.from == AppCache.getUser.uid,
+                                  isRead: element.isRead,
+                                  timeSent: DateFormat('hh:mm a').format(
+                                      DateTime.fromMillisecondsSinceEpoch(
+                                          element.createdAt)),
+                                ),
+                            itemComparator: (a,b) =>
+                                a.createdAt.compareTo(b.createdAt),
+                            useStickyGroupSeparators: true,
+                            floatingHeader: true,
+                            order: GroupedListOrder.DESC,
+                          )
+                      )),
                 ],
               ),
               footer: InputWidget(
