@@ -6,8 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:mms_app/app/colors.dart';
 import 'package:mms_app/app/size_config/config.dart';
 import 'package:mms_app/core/models/load_response.dart';
-import 'package:mms_app/core/models/truck_response.dart';
-import 'package:mms_app/core/routes/router.dart';
+ import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/core/storage/local_storage.dart';
 import 'package:mms_app/screens/general/filter_screen.dart';
 import 'package:mms_app/screens/trucker/home/all_already_taken.dart';
@@ -21,7 +20,6 @@ import 'package:mms_app/screens/widgets/notification_widget.dart';
 import 'package:mms_app/screens/widgets/text_widgets.dart';
 import 'package:mms_app/app/size_config/extensions.dart';
 import 'package:mms_app/screens/widgets/utils.dart';
-import 'dart:math' as math;
 
 class TruckerHomeScreen extends StatefulWidget {
   const TruckerHomeScreen({Key key}) : super(key: key);

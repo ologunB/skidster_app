@@ -12,7 +12,6 @@ import 'package:mms_app/core/models/load_response.dart';
 import 'package:mms_app/core/models/truck_response.dart';
 import 'package:mms_app/core/routes/router.dart';
 import 'package:mms_app/core/storage/local_storage.dart';
-import 'package:mms_app/core/utils/show_alert_dialog.dart';
 import 'package:mms_app/screens/general/finder_details.dart';
 import 'package:mms_app/screens/widgets/buttons.dart';
 import 'package:mms_app/screens/widgets/snackbar.dart';
